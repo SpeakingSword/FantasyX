@@ -1,4 +1,5 @@
 #include "material.h"
+#include "shader.h"
 
 using namespace fx;
 

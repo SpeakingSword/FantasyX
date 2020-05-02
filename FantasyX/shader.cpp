@@ -61,7 +61,7 @@ GLuint Shader::CreateShaderProgram(const GLchar *vertexShaderCode, const GLchar 
     {
         glGetShaderInfoLog(vertex, 512, NULL, infoLog);
         std::cout << "ENGIN CORE::ERROR::SHADER: vertex shader compilation failed !\n" << infoLog << std::endl;
-        exit(0);
+        system("pause");
     }
 
     // 片段着色器
@@ -74,7 +74,7 @@ GLuint Shader::CreateShaderProgram(const GLchar *vertexShaderCode, const GLchar 
     {
         glGetShaderInfoLog(fragment, 512, NULL, infoLog);
         std::cout << "ENGIN CORE::ERROR::SHADER: fragment shader compilation failed !\n" << infoLog << std::endl;
-        exit(0);
+        system("pause");
     }
 
     // 着色器程序
@@ -88,7 +88,7 @@ GLuint Shader::CreateShaderProgram(const GLchar *vertexShaderCode, const GLchar 
     {
         glGetProgramInfoLog(shaderProgramID, 512, NULL, infoLog);
         std::cout << "ENGIN CORE::ERROR::SHADER: shader program linking failed !\n" << infoLog << std::endl;
-        exit(0);
+        system("pause");
     }
 
     // 删除着色器
@@ -115,7 +115,7 @@ GLuint Shader::CreateShaderProgram(const GLchar *vertexShaderCode, const GLchar 
     {
         glGetShaderInfoLog(vertex, 512, NULL, infoLog);
         std::cout << "ENGIN CORE::ERROR::SHADER: vertex shader compilation failed !\n" << infoLog << std::endl;
-        exit(0);
+        system("pause");
     }
 
     // 几何着色器
@@ -128,7 +128,7 @@ GLuint Shader::CreateShaderProgram(const GLchar *vertexShaderCode, const GLchar 
     {
         glGetShaderInfoLog(geomatry, 512, NULL, infoLog);
         std::cout << "ENGIN CORE::ERROR::SHADER: geomatry shader compilation failed !\n" << infoLog << std::endl;
-        exit(0);
+        system("pause");
     }
 
     // 片段着色器
@@ -141,7 +141,7 @@ GLuint Shader::CreateShaderProgram(const GLchar *vertexShaderCode, const GLchar 
     {
         glGetShaderInfoLog(fragment, 512, NULL, infoLog);
         std::cout << "ENGIN CORE::ERROR::SHADER: fragment shader compilation failed !\n" << infoLog << std::endl;
-        exit(0);
+        system("pause");
     }
 
     // 着色器程序
@@ -156,7 +156,7 @@ GLuint Shader::CreateShaderProgram(const GLchar *vertexShaderCode, const GLchar 
     {
         glGetProgramInfoLog(shaderProgramID, 512, NULL, infoLog);
         std::cout << "ENGIN CORE::ERROR::SHADER: shader program linking failed !\n" << infoLog << std::endl;
-        exit(0);
+        system("pause");
     }
 
     // 删除着色器

@@ -124,7 +124,7 @@ void GameObject::PrintAll(GameObject *root, std::string &prefix)
 
     root->Print(prefix.c_str());
 
-    PrintAll(root->child, prefix.append(prefix.c_str()));
+    PrintAll(root->child, prefix.append(prefix.c_str(), 1));
 
     prefix = prefix.substr(0, prefix.length() - 1);
     PrintAll(root->sibling, prefix);
@@ -138,7 +138,7 @@ void GameObject::PrintAllName(GameObject *root, std::string &prefix)
 
     std::cout << prefix.c_str() << root->name.c_str() << std::endl;
 
-    PrintAllName(root->child, prefix.append(prefix.c_str()));
+    PrintAllName(root->child, prefix.append(prefix.c_str(), 1));
 
     prefix = prefix.substr(0, prefix.length() - 1);
     PrintAllName(root->sibling, prefix);

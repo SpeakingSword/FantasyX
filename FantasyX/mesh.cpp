@@ -196,17 +196,9 @@ void PolygonMesh::InitMeshData(const vector<Vertex> &vertices, const vector<GLui
 {
     this->path = path;
 
-    this->vertices = vertices;
-    //for (auto iter = vertices.cbegin(); iter != vertices.cend(); iter++)
-    //{
-    //    this->vertices.push_back(*iter);
-    //}
+    this->vertices.insert(this->vertices.end(), vertices.begin(), vertices.end());
 
-    this->indices = indices;
-    //for (auto iter = indices.cbegin(); iter != indices.cend(); iter++)
-    //{
-    //    this->indices.push_back(*iter);
-    //}
+    this->indices.insert(this->indices.end(), indices.begin(), indices.end());
 }
 
 void PolygonMesh::Print()

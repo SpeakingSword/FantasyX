@@ -438,5 +438,8 @@
     <ClCompile Include="resource_manager.cpp">
       <Filter>sources\core</Filter>
     </ClCompile>
+    <ClCompile Include="loadmodel_test.cpp">
+      <Filter>sources\test</Filter>
+    </ClCompile>
   </ItemGroup>
 </Project>

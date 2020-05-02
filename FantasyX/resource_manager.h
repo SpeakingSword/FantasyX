@@ -5,6 +5,7 @@
 #include <sstream>
 #include <iostream>
 #include <vector>
+#include <string.h>
 #include <unordered_map>
 #include <direct.h>
 #include <glad\glad.h>
@@ -15,6 +16,7 @@
 #include "mesh.h"
 #include "texture.h"
 #include "gameobject.h"
+#include "component.h"
 
 using namespace std;
 
@@ -69,7 +71,9 @@ namespace fx {
         const GLchar *GetAppDir();
         const GLchar *GetShaderDir();
         const GLchar *GetImageDir();
-        const GLchar *GetFileString(const GLchar *path);
+        GLchar *GetFileString(const GLchar *path);
+        void ProcessNode(aiNode *node, const aiScene *scene, GameObject *obj, const GLchar *path);
+        PolygonMesh *ProcessMesh(aiMesh *mesh, const GLchar *path);
     };
 }
 

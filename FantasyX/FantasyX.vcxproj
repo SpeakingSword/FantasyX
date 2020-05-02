@@ -243,6 +243,7 @@
     <ClCompile Include="imgui_impl_glfw.cpp" />
     <ClCompile Include="imgui_impl_opengl3.cpp" />
     <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="loadmodel_test.cpp" />
     <ClCompile Include="resource_manager.cpp" />
     <ClCompile Include="material.cpp" />
     <ClCompile Include="mesh.cpp" />

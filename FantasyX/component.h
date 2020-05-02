@@ -6,7 +6,6 @@
 
 #include "types.h"
 #include "mesh.h"
-#include "material.h"
 
 #include <glad\glad.h>
 
@@ -15,6 +14,7 @@ using namespace std;
 namespace fx {
 
     class GameObject;
+    class Material;
 
     class Component {
     public:

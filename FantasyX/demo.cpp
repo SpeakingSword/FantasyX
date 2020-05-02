@@ -1,4 +1,4 @@
-#define DEMO
+//#define DEMO
 #ifdef DEMO
 // ±ê×¼¿â
 #include <iostream>

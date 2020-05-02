@@ -6,12 +6,12 @@
 
 #include "types.h"
 #include "texture.h"
-#include "shader.h"
 #include "resource_manager.h"
 
 using namespace std;
 
 namespace fx {
+    class Shader;
     
     class Material {
     public:
