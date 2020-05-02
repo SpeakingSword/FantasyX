@@ -1,0 +1,259 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|x64">
+      <Configuration>Debug</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|x64">
+      <Configuration>Release</Configuration>
+      <Platform>x64</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <VCProjectVersion>15.0</VCProjectVersion>
+    <ProjectGuid>{A4100A76-DEB3-49CD-95B4-963F78095541}</ProjectGuid>
+    <RootNamespace>FantasyX</RootNamespace>
+    <WindowsTargetPlatformVersion>10.0.17763.0</WindowsTargetPlatformVersion>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v141</PlatformToolset>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>MultiByte</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <IncludePath>D:\VS2017Dependencies\includes;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\VS2017Dependencies\libs;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <SDLCheck>true</SDLCheck>
+      <ConformanceMode>true</ConformanceMode>
+    </ClCompile>
+    <Link>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <Image Include="Images\Alibaba_logo.png" />
+    <Image Include="Images\awesomeface.png" />
+    <Image Include="Images\blending_transparent_window.png" />
+    <Image Include="Images\container.jpg" />
+    <Image Include="Images\container2.png" />
+    <Image Include="Images\container2_emission.png" />
+    <Image Include="Images\container2_specular.png" />
+    <Image Include="Images\container2_specular_color.png" />
+    <Image Include="Images\grass.png" />
+    <Image Include="Images\HDR\Alexs_Apartment\Alexs_Apt_8k.jpg" />
+    <Image Include="Images\HDR\Alexs_Apartment\Alexs_Apt_preview.jpg" />
+    <Image Include="Images\HDR\Alexs_Apartment\Alexs_Apt_Thumb.jpg" />
+    <Image Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_preview.jpg" />
+    <Image Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_Thumb.jpg" />
+    <Image Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_tmap.jpg" />
+    <Image Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_Bg.jpg" />
+    <Image Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_preview.jpg" />
+    <Image Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_Thumb.jpg" />
+    <Image Include="Images\marble.jpg" />
+    <Image Include="Images\matrix.jpg" />
+    <Image Include="Images\metal.png" />
+    <Image Include="Images\Skybox\mountain_and_lake\back.jpg" />
+    <Image Include="Images\Skybox\mountain_and_lake\bottom.jpg" />
+    <Image Include="Images\Skybox\mountain_and_lake\front.jpg" />
+    <Image Include="Images\Skybox\mountain_and_lake\left.jpg" />
+    <Image Include="Images\Skybox\mountain_and_lake\right.jpg" />
+    <Image Include="Images\Skybox\mountain_and_lake\top.jpg" />
+    <Image Include="Images\wall.jpg" />
+    <Image Include="Images\wood.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\HDR\Alexs_Apartment\Alexs_Apartment.ibl" />
+    <None Include="Images\HDR\Alexs_Apartment\Alexs_Apt_2k.hdr" />
+    <None Include="Images\HDR\Alexs_Apartment\Alexs_Apt_Env.hdr" />
+    <None Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks.ibl" />
+    <None Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_2k.hdr" />
+    <None Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_Env.hdr" />
+    <None Include="Images\HDR\Factory_Catwalk\Factory_Catwalk.ibl" />
+    <None Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_2k.hdr" />
+    <None Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_Env.hdr" />
+    <None Include="Shaders\BRDF.frag" />
+    <None Include="Shaders\BRDF.vert" />
+    <None Include="Shaders\default.frag" />
+    <None Include="Shaders\default.vert" />
+    <None Include="Shaders\dirLightshadow.frag" />
+    <None Include="Shaders\dirLightshadow.vert" />
+    <None Include="Shaders\gaussian_blur.frag" />
+    <None Include="Shaders\gaussian_blur.vert" />
+    <None Include="Shaders\geomatryPass.frag" />
+    <None Include="Shaders\geomatryPass.vert" />
+    <None Include="Shaders\hdrBox.frag" />
+    <None Include="Shaders\hdrBox.vert" />
+    <None Include="Shaders\irradianceBox.frag" />
+    <None Include="Shaders\irradianceBox.vert" />
+    <None Include="Shaders\LegacySimple.frag" />
+    <None Include="Shaders\LegacyStandard.frag" />
+    <None Include="Shaders\light.frag" />
+    <None Include="Shaders\light.vert" />
+    <None Include="Shaders\lightingPass.frag" />
+    <None Include="Shaders\lightingPass.vert" />
+    <None Include="Shaders\normal.geom" />
+    <None Include="Shaders\normal.vert" />
+    <None Include="Shaders\parallax_mapping.frag" />
+    <None Include="Shaders\parallax_mapping.vert" />
+    <None Include="Shaders\Standard.vert" />
+    <None Include="Shaders\PBRStandard.frag" />
+    <None Include="Shaders\pbr_lighting.frag" />
+    <None Include="Shaders\pbr_lighting.vert" />
+    <None Include="Shaders\pointLightShadow.frag" />
+    <None Include="Shaders\pointLightShadow.geom" />
+    <None Include="Shaders\pointLightShadow.vert" />
+    <None Include="Shaders\prefilterMap.frag" />
+    <None Include="Shaders\prefilterMap.vert" />
+    <None Include="Shaders\screen.frag" />
+    <None Include="Shaders\screen.vert" />
+    <None Include="Shaders\single_color.frag" />
+    <None Include="Shaders\skybox.frag" />
+    <None Include="Shaders\skybox.vert" />
+    <None Include="Shaders\ssaoBlur.frag" />
+    <None Include="Shaders\ssaoBlur.vert" />
+    <None Include="Shaders\ssaoPass.frag" />
+    <None Include="Shaders\ssaoPass.vert" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="bitree.h" />
+    <ClInclude Include="camera.h" />
+    <ClInclude Include="component.h" />
+    <ClInclude Include="share.h" />
+    <ClInclude Include="gameobject.h" />
+    <ClInclude Include="imconfig.h" />
+    <ClInclude Include="imgui.h" />
+    <ClInclude Include="imgui_impl_glfw.h" />
+    <ClInclude Include="imgui_impl_opengl3.h" />
+    <ClInclude Include="imgui_internal.h" />
+    <ClInclude Include="resource_manager.h" />
+    <ClInclude Include="imstb_rectpack.h" />
+    <ClInclude Include="imstb_textedit.h" />
+    <ClInclude Include="imstb_truetype.h" />
+    <ClInclude Include="material.h" />
+    <ClInclude Include="mesh.h" />
+    <ClInclude Include="mesh_old.h" />
+    <ClInclude Include="model.h" />
+    <ClInclude Include="renderer.h" />
+    <ClInclude Include="scene.h" />
+    <ClInclude Include="shader.h" />
+    <ClInclude Include="shader_old.h" />
+    <ClInclude Include="texture.h" />
+    <ClInclude Include="types.h" />
+    <ClInclude Include="visitor.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="component.cpp" />
+    <ClCompile Include="componentsystem_test.cpp" />
+    <ClCompile Include="demo.cpp" />
+    <ClCompile Include="gameobject.cpp" />
+    <ClCompile Include="glad.c" />
+    <ClCompile Include="imgui.cpp" />
+    <ClCompile Include="imgui_demo.cpp" />
+    <ClCompile Include="imgui_draw.cpp" />
+    <ClCompile Include="imgui_impl_glfw.cpp" />
+    <ClCompile Include="imgui_impl_opengl3.cpp" />
+    <ClCompile Include="imgui_widgets.cpp" />
+    <ClCompile Include="resource_manager.cpp" />
+    <ClCompile Include="material.cpp" />
+    <ClCompile Include="mesh.cpp" />
+    <ClCompile Include="mesh_old.cpp" />
+    <ClCompile Include="model.cpp" />
+    <ClCompile Include="scene.cpp" />
+    <ClCompile Include="gameobject_test.cpp" />
+    <ClCompile Include="shader.cpp" />
+    <ClCompile Include="shader_old.cpp" />
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

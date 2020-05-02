@@ -1,0 +1,442 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="headers">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hh;hpp;hxx;hm;inl;inc;ipp;xsd</Extensions>
+    </Filter>
+    <Filter Include="sources">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="resources">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="resources\images">
+      <UniqueIdentifier>{4338af4c-c367-42e7-bed7-c86980a3039a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\shaders">
+      <UniqueIdentifier>{56f98da1-fadd-4503-8fa9-232240bce207}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\images\skyboxs">
+      <UniqueIdentifier>{2c197b6f-a525-47e4-9fbe-0dca21652538}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\images\skyboxs\mountain_and_lake">
+      <UniqueIdentifier>{ebd7412f-b062-4280-a8bc-dfc03119fd25}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\images\hdrs">
+      <UniqueIdentifier>{536ed87c-a92f-485d-974a-079d7da686e3}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\images\hdrs\alexs_apartment">
+      <UniqueIdentifier>{1582c434-7fed-456c-93f9-5599235260bb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\images\hdrs\brooklyn_bridge_planks">
+      <UniqueIdentifier>{c09792ec-c771-4393-af20-af35ac5cda8d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="resources\images\hdrs\factory_catwalk">
+      <UniqueIdentifier>{1ad70931-9553-4d51-b909-4af7e524ef18}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\core">
+      <UniqueIdentifier>{0272d7c5-4063-4360-8e68-acf33e13e9f5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="headers\imgui">
+      <UniqueIdentifier>{0dc6292f-1bf5-4a9f-b639-618640c2410e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\imgui">
+      <UniqueIdentifier>{bcca37ad-5c6e-426c-9ccc-b4f2d1395954}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\core">
+      <UniqueIdentifier>{4b97fe0b-abde-4001-b628-499a4d690926}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\glad">
+      <UniqueIdentifier>{b2d9dfe7-5bb5-4cf0-8e70-35a586199748}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="sources\test">
+      <UniqueIdentifier>{f7a9e5ee-2fad-4521-9234-1cc19b4c46f4}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="Images\Alibaba_logo.png">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\awesomeface.png">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\blending_transparent_window.png">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\container.jpg">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\container2.png">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\container2_emission.png">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\container2_specular.png">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\container2_specular_color.png">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\grass.png">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\marble.jpg">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\matrix.jpg">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\metal.png">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\wall.jpg">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\wood.png">
+      <Filter>resources\images</Filter>
+    </Image>
+    <Image Include="Images\Skybox\mountain_and_lake\back.jpg">
+      <Filter>resources\images\skyboxs\mountain_and_lake</Filter>
+    </Image>
+    <Image Include="Images\Skybox\mountain_and_lake\bottom.jpg">
+      <Filter>resources\images\skyboxs\mountain_and_lake</Filter>
+    </Image>
+    <Image Include="Images\Skybox\mountain_and_lake\front.jpg">
+      <Filter>resources\images\skyboxs\mountain_and_lake</Filter>
+    </Image>
+    <Image Include="Images\Skybox\mountain_and_lake\left.jpg">
+      <Filter>resources\images\skyboxs\mountain_and_lake</Filter>
+    </Image>
+    <Image Include="Images\Skybox\mountain_and_lake\right.jpg">
+      <Filter>resources\images\skyboxs\mountain_and_lake</Filter>
+    </Image>
+    <Image Include="Images\Skybox\mountain_and_lake\top.jpg">
+      <Filter>resources\images\skyboxs\mountain_and_lake</Filter>
+    </Image>
+    <Image Include="Images\HDR\Alexs_Apartment\Alexs_Apt_8k.jpg">
+      <Filter>resources\images\hdrs\alexs_apartment</Filter>
+    </Image>
+    <Image Include="Images\HDR\Alexs_Apartment\Alexs_Apt_preview.jpg">
+      <Filter>resources\images\hdrs\alexs_apartment</Filter>
+    </Image>
+    <Image Include="Images\HDR\Alexs_Apartment\Alexs_Apt_Thumb.jpg">
+      <Filter>resources\images\hdrs\alexs_apartment</Filter>
+    </Image>
+    <Image Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_preview.jpg">
+      <Filter>resources\images\hdrs\brooklyn_bridge_planks</Filter>
+    </Image>
+    <Image Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_Thumb.jpg">
+      <Filter>resources\images\hdrs\brooklyn_bridge_planks</Filter>
+    </Image>
+    <Image Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_tmap.jpg">
+      <Filter>resources\images\hdrs\brooklyn_bridge_planks</Filter>
+    </Image>
+    <Image Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_Bg.jpg">
+      <Filter>resources\images\hdrs\factory_catwalk</Filter>
+    </Image>
+    <Image Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_preview.jpg">
+      <Filter>resources\images\hdrs\factory_catwalk</Filter>
+    </Image>
+    <Image Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_Thumb.jpg">
+      <Filter>resources\images\hdrs\factory_catwalk</Filter>
+    </Image>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Images\HDR\Alexs_Apartment\Alexs_Apartment.ibl">
+      <Filter>resources\images\hdrs\alexs_apartment</Filter>
+    </None>
+    <None Include="Images\HDR\Alexs_Apartment\Alexs_Apt_2k.hdr">
+      <Filter>resources\images\hdrs\alexs_apartment</Filter>
+    </None>
+    <None Include="Images\HDR\Alexs_Apartment\Alexs_Apt_Env.hdr">
+      <Filter>resources\images\hdrs\alexs_apartment</Filter>
+    </None>
+    <None Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks.ibl">
+      <Filter>resources\images\hdrs\brooklyn_bridge_planks</Filter>
+    </None>
+    <None Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_2k.hdr">
+      <Filter>resources\images\hdrs\brooklyn_bridge_planks</Filter>
+    </None>
+    <None Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_Env.hdr">
+      <Filter>resources\images\hdrs\brooklyn_bridge_planks</Filter>
+    </None>
+    <None Include="Images\HDR\Factory_Catwalk\Factory_Catwalk.ibl">
+      <Filter>resources\images\hdrs\factory_catwalk</Filter>
+    </None>
+    <None Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_2k.hdr">
+      <Filter>resources\images\hdrs\factory_catwalk</Filter>
+    </None>
+    <None Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_Env.hdr">
+      <Filter>resources\images\hdrs\factory_catwalk</Filter>
+    </None>
+    <None Include="Shaders\BRDF.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\BRDF.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\default.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\default.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\dirLightshadow.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\dirLightshadow.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\gaussian_blur.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\gaussian_blur.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\geomatryPass.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\geomatryPass.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\hdrBox.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\hdrBox.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\irradianceBox.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\irradianceBox.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\light.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\light.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\lightingPass.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\lightingPass.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\normal.geom">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\normal.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\parallax_mapping.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\parallax_mapping.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\pbr_lighting.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\pbr_lighting.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\pointLightShadow.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\pointLightShadow.geom">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\pointLightShadow.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\prefilterMap.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\prefilterMap.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\screen.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\screen.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\single_color.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\skybox.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\skybox.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\ssaoBlur.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\ssaoBlur.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\ssaoPass.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\ssaoPass.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\PBRStandard.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\Standard.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\LegacyStandard.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\LegacySimple.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="camera.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="model.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="scene.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="types.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="component.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui.h">
+      <Filter>headers\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_glfw.h">
+      <Filter>headers\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_impl_opengl3.h">
+      <Filter>headers\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imgui_internal.h">
+      <Filter>headers\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_rectpack.h">
+      <Filter>headers\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_textedit.h">
+      <Filter>headers\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imstb_truetype.h">
+      <Filter>headers\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="imconfig.h">
+      <Filter>headers\imgui</Filter>
+    </ClInclude>
+    <ClInclude Include="renderer.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="visitor.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="gameobject.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh_old.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="mesh.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="texture.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="material.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="shader_old.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="shader.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="share.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="bitree.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="resource_manager.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="imgui.cpp">
+      <Filter>sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_demo.cpp">
+      <Filter>sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_draw.cpp">
+      <Filter>sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_glfw.cpp">
+      <Filter>sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_impl_opengl3.cpp">
+      <Filter>sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="imgui_widgets.cpp">
+      <Filter>sources\imgui</Filter>
+    </ClCompile>
+    <ClCompile Include="demo.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="model.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="scene.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="glad.c">
+      <Filter>sources\glad</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh_old.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="mesh.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="material.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="shader_old.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="shader.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="component.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="gameobject.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="gameobject_test.cpp">
+      <Filter>sources\test</Filter>
+    </ClCompile>
+    <ClCompile Include="componentsystem_test.cpp">
+      <Filter>sources\test</Filter>
+    </ClCompile>
+    <ClCompile Include="resource_manager.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>
