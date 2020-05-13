@@ -121,46 +121,6 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
-    <Image Include="Images\Alibaba_logo.png" />
-    <Image Include="Images\awesomeface.png" />
-    <Image Include="Images\blending_transparent_window.png" />
-    <Image Include="Images\container.jpg" />
-    <Image Include="Images\container2.png" />
-    <Image Include="Images\container2_emission.png" />
-    <Image Include="Images\container2_specular.png" />
-    <Image Include="Images\container2_specular_color.png" />
-    <Image Include="Images\grass.png" />
-    <Image Include="Images\HDR\Alexs_Apartment\Alexs_Apt_8k.jpg" />
-    <Image Include="Images\HDR\Alexs_Apartment\Alexs_Apt_preview.jpg" />
-    <Image Include="Images\HDR\Alexs_Apartment\Alexs_Apt_Thumb.jpg" />
-    <Image Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_preview.jpg" />
-    <Image Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_Thumb.jpg" />
-    <Image Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_tmap.jpg" />
-    <Image Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_Bg.jpg" />
-    <Image Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_preview.jpg" />
-    <Image Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_Thumb.jpg" />
-    <Image Include="Images\marble.jpg" />
-    <Image Include="Images\matrix.jpg" />
-    <Image Include="Images\metal.png" />
-    <Image Include="Images\Skybox\mountain_and_lake\back.jpg" />
-    <Image Include="Images\Skybox\mountain_and_lake\bottom.jpg" />
-    <Image Include="Images\Skybox\mountain_and_lake\front.jpg" />
-    <Image Include="Images\Skybox\mountain_and_lake\left.jpg" />
-    <Image Include="Images\Skybox\mountain_and_lake\right.jpg" />
-    <Image Include="Images\Skybox\mountain_and_lake\top.jpg" />
-    <Image Include="Images\wall.jpg" />
-    <Image Include="Images\wood.png" />
-  </ItemGroup>
-  <ItemGroup>
-    <None Include="Images\HDR\Alexs_Apartment\Alexs_Apartment.ibl" />
-    <None Include="Images\HDR\Alexs_Apartment\Alexs_Apt_2k.hdr" />
-    <None Include="Images\HDR\Alexs_Apartment\Alexs_Apt_Env.hdr" />
-    <None Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks.ibl" />
-    <None Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_2k.hdr" />
-    <None Include="Images\HDR\Brooklyn_Bridge_Planks\Brooklyn_Bridge_Planks_Env.hdr" />
-    <None Include="Images\HDR\Factory_Catwalk\Factory_Catwalk.ibl" />
-    <None Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_2k.hdr" />
-    <None Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_Env.hdr" />
     <None Include="Shaders\Display.frag" />
     <None Include="Shaders\Display.vert" />
     <None Include="Shaders\LegacySimple.frag" />
