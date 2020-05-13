@@ -10,6 +10,7 @@
 #include "mesh.h"
 #include "bitree.h"
 #include "component.h"
+#include "clocker.h"
 
 #include <glad\glad.h>
 
@@ -70,9 +71,14 @@ namespace fx {
         ~Scene();
 
         /*
-          遍历层级结构树
+          遍历层级结构树初始化
         */
-        void Traverse(GameObject *obj);
+        void TraverseInit(GameObject *obj);
+
+        /*
+          遍历层次结构树更新数据
+        */
+        void TraverseUpdate(GameObject *obj);
 
         /*
           将对象添加到对应的容器
@@ -92,7 +98,7 @@ namespace fx {
         /*
           将游戏对象插入BSP树
         */
-        void AddToBSPTree(GameObject *obj, BiTreeNode<GameObject *> *treeNode);
+        void AddToBSPTree(GameObject *obj, BiTree<GameObject *> &tree, BiTreeNode<GameObject *> *treeNode);
     }; 
 }
 

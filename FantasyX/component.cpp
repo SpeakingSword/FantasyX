@@ -66,7 +66,6 @@ void ComponentSystem::AddComponent(Component *com)
     if (Contain(com->name.c_str()))
     {
         std::cout << "ENGIN CORE::COMPONENT SYSTEM::AddComponent()::Component " << com->name.c_str() << " already exist !" << std::endl;
-        com->Destroy();
     }
     else
     {
@@ -143,6 +142,13 @@ void Transform::Start()
 
 void Transform::Update()
 {
+    if (this->rotation.y > 360.0f)
+        this->rotation.y -= 360.0f;
+    if (this->rotation.x > 360.0f)
+        this->rotation.x -= 360.0f;
+    if (this->rotation.z > 360.0f)
+        this->rotation.z -= 360.0f;
+
     worldPos = modelMatrix * Vector4(0.0f, 0.0f, 0.0f, 1.0f);
     UpdateVector();
 }
@@ -175,9 +181,9 @@ void Transform::RotateAround(Vector3 pos, Vector3 axis, GLfloat deg, Space mode)
 void Transform::UpdateVector()
 {
     Vector3 temp_front;
-    temp_front.x = cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y));
+    temp_front.x = cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
     temp_front.y = sin(glm::radians(rotation.x));
-    temp_front.z = cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
+    temp_front.z = -cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y));
     this->front = glm::normalize(temp_front);
     this->right = glm::normalize(glm::cross(this->front, this->worldUp));
     this->up = glm::normalize(glm::cross(this->right, this->front));
@@ -233,7 +239,7 @@ void Render::Start()
 
 void Render::Update()
 {
-    this->material->MappingProperty();
+    // this->material->MappingProperty();
 }
 
 void Render::DrawUIElements()

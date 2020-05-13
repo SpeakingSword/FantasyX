@@ -57,6 +57,35 @@ namespace fx {
         void InitMesh() override;
         void Destroy() override;
     };
+
+    class RectangleMesh : public Mesh {
+    public:
+        static RectangleMesh *GetInstance();
+        void Print() override;
+
+    private:
+        static RectangleMesh *_instance;
+        RectangleMesh();
+
+        class GC {
+        public:
+            GC() { cout << "ENGIN CORE: RectangleMesh GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "ENGIN CORE: RectangleMesh GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "ENGIN CORE: RectangleMesh destroyed ... " << endl;
+                }
+            }
+        };
+        static GC gc;
+
+        void InitMesh() override;
+        void Destroy() override;
+    };
     
     // ¶à±ßÐÎÍø¸ñ
     class PolygonMesh : public Mesh {

@@ -25,8 +25,10 @@ void LegacySimpleMaterial::InitMaterial()
 
 void LegacySimpleMaterial::MappingProperty()
 {
+    shader->Bind();
     shader->SetVec3("material._BaseColor", baseColor);
     shader->SetInt("material._SpecularStrength", specularStrength);
+    shader->Unbind();
 }
 
 void LegacySimpleMaterial::Destroy()
@@ -80,6 +82,7 @@ void LegacyStandardMaterial::InitMaterial()
 
 void LegacyStandardMaterial::MappingProperty()
 {
+    shader->Bind();
     shader->SetInt("material._SpecularStrength", specularStrength);
     for (int i = 0; i < textures2D.size(); i++)
     {
@@ -87,6 +90,7 @@ void LegacyStandardMaterial::MappingProperty()
         shader->SetInt(("material." + textures2D[i].type).c_str(), i);
         glBindTexture(GL_TEXTURE_2D, textures2D[i].id);
     }
+    shader->Unbind();
 }
 
 void LegacyStandardMaterial::Print()
@@ -101,3 +105,55 @@ void LegacyStandardMaterial::Print()
     std::cout << "Shader Name: " << this->shader->name.c_str() << std::endl;
 }
 #pragma endregion
+
+#pragma region PBRSimpleMaterial
+
+PBRSimpleMaterial::PBRSimpleMaterial()
+{
+    InitMaterial();
+    cout << "ENGIN CORE: " << name.c_str() << " created ... " << endl;
+}
+
+PBRSimpleMaterial::~PBRSimpleMaterial()
+{
+    cout << "ENGIN CORE: " << name.c_str() << " destroyed ... " << endl;
+}
+
+void PBRSimpleMaterial::Destroy()
+{
+    this->~PBRSimpleMaterial();
+}
+
+void PBRSimpleMaterial::InitMaterial()
+{
+    name = "PBRSimpleMaterial";
+    baseColor = Vector3(0.7f);
+    metallic = 0.5f;
+    roughness = 0.5f;
+    ao = 1.0f;
+    shader = PBRSimpleShader::GetInstance();
+}
+
+void PBRSimpleMaterial::MappingProperty()
+{
+    shader->Bind();
+    shader->SetVec3("material._BaseColor", baseColor);
+    shader->SetFloat("material._Metallic", metallic);
+    shader->SetFloat("material._Roughness", roughness);
+    shader->SetFloat("material._Ao", ao);
+    shader->Unbind();
+}
+
+void PBRSimpleMaterial::Print()
+{
+    std::cout << "Material Name: " << this->name.c_str() << std::endl;
+    std::cout << "BaseColor: " << baseColor.x << " " << baseColor.y << " " << baseColor.z << std::endl;
+    std::cout << "Metallic: " << this->metallic << std::endl;
+    std::cout << "Roughness: " << this->roughness << std::endl;
+    std::cout << "Ao: " << this->ao << std::endl;
+    std::cout << "Shader ID: " << this->shader->ID << std::endl;
+    std::cout << "Shader Name: " << this->shader->name.c_str() << std::endl;
+}
+
+#pragma endregion
+

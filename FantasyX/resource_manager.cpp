@@ -37,8 +37,8 @@ void ResourceManager::ProcessNode(aiNode *node, const aiScene *scene, GameObject
     // 给GameObject添加 Render 组件
     Render *render = new Render();
     // 设置默认材质
-    LegacySimpleMaterial *legacySimple = new LegacySimpleMaterial();
-    render->material = legacySimple;
+    PBRSimpleMaterial *PBRSimple = new PBRSimpleMaterial();
+    render->material = PBRSimple;
     // 如果当前节点存有 mesh 则添加
     if (node->mNumMeshes > 0)
     {

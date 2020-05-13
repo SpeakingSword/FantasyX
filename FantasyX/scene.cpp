@@ -13,6 +13,11 @@ Scene::Scene()
 
     // 初始化层级结构树（K叉树）,创建根节点
     this->root = new GameObject();
+    fx::Render *render = new fx::Render();
+    this->root->AddComponent(render);
+
+    opaqueTree.root = new BiTreeNode<GameObject *>(this->root);
+    transparentTree.root = opaqueTree.root;
     
     std::cout << "ENGIN CORE: Scene created ... " << std::endl;
 }
@@ -45,10 +50,10 @@ GameObject *Scene::End() const
 
 void Scene::Init()
 {
-    
+    TraverseInit(root);
 }
 
-void Scene::Traverse(GameObject *obj)
+void Scene::TraverseInit(GameObject *obj)
 {
     // 先序遍历层次结构树
     // 如果当前节点为空则返回
@@ -72,14 +77,47 @@ void Scene::Traverse(GameObject *obj)
 
     // 如果左孩子不为空遍历左孩子
     if (obj->child != nullptr)
-        Traverse(obj->child);
+        TraverseInit(obj->child);
     
     // 如果右兄弟不为空遍历右兄弟，但遍历之前先将 modelMatrix 恢复到父对象的
     modelMatrix = modelMatrixStack.top();
     modelMatrixStack.pop();
     if (obj->sibling != nullptr)
-        Traverse(obj->sibling);
+        TraverseInit(obj->sibling);
     
+}
+
+void Scene::TraverseUpdate(GameObject *obj)
+{
+    // 先序遍历层次结构树
+    // 如果当前节点为空则返回
+    if (obj == nullptr)
+        return;
+
+    // 先将父对象的 modelMatrix 压入栈
+    modelMatrixStack.push(modelMatrix);
+
+    // 更新当前对象 transform 的 modelMatrix
+    modelMatrix = glm::translate(modelMatrix, obj->transform->position);
+    // 旋转顺序为 y->x->z
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(obj->transform->rotation.y), Vector3(0.0f, 1.0f, 0.0f));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(obj->transform->rotation.x), Vector3(1.0f, 0.0f, 0.0f));
+    modelMatrix = glm::rotate(modelMatrix, glm::radians(obj->transform->rotation.z), Vector3(0.0f, 0.0f, 1.0f));
+    modelMatrix = glm::scale(modelMatrix, obj->transform->scale);
+    obj->transform->modelMatrix = this->modelMatrix;
+    obj->Update();
+    // 将对象放入对应的容器
+    // AddTo(obj);
+
+    // 如果左孩子不为空遍历左孩子
+    if (obj->child != nullptr)
+        TraverseUpdate(obj->child);
+
+    // 如果右兄弟不为空遍历右兄弟，但遍历之前先将 modelMatrix 恢复到父对象的
+    modelMatrix = modelMatrixStack.top();
+    modelMatrixStack.pop();
+    if (obj->sibling != nullptr)
+        TraverseUpdate(obj->sibling);
 }
 
 void Scene::AddTo(GameObject *obj)
@@ -87,10 +125,10 @@ void Scene::AddTo(GameObject *obj)
     switch (obj->tag)
     {
     case GT_OPAQUE:
-        AddToBSPTree(obj, opaqueTree.root);
+        AddToBSPTree(obj, opaqueTree, opaqueTree.root);
         break;
     case GT_TRANSPARENT:
-        AddToBSPTree(obj, transparentTree.root);
+        AddToBSPTree(obj, transparentTree, opaqueTree.root);
         break;
     case GT_LIGHT:
         AddToLights(obj);
@@ -105,15 +143,16 @@ void Scene::AddTo(GameObject *obj)
 void Scene::AddToLights(GameObject *obj)
 {
     Lighting *light = (Lighting *)obj->GetComponent("Light");
-    if (light->GetType() == "DirLight")
+    const GLchar *type = light->GetType();
+    if (strcmp(type, "DirLight") == 0)
     {
         AddToList(obj, dirLights);
     }
-    else if (light->GetType() == "PointLight")
+    else if (strcmp(type, "PointLight") == 0)
     {
         AddToList(obj, pointLights);
     }
-    else if (light->GetType() == "SpotLight")
+    else if (strcmp(type, "SpotLight") == 0)
     {
         AddToList(obj, spotLights);
     }
@@ -124,12 +163,12 @@ void Scene::AddToList(GameObject *obj, list<GameObject *> &mList)
     mList.push_back(obj);
 }
 
-void Scene::AddToBSPTree(GameObject *obj, BiTreeNode<GameObject *> *treeNode)
+void Scene::AddToBSPTree(GameObject *obj, BiTree<GameObject *> &tree, BiTreeNode<GameObject *> *treeNode)
 {
     // 如果根节点为空，直接将对象插入根节点
-    if (treeNode == nullptr)
+    if (tree.root == nullptr)
     {
-        treeNode = new BiTreeNode<GameObject *>(obj);
+        tree.root = new BiTreeNode<GameObject *>(obj);
         return;
     }
 
@@ -140,25 +179,22 @@ void Scene::AddToBSPTree(GameObject *obj, BiTreeNode<GameObject *> *treeNode)
     // 如果目标对象在当前节点保存的对象前面
     if (targetObjPosition.z > nodeObjPosition.z)
     {
-        // 如果当前节点左边为空
-        if (treeNode->left == nullptr)
-        {
-            treeNode->left = new BiTreeNode<GameObject *>(obj);
+        if (tree.insert_left(treeNode, obj))
             return;
+        else
+        {
+            // 否则继续遍历左节点
+            AddToBSPTree(obj, tree, treeNode->left);
         }
-        
-        // 否则继续遍历左节点
-        AddToBSPTree(obj, treeNode->left);
     }
     else    // 如果相等或者在后面
     {
-        if (treeNode->right == nullptr)
-        {
-            treeNode->right = new BiTreeNode<GameObject *>(obj);
+        if (tree.insert_right(treeNode, obj))
             return;
+        else
+        {
+            AddToBSPTree(obj, tree, treeNode->right);
         }
-
-        AddToBSPTree(obj, treeNode->right);
     }
     
 }
@@ -225,23 +261,26 @@ void Scene::Add(GameObject *obj, GLuint index)
 
 void Scene::Update()
 {
-    opaqueTree.remove(opaqueTree.root);
-    transparentTree.remove(transparentTree.root);
-    dirLights.clear();
-    pointLights.clear();
-    spotLights.clear();
-    cameras.clear();
-    while (!modelMatrixStack.empty())
-    {
-        modelMatrixStack.pop();
-    }
-    Matrix4x4 tempMat;
-    modelMatrix = tempMat;
-    Traverse(root);
+    TraverseUpdate(root);
 }
 
 void Scene::Render()
 {
-
+    if (renderer != nullptr)
+    {
+        SceneData d;
+        d.opaqueTree = &opaqueTree;
+        d.transparentTree = &transparentTree;
+        d.dirLights = &dirLights;
+        d.pointLights = &pointLights;
+        d.spotLights = &spotLights;
+        d.cameras = &cameras;
+        renderer->RenderScene(d);
+    }
+    else
+    {
+        std::cout << "ENGIN CORE::WARNNING: Scene renderer not set yet ! " << std::endl;
+    }
+    
 }
 #pragma endregion

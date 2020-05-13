@@ -129,6 +129,8 @@ namespace fx {
 
         // direction eq transform.front
         Vector3 direction;
+        GLfloat shadowNear;
+        GLfloat shadowFar;
 
         DirLight();
         void Awake() override;
@@ -236,6 +238,8 @@ namespace fx {
         GLfloat far;
         GLuint operationMode;
         GLuint projection;
+        GLuint width;
+        GLuint height;
         bool constrainPitch;
 
         Camera(Vector3 position = Vector3(0.0f), Vector3 up = Vector3(0.0f, 1.0f, 0.0f),
@@ -251,6 +255,8 @@ namespace fx {
             this->operationMode = CAM_FIRST_PERSON;
             this->projection = CAM_PERSPECTIVE;
             this->constrainPitch = true;
+            this->width = 1280;
+            this->height = 720;
             UpdateCameraVectors();
 
             std::cout << "Camera created ... " << std::endl;
@@ -269,6 +275,8 @@ namespace fx {
             this->operationMode = CAM_FIRST_PERSON;
             this->projection = CAM_PERSPECTIVE;
             this->constrainPitch = true;
+            this->width = 1280;
+            this->height = 720;
             UpdateCameraVectors();
 
             std::cout << "Camera created ... " << std::endl;

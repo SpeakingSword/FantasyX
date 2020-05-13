@@ -8,8 +8,7 @@ layout (location = 4) in vec3 Bitangent;
 out VS_OUT {
 	vec2 texCoord;
 	vec3 fragPos;
-	vec3 normal; 
-	mat3 TBN;
+	vec3 normal;
 } vs_out;
 
 
@@ -28,9 +27,4 @@ void main()
     vs_out.texCoord = TexCoord;
     vs_out.fragPos = vec3(modelMatrix * vec4(Pos, 1.0f));
     vs_out.normal = mat3(normalMatrix) * Normal;
-
-    vec3 T = normalize(vec3(normalMatrix * vec4(Tangent, 0.0f)));
-	vec3 N = normalize(vec3(normalMatrix * vec4(Normal, 0.0f)));
-	vec3 B = normalize(vec3(normalMatrix * vec4(Bitangent, 0.0f)));
-	vs_out.TBN = mat3(T, B, N);
 }

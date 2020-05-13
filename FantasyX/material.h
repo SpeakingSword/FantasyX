@@ -54,6 +54,23 @@ namespace fx {
         void InitMaterial() override;
     };
 
+    class PBRSimpleMaterial : public Material {
+    public:
+        Vector3 baseColor;
+        GLfloat metallic;
+        GLfloat roughness;
+        GLfloat ao;
+
+        PBRSimpleMaterial();
+        void Destroy() override;
+        void MappingProperty() override;
+        void Print() override;
+
+    private:
+        ~PBRSimpleMaterial();
+        void InitMaterial() override;
+    };
+
     // Ìí¼Ó¸ü¶à Material ... 
     
 }

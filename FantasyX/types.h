@@ -1,6 +1,10 @@
 #ifndef TYPES_H
 #define TYPES_H
 
+#include <list>
+
+#include "bitree.h"
+
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
 #include <glm\gtc\type_ptr.hpp>
@@ -12,6 +16,10 @@ namespace fx {
     typedef glm::vec3 Vector3;
     typedef glm::vec4 Vector4;
     typedef glm::mat4 Matrix4x4;
+
+    const Vector3 WORLD_FRONT(0.0f, 0.0f, 1.0f);
+    const Vector3 WORLD_RIGHT(1.0f, 0.0f, 0.0f);
+    const Vector3 WORLD_UP(0.0f, 1.0f, 0.0f);
     
     typedef enum {
         COM_NONE = 0,
@@ -77,6 +85,88 @@ namespace fx {
         Vector3 tangent;
         Vector3 bitangent;
     }Vertex;
+
+
+    typedef enum {
+        POST_NONE,
+        POST_INVERSE,
+        POST_MONOCHROME
+    }PostProcessing;
+
+    typedef enum {
+        DRAW_WITH_DOTS,
+        DRAW_WITH_LINES,
+        DRAW_WITH_FACES
+    }DrawMode;
+
+    typedef enum {
+        DISPLAY_ALL,
+        DISPLAY_ALL_NO_POST_EFFECT,
+        DISPLAY_ONLY_ALBEDO_MAP,
+        DISPLAY_ONLY_NORMAL_MAP,
+        DISPLAY_ONLY_METALLIC_MAP,
+        DISPLAY_ONLY_ROUGHNESS_MAP,
+        DISPLAY_ONLY_AO_MAP,
+        DISPLAY_ONLY_POS_MAP,
+        DISPLAY_ONLY_DEPTH_MAP
+    }FinalDispalayType;
+
+    /*
+    typedef struct {
+        GLuint buffer_id;
+        GLuint pos_depth_map;
+        GLuint albedo_metallic_map;
+        GLuint normal_roughness_map;
+        GLuint ao_map;
+    }Gbuffer;
+
+    typedef struct {
+        GLuint buffer_id;
+        GLuint buffer_map;
+    }DirLightDepthBuffer;
+
+    typedef struct {
+        GLuint buffer_id;
+        GLuint buffer_map;
+    }DirectLightCalculateBuffer;
+
+    typedef struct {
+        GLuint buffer_id;
+        GLuint hdr_cube_map;
+        GLuint hdr_cube_map_width;
+        GLuint irradiance_map;
+        GLuint irradiance_map_width;
+        GLuint prefilter_map;
+        GLuint prefilter_map_width;
+        GLuint brdf_map;
+        GLuint brdf_map_width;
+    }IndirectLightCalculateBuffer;
+
+    typedef struct {
+        GLuint buffer_id;
+        GLuint buffer_map;
+    }CombineMapBuffer;
+
+    typedef struct {
+        GLuint buffer_id;
+        GLuint buffer_map;
+    }HightLightBuffer;
+
+    typedef struct {
+        GLuint buffer_id[2];
+        GLuint buffer_map[2];
+    }PingPongBuffer;
+
+    typedef struct {
+        GLuint buffer_id;
+        GLuint buffer_map;
+    }FxaaEffectBuffer;
+
+    typedef struct {
+        GLuint buffer_id;
+        GLuint buffer_map;
+    }PostProcessingBuffer;
+    */
 }
 
 #endif // !TYPES_H

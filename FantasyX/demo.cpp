@@ -1203,6 +1203,7 @@ int main()
 	// --------------------------------------------------------------------------------------------------------------------------------------
 	// --------------------------------------------------------------------------------------------------------------------------------------
 	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 
 	prefilterShader.use();
 	prefilterShader.setMat4("projection", captureProjection);
@@ -1218,7 +1219,7 @@ int main()
 		// 根据mipmap等级重设帧缓冲的大小
 		unsigned int mipWidth = prefilterMapWidth * std::pow(0.5f, mip);
 		unsigned int mipHeight = prefilterMapWidth * std::pow(0.5f, mip);
-		glBindFramebuffer(GL_RENDERBUFFER, captureRBO);
+		
 		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
 		glViewport(0, 0, mipWidth, mipHeight);
 
@@ -1271,8 +1272,6 @@ int main()
 	bool oneceDirShadow = false;
 	bool onecePointShadow = false;
 	bool ssaoOn = false;
-
-
 
 	// 渲染循环
 	// --------------------------------------------------------------------------------------------------------------------------------------

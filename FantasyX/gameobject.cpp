@@ -1,9 +1,17 @@
 #include "gameobject.h"
 #include "component.h"
+#include "material.h"
+#include "mesh.h"
+#include "shader.h"
+
+#include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
 
 using namespace fx;
 
 GLuint GameObject::gameObjectCount = 0;
+// GLuint GameObject::cubeCount = 0;
 
 GameObject::GameObject()
 {
@@ -89,7 +97,30 @@ void GameObject::Update()
 
 void GameObject::Draw()
 {
+    Render *render = (Render *)this->GetComponent("Render");
+    if (render->mesh != nullptr)
+    {
+        render->material->MappingProperty();
+        render->material->shader->Bind();
+        render->material->shader->SetMat4("modelMatrix", this->transform->modelMatrix);
+        render->material->shader->SetMat4("normalMatrix", glm::transpose(glm::inverse(this->transform->modelMatrix)));
+        glBindVertexArray(render->mesh->VAO);
+        if (render->mesh->indices.size() > 0)
+        {
+            glDrawElements(GL_TRIANGLES, render->mesh->indices.size(), GL_UNSIGNED_INT, 0);
+        }
+        else
+        {
+            glDrawArrays(GL_TRIANGLES, 0, render->mesh->vertices.size());
+        }
+        render->material->shader->Unbind();
+        glBindVertexArray(0);
+    }
+}
 
+void GameObject::Draw(Shader *shader)
+{
+    // 使用外部要求的、特殊的Shader绘制网格
 }
 
 void GameObject::Destroy()
@@ -167,5 +198,92 @@ void GameObject::RemoveComponent(const GLchar *name)
 void GameObject::ShowAllComponent()
 {
     componentSystem->ShowAllComponents();
+}
+
+GameObject *GameObject::Cube()
+{
+    GameObject *cube = new GameObject();
+    cube->name = "Cube";
+    cube->tag = GT_OPAQUE;
+
+    Render *render = new Render();
+    PBRSimpleMaterial *PBRSimple = new PBRSimpleMaterial();
+    render->material = PBRSimple;
+    render->mesh = CubeMesh::GetInstance();
+    cube->AddComponent(render);
+
+    return cube;
+}
+
+GameObject *GameObject::DirLight()
+{
+    GameObject *dirLight = new GameObject();
+    dirLight->name = "DirLight";
+    dirLight->tag = GT_LIGHT;
+
+    fx::DirLight *lighting = new fx::DirLight();
+    dirLight->AddComponent(lighting);
+
+    Render *render = new Render();
+    // 应该使用2D材质（渲染图标）或者添加球体的mesh（可视化）
+    PBRSimpleMaterial *PBRSimple = new PBRSimpleMaterial();
+    render->material = PBRSimple;
+    dirLight->AddComponent(render);
+
+    return dirLight;
+}
+
+GameObject *GameObject::PointLight()
+{
+    GameObject *pointLight = new GameObject();
+    pointLight->name = "PointLight";
+    pointLight->tag = GT_LIGHT;
+
+    fx::PointLight *lighting = new fx::PointLight();
+    pointLight->AddComponent(lighting);
+
+    Render *render = new Render();
+    // 应该使用2D材质（渲染图标）或者添加球体的mesh（可视化）
+    PBRSimpleMaterial *PBRSimple = new PBRSimpleMaterial();
+    render->material = PBRSimple;
+    pointLight->AddComponent(render);
+
+    return pointLight;
+}
+
+GameObject *GameObject::SpotLight()
+{
+    GameObject *spotLight = new GameObject();
+    spotLight->name = "SpotLight";
+    spotLight->tag = GT_LIGHT;
+
+    fx::SpotLight *lighting = new fx::SpotLight();
+    spotLight->AddComponent(lighting);
+
+    Render *render = new Render();
+    // 应该使用2D材质（渲染图标）或者添加球体的mesh（可视化）
+    PBRSimpleMaterial *PBRSimple = new PBRSimpleMaterial();
+    render->material = PBRSimple;
+    spotLight->AddComponent(render);
+
+    return spotLight;
+}
+
+GameObject *GameObject::Camera()
+{
+    GameObject *camera = new GameObject();
+    camera->name = "Camera";
+    camera->tag = GT_CAMERA;
+
+    fx::Camera *cam_com = new fx::Camera();
+    camera->AddComponent(cam_com);
+
+    Render *render = new Render();
+    // 应该使用2D材质（渲染图标）或者添加球体的mesh（可视化）
+    PBRSimpleMaterial *PBRSimple = new PBRSimpleMaterial();
+    render->material = PBRSimple;
+    camera->AddComponent(render);
+
+    return camera;
 }
 

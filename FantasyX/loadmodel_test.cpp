@@ -1,10 +1,11 @@
-#ifndef LOADMODEL_TEST_H
-#define LOADMODEL_TEST_H
+//#define LOADMODEL_TEST_H
+#ifdef LOADMODEL_TEST_H
 
 #include <iostream>
 
 #include "scene.h"
 #include "resource_manager.h"
+#include "gameobject.h"
 
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
@@ -12,12 +13,9 @@
 using namespace std;
 using namespace fx;
 
-//void InitEngine();
-
 int main()
 {
-    //InitEngine();
-
+#pragma region 必须的初始化部分
     // GLFW: 初始化与配置
     // ------------------------------------------
     glfwInit();
@@ -32,7 +30,7 @@ int main()
 
     // GLFW: 创建窗口
     // -------------------------------------------------------------------------------------
-    GLFWwindow* window = glfwCreateWindow(800, 600, "LearnOpenGL", NULL, NULL);
+    GLFWwindow* window = glfwCreateWindow(800, 600, "FantasyX", NULL, NULL);
     if (window == NULL)
     {
         std::cout << "Failed to Create GLFW window" << std::endl;
@@ -49,16 +47,18 @@ int main()
         std::cout << "Failed to initialize GLAD" << std::endl;
         return -1;
     }
+#pragma endregion
 
     ResourceManager *res = ResourceManager::GetInstance();
-    GameObject *model = res->LoadModel("D:\\OpenGL3DModels\\nanosuit\\nanosuit.obj");
+    GameObject *solder = res->LoadModel("D:\\OpenGL3DModels\\nanosuit\\nanosuit.obj");
+    GameObject *gril = res->LoadModel("D:\\OpenGL3DModels\\matilda\\matilda.obj");
     string prefix = "-";
-    GameObject::PrintAllName(model, prefix);
-    
+    GameObject::PrintAllName(solder, prefix);
+    GameObject::PrintAllName(gril, prefix);
+
     while (!glfwWindowShouldClose(window))
     {
-        // now do nothing !
+        // 渲染循环 ... 
     }
 }
-
-#endif // !LOADMODEL_TEST_H
+#endif // LOADMODEL_TEST_H

@@ -173,124 +173,7 @@
     <None Include="Images\HDR\Factory_Catwalk\Factory_Catwalk_Env.hdr">
       <Filter>resources\images\hdrs\factory_catwalk</Filter>
     </None>
-    <None Include="Shaders\BRDF.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\BRDF.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\default.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\default.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\dirLightshadow.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\dirLightshadow.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\gaussian_blur.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\gaussian_blur.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\geomatryPass.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\geomatryPass.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\hdrBox.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\hdrBox.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\irradianceBox.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\irradianceBox.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\light.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\light.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\lightingPass.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\lightingPass.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\normal.geom">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\normal.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\parallax_mapping.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\parallax_mapping.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\pbr_lighting.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\pbr_lighting.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\pointLightShadow.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\pointLightShadow.geom">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\pointLightShadow.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\prefilterMap.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\prefilterMap.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\screen.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\screen.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\single_color.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\skybox.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\skybox.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\ssaoBlur.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\ssaoBlur.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\ssaoPass.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\ssaoPass.vert">
-      <Filter>resources\shaders</Filter>
-    </None>
     <None Include="Shaders\PBRStandard.frag">
-      <Filter>resources\shaders</Filter>
-    </None>
-    <None Include="Shaders\Standard.vert">
       <Filter>resources\shaders</Filter>
     </None>
     <None Include="Shaders\LegacyStandard.frag">
@@ -299,12 +182,24 @@
     <None Include="Shaders\LegacySimple.frag">
       <Filter>resources\shaders</Filter>
     </None>
+    <None Include="Shaders\PBRSimple.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\PBRSimple.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\Display.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\Display.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\PBRStandard.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="camera.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="model.h">
       <Filter>headers\core</Filter>
     </ClInclude>
     <ClInclude Include="scene.h">
@@ -349,9 +244,6 @@
     <ClInclude Include="gameobject.h">
       <Filter>headers\core</Filter>
     </ClInclude>
-    <ClInclude Include="mesh_old.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
     <ClInclude Include="mesh.h">
       <Filter>headers\core</Filter>
     </ClInclude>
@@ -359,9 +251,6 @@
       <Filter>headers\core</Filter>
     </ClInclude>
     <ClInclude Include="material.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="shader_old.h">
       <Filter>headers\core</Filter>
     </ClInclude>
     <ClInclude Include="shader.h">
@@ -374,6 +263,12 @@
       <Filter>headers\core</Filter>
     </ClInclude>
     <ClInclude Include="resource_manager.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="clocker.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="buffer.h">
       <Filter>headers\core</Filter>
     </ClInclude>
   </ItemGroup>
@@ -396,28 +291,16 @@
     <ClCompile Include="imgui_widgets.cpp">
       <Filter>sources\imgui</Filter>
     </ClCompile>
-    <ClCompile Include="demo.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="model.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
     <ClCompile Include="scene.cpp">
       <Filter>sources\core</Filter>
     </ClCompile>
     <ClCompile Include="glad.c">
       <Filter>sources\glad</Filter>
     </ClCompile>
-    <ClCompile Include="mesh_old.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
     <ClCompile Include="mesh.cpp">
       <Filter>sources\core</Filter>
     </ClCompile>
     <ClCompile Include="material.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="shader_old.cpp">
       <Filter>sources\core</Filter>
     </ClCompile>
     <ClCompile Include="shader.cpp">
@@ -439,6 +322,24 @@
       <Filter>sources\core</Filter>
     </ClCompile>
     <ClCompile Include="loadmodel_test.cpp">
+      <Filter>sources\test</Filter>
+    </ClCompile>
+    <ClCompile Include="scene_test.cpp">
+      <Filter>sources\test</Filter>
+    </ClCompile>
+    <ClCompile Include="clocker.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="buffer.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer.cpp">
+      <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_test_simple_draw.cpp">
+      <Filter>sources\test</Filter>
+    </ClCompile>
+    <ClCompile Include="demo.cpp">
       <Filter>sources\test</Filter>
     </ClCompile>
   </ItemGroup>

@@ -16,6 +16,7 @@ namespace fx {
     class Component;
     class ComponentSystem;
     class Transform;
+    class Shader;
 
     class GameObject {
     public:
@@ -34,6 +35,7 @@ namespace fx {
         void Release(GLuint index);
         void Update();
         void Draw();
+        void Draw(Shader *shader);
         void Destroy();
         void Print();
         void Print(const GLchar *prefix);
@@ -45,8 +47,15 @@ namespace fx {
         void RemoveComponent(const GLchar *name);
         void ShowAllComponent();
 
+        static GameObject *Cube();
+        static GameObject *DirLight();
+        static GameObject *PointLight();
+        static GameObject *SpotLight();
+        static GameObject *Camera();
+
     private:
         static GLuint gameObjectCount;
+        // static GLuint cubeCount;
         ComponentSystem *componentSystem;
         ~GameObject();
     };

@@ -116,6 +116,96 @@ namespace fx {
     };
 #pragma endregion
 
+#pragma region PBRSimpleShader
+
+    class PBRSimpleShader : public Shader {
+    public:
+        static PBRSimpleShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new PBRSimpleShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static PBRSimpleShader *_instance;
+
+        PBRSimpleShader()
+        {
+            InitShader();
+            std::cout << "PBRSimpleShader created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "PBRSimpleShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "PBRSimpleShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "PBRSimpleShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
+#pragma region DisplayShader
+
+    class DisplayShader : public Shader {
+    public:
+        static DisplayShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new DisplayShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static DisplayShader *_instance;
+
+        DisplayShader()
+        {
+            InitShader();
+            std::cout << name.c_str() << " created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "DisplayShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "DisplayShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "DisplayShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
     // 添加更多的 Shader ...
 }
 

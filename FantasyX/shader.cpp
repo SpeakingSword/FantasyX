@@ -193,3 +193,43 @@ void LegacyStandardShader::InitShader()
     ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 }
 #pragma endregion
+
+#pragma region PBRSimpleShader
+PBRSimpleShader *PBRSimpleShader::_instance = nullptr;
+
+void PBRSimpleShader::InitShader()
+{
+    name = "PBRSimpleShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRSimple.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRSimple.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
+
+    // 绑定着色器共享内存变量
+    GLuint SharedMatrcesBlock = glGetUniformBlockIndex(ID, "SharedMatrices");
+    GLuint SharedCameraValuesBlock = glGetUniformBlockIndex(ID, "SharedCameraValues");
+    glUniformBlockBinding(ID, SharedMatrcesBlock, 0);
+    glUniformBlockBinding(ID, SharedCameraValuesBlock, 1);
+}
+#pragma endregion
+
+#pragma region DisplayShader
+DisplayShader *DisplayShader::_instance = nullptr;
+
+void DisplayShader::InitShader()
+{
+    name = "DisplayShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Display.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Display.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
+
+    // 特别的初始化步骤，针对特别处理着色器
+    this->Bind();
+    this->SetInt("display", 0);
+    this->Unbind();
+}
+
+#pragma endregion
+
+
