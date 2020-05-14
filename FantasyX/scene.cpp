@@ -48,6 +48,11 @@ GameObject *Scene::End() const
     return p;
 }
 
+GameObject *Scene::Root() const
+{
+    return root;
+}
+
 void Scene::Init()
 {
     TraverseInit(root);

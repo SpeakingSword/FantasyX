@@ -27,6 +27,7 @@ namespace fx {
         Scene();
         GameObject *Start() const;
         GameObject *End() const;
+        GameObject *Root() const;
 
         /*
           初始化场景数据，为渲染做准备

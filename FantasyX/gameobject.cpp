@@ -98,7 +98,7 @@ void GameObject::Update()
 void GameObject::Draw()
 {
     Render *render = (Render *)this->GetComponent("Render");
-    if (render->mesh != nullptr)
+    if (render != nullptr && render->mesh != nullptr)
     {
         render->material->MappingProperty();
         render->material->shader->Bind();

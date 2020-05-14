@@ -132,11 +132,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitree.h" />
-    <ClInclude Include="camera.h" />
     <ClInclude Include="clocker.h" />
     <ClInclude Include="component.h" />
     <ClInclude Include="buffer.h" />
-    <ClInclude Include="share.h" />
+    <ClInclude Include="context.h" />
     <ClInclude Include="gameobject.h" />
     <ClInclude Include="imconfig.h" />
     <ClInclude Include="imgui.h" />
@@ -154,13 +153,13 @@
     <ClInclude Include="shader.h" />
     <ClInclude Include="texture.h" />
     <ClInclude Include="types.h" />
-    <ClInclude Include="visitor.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="buffer.cpp" />
     <ClCompile Include="clocker.cpp" />
     <ClCompile Include="component.cpp" />
     <ClCompile Include="componentsystem_test.cpp" />
+    <ClCompile Include="context.cpp" />
     <ClCompile Include="demo.cpp" />
     <ClCompile Include="gameobject.cpp" />
     <ClCompile Include="glad.c" />

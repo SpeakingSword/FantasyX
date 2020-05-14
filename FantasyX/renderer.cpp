@@ -329,6 +329,8 @@ void Renderer::Display()
     glClear(GL_COLOR_BUFFER_BIT);
     
     glActiveTexture(GL_TEXTURE0);
+
+    bool displaySingleColor = false;
     switch (finalDisplay)
     {
     case DISPLAY_ALL:
@@ -340,21 +342,25 @@ void Renderer::Display()
         break;
     case DISPLAY_ONLY_AO_MAP:
         glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_AO]->id);
+        displaySingleColor = true;
         break;
     case DISPLAY_ONLY_METALLIC_MAP:
         glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_METALLIC]->id);
+        displaySingleColor = true;
         break;
     case DISPLAY_ONLY_NORMAL_MAP:
         glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_NORMAL]->id);
         break;
     case DISPLAY_ONLY_ROUGHNESS_MAP:
         glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_ROUGHNESS]->id);
+        displaySingleColor = true;
         break;
     case DISPLAY_ONLY_POS_MAP:
         glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_POS]->id);
         break;
     case DISPLAY_ONLY_DEPTH_MAP:
         glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_DEPTH]->id);
+        displaySingleColor = true;
         break;
     default:
         break;
@@ -364,6 +370,8 @@ void Renderer::Display()
     shader->Bind();
     shader->SetFloat("gamma", this->gamma);
     shader->SetFloat("exposure", this->exposure);
+    shader->SetBool("displaySingleColor", displaySingleColor);
+
 
     RectangleMesh *mesh = RectangleMesh::GetInstance();
     glBindVertexArray(mesh->VAO);

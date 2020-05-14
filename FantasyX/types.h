@@ -110,63 +110,6 @@ namespace fx {
         DISPLAY_ONLY_POS_MAP,
         DISPLAY_ONLY_DEPTH_MAP
     }FinalDispalayType;
-
-    /*
-    typedef struct {
-        GLuint buffer_id;
-        GLuint pos_depth_map;
-        GLuint albedo_metallic_map;
-        GLuint normal_roughness_map;
-        GLuint ao_map;
-    }Gbuffer;
-
-    typedef struct {
-        GLuint buffer_id;
-        GLuint buffer_map;
-    }DirLightDepthBuffer;
-
-    typedef struct {
-        GLuint buffer_id;
-        GLuint buffer_map;
-    }DirectLightCalculateBuffer;
-
-    typedef struct {
-        GLuint buffer_id;
-        GLuint hdr_cube_map;
-        GLuint hdr_cube_map_width;
-        GLuint irradiance_map;
-        GLuint irradiance_map_width;
-        GLuint prefilter_map;
-        GLuint prefilter_map_width;
-        GLuint brdf_map;
-        GLuint brdf_map_width;
-    }IndirectLightCalculateBuffer;
-
-    typedef struct {
-        GLuint buffer_id;
-        GLuint buffer_map;
-    }CombineMapBuffer;
-
-    typedef struct {
-        GLuint buffer_id;
-        GLuint buffer_map;
-    }HightLightBuffer;
-
-    typedef struct {
-        GLuint buffer_id[2];
-        GLuint buffer_map[2];
-    }PingPongBuffer;
-
-    typedef struct {
-        GLuint buffer_id;
-        GLuint buffer_map;
-    }FxaaEffectBuffer;
-
-    typedef struct {
-        GLuint buffer_id;
-        GLuint buffer_map;
-    }PostProcessingBuffer;
-    */
 }
 
 #endif // !TYPES_H

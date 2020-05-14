@@ -9,11 +9,16 @@ uniform sampler2D display;
 
 uniform float gamma;
 uniform float exposure;
+uniform bool displaySingleColor;
 
 void main()
 {
     // 获取高动态范围颜色值
-	vec3 hdrColor = texture(display, fs_in.texCoord).rgb;
+    vec3 hdrColor;
+    if (displaySingleColor)
+        hdrColor = vec3(texture(display, fs_in.texCoord).r);
+    else
+        hdrColor = texture(display, fs_in.texCoord).rgb;
 	
 	// HDR 曝光色调映射
 	vec3 mapped = vec3(1.0f) - exp(-hdrColor * exposure);

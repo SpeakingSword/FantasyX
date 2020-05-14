@@ -65,9 +65,6 @@
     </None>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="camera.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
     <ClInclude Include="scene.h">
       <Filter>headers\core</Filter>
     </ClInclude>
@@ -104,9 +101,6 @@
     <ClInclude Include="renderer.h">
       <Filter>headers\core</Filter>
     </ClInclude>
-    <ClInclude Include="visitor.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
     <ClInclude Include="gameobject.h">
       <Filter>headers\core</Filter>
     </ClInclude>
@@ -122,9 +116,6 @@
     <ClInclude Include="shader.h">
       <Filter>headers\core</Filter>
     </ClInclude>
-    <ClInclude Include="share.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
     <ClInclude Include="bitree.h">
       <Filter>headers\core</Filter>
     </ClInclude>
@@ -135,6 +126,9 @@
       <Filter>headers\core</Filter>
     </ClInclude>
     <ClInclude Include="buffer.h">
+      <Filter>headers\core</Filter>
+    </ClInclude>
+    <ClInclude Include="context.h">
       <Filter>headers\core</Filter>
     </ClInclude>
   </ItemGroup>
@@ -207,6 +201,9 @@
     </ClCompile>
     <ClCompile Include="demo.cpp">
       <Filter>sources\test</Filter>
+    </ClCompile>
+    <ClCompile Include="context.cpp">
+      <Filter>sources\core</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>
