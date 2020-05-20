@@ -8,7 +8,6 @@ layout (location = 5) out float gRoughness;
 layout (location = 6) out float gAo;
 
 in VS_OUT {
-	vec2 texCoord;
 	vec3 fragPos;
 	vec3 normal;
 } fs_in;

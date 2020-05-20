@@ -25,6 +25,7 @@ namespace fx {
         void SetFloat(const GLchar *name, GLfloat value) const;
         void SetMat4(const GLchar *name, const Matrix4x4 &value) const;
         void SetVec3(const GLchar *name, const Vector3 &value) const;
+        void SetVec4(const GLchar *name, const Vector4 &value) const;
         void SetVec3(const GLchar *name, GLfloat x, GLfloat y, GLfloat z) const;
 
         virtual void InitShader() = 0;
@@ -161,6 +162,52 @@ namespace fx {
 
 #pragma endregion
 
+#pragma region PBRStandardShader
+
+    class PBRStandardShader : public Shader {
+    public:
+        static PBRStandardShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new PBRStandardShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static PBRStandardShader *_instance;
+
+        PBRStandardShader()
+        {
+            InitShader();
+            std::cout << "PBRStandardShader created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "PBRStandardShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "PBRStandardShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "PBRStandardShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
+
 #pragma region DisplayShader
 
     class DisplayShader : public Shader {
@@ -205,6 +252,457 @@ namespace fx {
     };
 
 #pragma endregion
+
+#pragma region DirLightShadowShader
+
+    class DirLightShadowShader : public Shader {
+    public:
+        static DirLightShadowShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new DirLightShadowShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static DirLightShadowShader *_instance;
+
+        DirLightShadowShader()
+        {
+            InitShader();
+            std::cout << name.c_str() << " created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "DirLightShadowShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "DirLightShadowShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "DirLightShadowShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
+#pragma region PBRLightingShader
+
+    class PBRLightingShader : public Shader {
+    public:
+        static PBRLightingShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new PBRLightingShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static PBRLightingShader *_instance;
+
+        PBRLightingShader()
+        {
+            InitShader();
+            std::cout << name.c_str() << " created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "PBRLightingShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "PBRLightingShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "PBRLightingShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
+#pragma region BrightCatchShader
+
+    class BrightCatchShader : public Shader {
+    public:
+        static BrightCatchShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new BrightCatchShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static BrightCatchShader *_instance;
+
+        BrightCatchShader()
+        {
+            InitShader();
+            std::cout << name.c_str() << " created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "BrightCatchShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "BrightCatchShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "BrightCatchShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
+#pragma region GaussianBlurShader
+
+    class GaussianBlurShader : public Shader {
+    public:
+        static GaussianBlurShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new GaussianBlurShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static GaussianBlurShader *_instance;
+
+        GaussianBlurShader()
+        {
+            InitShader();
+            std::cout << name.c_str() << " created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "GaussianBlurShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "GaussianBlurShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "GaussianBlurShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
+#pragma region BloomShader
+
+    class BloomShader : public Shader {
+    public:
+        static BloomShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new BloomShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static BloomShader *_instance;
+
+        BloomShader()
+        {
+            InitShader();
+            std::cout << name.c_str() << " created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "BloomShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "BloomShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "BloomShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
+#pragma region SkyBoxShader
+
+    class SkyBoxShader : public Shader {
+    public:
+        static SkyBoxShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new SkyBoxShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static SkyBoxShader *_instance;
+
+        SkyBoxShader()
+        {
+            InitShader();
+            std::cout << name.c_str() << " created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "SkyBoxShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "SkyBoxShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "SkyBoxShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
+#pragma region HdrBoxShader
+
+    class HdrBoxShader : public Shader {
+    public:
+        static HdrBoxShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new HdrBoxShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static HdrBoxShader *_instance;
+
+        HdrBoxShader()
+        {
+            InitShader();
+            std::cout << name.c_str() << " created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "HdrBoxShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "HdrBoxShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "HdrBoxShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
+#pragma region IrradianceBoxShader
+
+    class IrradianceBoxShader : public Shader {
+    public:
+        static IrradianceBoxShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new IrradianceBoxShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static IrradianceBoxShader *_instance;
+
+        IrradianceBoxShader()
+        {
+            InitShader();
+            std::cout << name.c_str() << " created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "IrradianceBoxShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "IrradianceBoxShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "IrradianceBoxShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
+#pragma region PrefilterBoxShader
+
+    class PrefilterBoxShader : public Shader {
+    public:
+        static PrefilterBoxShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new PrefilterBoxShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static PrefilterBoxShader *_instance;
+
+        PrefilterBoxShader()
+        {
+            InitShader();
+            std::cout << name.c_str() << " created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "PrefilterBoxShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "PrefilterBoxShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "PrefilterBoxShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
+#pragma region BRDFShader
+
+    class BRDFShader : public Shader {
+    public:
+        static BRDFShader *GetInstance()
+        {
+            if (_instance == nullptr)
+            {
+                _instance = new BRDFShader();
+            }
+
+            return _instance;
+        }
+
+    private:
+        static BRDFShader *_instance;
+
+        BRDFShader()
+        {
+            InitShader();
+            std::cout << name.c_str() << " created ... " << std::endl;
+        }
+
+        class GC {
+        public:
+            GC() { cout << "BRDFShader GC created ... " << endl; }
+            ~GC()
+            {
+                cout << "BRDFShader GC destroyed ..." << endl;
+                if (_instance != nullptr)
+                {
+                    delete _instance;
+                    _instance = nullptr;
+                    cout << "BRDFShader destroyed ... " << endl;
+                }
+            }
+        };
+
+        static GC gc;
+
+        void InitShader() override;
+    };
+
+#pragma endregion
+
 
     // 添加更多的 Shader ...
 }

@@ -65,17 +65,7 @@ void LegacyStandardMaterial::Destroy()
 
 void LegacyStandardMaterial::InitMaterial()
 {
-    // 贴图可以通过默认图片初始化
-    // 比如全灰色漫反射贴图，全绿色法线贴图，全黑色高光贴图
     name = "LegacyStandardMaterial";
-    // 初始化贴图 ...
-    ResourceManager *res = ResourceManager::GetInstance();
-    Texture diffuseMap = res->LoadTexture2D((string(res->GetAppDir()) + string(res->GetImageDir()) + "default_diff.png").c_str(), "_DiffuseMap", true);
-    Texture normalMap = res->LoadTexture2D((string(res->GetAppDir()) + string(res->GetImageDir()) + "default_normal.png").c_str(), "_NormalMap", false);
-    Texture specularMap = res->LoadTexture2D((string(res->GetAppDir()) + string(res->GetImageDir()) + "default_spec.png").c_str(), "_SpecularMap", false);
-    textures2D.push_back(diffuseMap);
-    textures2D.push_back(normalMap);
-    textures2D.push_back(specularMap);
     specularStrength = 32;
     shader = LegacyStandardShader::GetInstance();
 }
@@ -128,8 +118,8 @@ void PBRSimpleMaterial::InitMaterial()
 {
     name = "PBRSimpleMaterial";
     baseColor = Vector3(0.7f);
-    metallic = 0.5f;
-    roughness = 0.5f;
+    metallic = 1.0f;
+    roughness = 0.2f;
     ao = 1.0f;
     shader = PBRSimpleShader::GetInstance();
 }
@@ -156,4 +146,48 @@ void PBRSimpleMaterial::Print()
 }
 
 #pragma endregion
+
+#pragma region PBRStandradMaterial
+
+PBRStandardMaterial::PBRStandardMaterial()
+{
+    InitMaterial();
+    std::cout << "ENGIN CORE:: " << name.c_str() << " created ... " << std::endl;
+}
+
+PBRStandardMaterial::~PBRStandardMaterial()
+{
+    std::cout << "ENGIN CORE:: " << name.c_str() << " destoyed ... " << std::endl;
+}
+
+void PBRStandardMaterial::Destroy()
+{
+    this->~PBRStandardMaterial();
+}
+
+void PBRStandardMaterial::InitMaterial()
+{
+    name = "PBRStandardMaterial";
+    shader = PBRStandardShader::GetInstance();
+}
+
+void PBRStandardMaterial::MappingProperty()
+{
+    shader->Bind();
+    for (GLuint i = 0; i < textures2D.size(); ++i)
+    {
+        glActiveTexture(GL_TEXTURE0 + i);
+        shader->SetInt(("material." + textures2D[i].type).c_str(), i);
+        glBindTexture(GL_TEXTURE_2D, textures2D[i].id);
+    }
+    shader->Unbind();
+}
+
+
+void PBRStandardMaterial::Print()
+{
+    // wait ...
+}
+#pragma endregion
+
 

@@ -121,14 +121,34 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="Shaders\Bloom.frag" />
+    <None Include="Shaders\Bloom.vert" />
+    <None Include="Shaders\BRDF.frag" />
+    <None Include="Shaders\BRDF.vert" />
+    <None Include="Shaders\BrightCatch.frag" />
+    <None Include="Shaders\BrightCatch.vert" />
+    <None Include="Shaders\DirLightShadow.frag" />
+    <None Include="Shaders\DirLightShadow.vert" />
     <None Include="Shaders\Display.frag" />
     <None Include="Shaders\Display.vert" />
+    <None Include="Shaders\GaussianBlur.frag" />
+    <None Include="Shaders\GaussianBlur.vert" />
+    <None Include="Shaders\HdrBox.frag" />
+    <None Include="Shaders\HdrBox.vert" />
+    <None Include="Shaders\IrradianceBox.frag" />
+    <None Include="Shaders\IrradianceBox.vert" />
     <None Include="Shaders\LegacySimple.frag" />
     <None Include="Shaders\LegacyStandard.frag" />
+    <None Include="Shaders\PBRLighting.frag" />
+    <None Include="Shaders\PBRLighting.vert" />
     <None Include="Shaders\PBRSimple.frag" />
     <None Include="Shaders\PBRSimple.vert" />
     <None Include="Shaders\PBRStandard.vert" />
     <None Include="Shaders\PBRStandard.frag" />
+    <None Include="Shaders\PrefilterBox.frag" />
+    <None Include="Shaders\PrefilterBox.vert" />
+    <None Include="Shaders\Skybox.frag" />
+    <None Include="Shaders\Skybox.vert" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="bitree.h" />

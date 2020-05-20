@@ -50,6 +50,31 @@ GLFWwindow *fxWindow::GetGLFWwindow()
     return window;
 }
 
+void fxWindow::MouseMove(GLdouble xpos, GLdouble ypos, Camera *camera)
+{
+    if (firstMove)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMove = false;
+    }
+
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+    lastX = xpos;
+    lastY = ypos;
+
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT))
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        camera->ProcessMouseMovement(xoffset, yoffset);
+    }
+    else
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+}
+
 void fxWindow::ProcessInput(GameObject *sceneRoot, GameObject *camera)
 {
     if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
@@ -57,6 +82,10 @@ void fxWindow::ProcessInput(GameObject *sceneRoot, GameObject *camera)
         glfwSetWindowShouldClose(window, true);
         return;
     }
+
+    GLdouble xpos, ypos;
+    glfwGetCursorPos(window, &xpos, &ypos);
+    MouseMove(xpos, ypos, (Camera *)camera->GetComponent("Camera"));
 
     if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
     {

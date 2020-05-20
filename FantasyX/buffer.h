@@ -4,6 +4,8 @@
 #include <iostream>
 #include <vector>
 #include "types.h"
+#include "texture.h"
+#include "shader.h"
 #include <glad\glad.h>
 using namespace std;
 
@@ -172,6 +174,28 @@ namespace fx {
 
     private:
         ~UniformBuffer();
+    };
+
+    class HdrIBLTextures {
+    public:
+        Texture hdrTexture;
+        bool texturesInitiated;
+        bool textureBeenFilled;
+        TextureBuffer *IBLTextures[IBL_MAP_NUM];
+        GLuint cube_map_width;
+        GLuint irradiance_map_width;
+        GLuint prefilter_map_width;
+        GLuint brdf_lut_map_width;
+        static Matrix4x4 renderCubeMapProjection;
+        static Matrix4x4 *renderCubeMapViews;
+
+        HdrIBLTextures();
+        void CreateTextures();
+        void DrawTextures(const FrameBuffer *framebuffer, const RenderBuffer *rbo);
+        void Destroy();
+
+    private:
+        ~HdrIBLTextures();
     };
 }
 

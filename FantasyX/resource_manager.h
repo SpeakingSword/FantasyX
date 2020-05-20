@@ -22,10 +22,12 @@ using namespace std;
 
 namespace fx {
 
+    class Material;
+
     class ResourceManager {
     private:
-        vector<PolygonMesh *> meshes;    // 记录 PolygonMesh 的引用
-        vector<Texture> textures;       // 记录 Texture 的引用
+        vector<GameObject *> models;    // 记录加载过的模型
+        vector<Texture> textures;       // 记录加载过的纹理
         string appDir;
         string shaderDir;
         string imageDir;
@@ -67,12 +69,14 @@ namespace fx {
         }
     
         GameObject *LoadModel(const GLchar *path);
-        Texture LoadTexture2D(const GLchar *path, const GLchar *type, bool gamma);
+        Texture LoadTexture2D(const GLchar *path, const GLchar *type, bool gamma = false);
+        Texture LoadCubeMap(vector<string> faces);
+        Texture LoadHdrTexture(const GLchar *path);
         const GLchar *GetAppDir();
         const GLchar *GetShaderDir();
         const GLchar *GetImageDir();
         GLchar *GetFileString(const GLchar *path);
-        void ProcessNode(aiNode *node, const aiScene *scene, GameObject *obj, const GLchar *path);
+        void ProcessNode(aiNode *node, const aiScene *scene, GameObject *obj, const GLchar *path, Material *mat);
         PolygonMesh *ProcessMesh(aiMesh *mesh, const GLchar *path);
     };
 }

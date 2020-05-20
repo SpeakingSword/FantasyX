@@ -17,6 +17,8 @@ namespace fx {
     class ComponentSystem;
     class Transform;
     class Shader;
+    class Material;
+    class Renderer;
 
     class GameObject {
     public:
@@ -46,6 +48,9 @@ namespace fx {
         void AddComponent(Component *);
         void RemoveComponent(const GLchar *name);
         void ShowAllComponent();
+        void SetMaterial(Material *mat);
+        void SetVisible(bool visible);
+        Material *GetMaterial();
 
         static GameObject *Cube();
         static GameObject *DirLight();
@@ -55,9 +60,10 @@ namespace fx {
 
     private:
         static GLuint gameObjectCount;
-        // static GLuint cubeCount;
         ComponentSystem *componentSystem;
         ~GameObject();
+        static void TraverseSetMat(GameObject *obj, Material *mat);
+        static void TraverseSetVisible(GameObject *obj, bool visible);
     };
 
 }

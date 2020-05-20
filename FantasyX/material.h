@@ -71,6 +71,20 @@ namespace fx {
         void InitMaterial() override;
     };
 
+    class PBRStandardMaterial : public Material {
+    public:
+        vector<Texture> textures2D;
+
+        PBRStandardMaterial();
+        void Destroy() override;
+        void MappingProperty() override;
+        void Print() override;
+
+    private:
+        ~PBRStandardMaterial();
+        void InitMaterial() override;
+    };
+
     // Ìí¼Ó¸ü¶à Material ... 
     
 }

@@ -181,9 +181,9 @@ void Transform::RotateAround(Vector3 pos, Vector3 axis, GLfloat deg, Space mode)
 void Transform::UpdateVector()
 {
     Vector3 temp_front;
-    temp_front.x = cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
+    temp_front.x = cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y));
     temp_front.y = sin(glm::radians(rotation.x));
-    temp_front.z = -cos(glm::radians(rotation.x)) * cos(glm::radians(rotation.y));
+    temp_front.z = cos(glm::radians(rotation.x)) * sin(glm::radians(rotation.y));
     this->front = glm::normalize(temp_front);
     this->right = glm::normalize(glm::cross(this->front, this->worldUp));
     this->up = glm::normalize(glm::cross(this->right, this->front));

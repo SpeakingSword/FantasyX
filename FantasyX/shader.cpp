@@ -38,6 +38,11 @@ void Shader::SetVec3(const GLchar *name, const Vector3 &value) const
     glUniform3fv(glGetUniformLocation(ID, name), 1, &value[0]);
 }
 
+void Shader::SetVec4(const GLchar *name, const Vector4 &value) const
+{
+    glUniform4fv(glGetUniformLocation(ID, name), 1, &value[0]);
+}
+
 void Shader::SetVec3(const GLchar *name, GLfloat x, GLfloat y, GLfloat z) const
 {
     glUniform3f(glGetUniformLocation(ID, name), x, y, z);
@@ -213,6 +218,26 @@ void PBRSimpleShader::InitShader()
 }
 #pragma endregion
 
+#pragma region PBRStandardShader
+PBRStandardShader *PBRStandardShader::_instance = nullptr;
+
+void PBRStandardShader::InitShader()
+{
+    name = "PBRStandardShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRStandard.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRStandard.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
+
+    // 绑定着色器共享内存变量
+    GLuint SharedMatrcesBlock = glGetUniformBlockIndex(ID, "SharedMatrices");
+    GLuint SharedCameraValuesBlock = glGetUniformBlockIndex(ID, "SharedCameraValues");
+    glUniformBlockBinding(ID, SharedMatrcesBlock, 0);
+    glUniformBlockBinding(ID, SharedCameraValuesBlock, 1);
+}
+
+#pragma endregion
+
 #pragma region DisplayShader
 DisplayShader *DisplayShader::_instance = nullptr;
 
@@ -228,6 +253,195 @@ void DisplayShader::InitShader()
     this->Bind();
     this->SetInt("display", 0);
     this->Unbind();
+}
+
+#pragma endregion
+
+#pragma region DirLightShadowShader
+DirLightShadowShader *DirLightShadowShader::_instance = nullptr;
+
+void DirLightShadowShader::InitShader()
+{
+    name = "DirLightShadowShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "DirLightShadow.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "DirLightShadow.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
+}
+
+#pragma endregion
+
+#pragma region PBRLightingShader
+PBRLightingShader *PBRLightingShader::_instance = nullptr;
+
+void PBRLightingShader::InitShader()
+{
+    name = "PBRLightingShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRLighting.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRLighting.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
+
+    this->Bind();
+    this->SetInt("gPos", 0);
+    this->SetInt("gDepth", 1);
+    this->SetInt("gAlbedo", 2);
+    this->SetInt("gMetallic", 3);
+    this->SetInt("gNormal", 4);
+    this->SetInt("gRoughness", 5);
+    this->SetInt("gAo", 6);
+    this->SetInt("irradianceMap", 7);
+    this->SetInt("prefilterMap", 8);
+    this->SetInt("brdfLutMap", 9);
+    this->Unbind();
+}
+
+#pragma endregion
+
+#pragma region BrightCatchShader
+BrightCatchShader *BrightCatchShader::_instance = nullptr;
+
+void BrightCatchShader::InitShader()
+{
+    name = "BrightCatchShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "BrightCatch.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "BrightCatch.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
+
+    // 特别的初始化步骤，针对特别处理着色器
+    this->Bind();
+    this->SetInt("lightMap", 0);
+    this->Unbind();
+}
+
+#pragma endregion
+
+#pragma region GaussianBlurShader
+GaussianBlurShader *GaussianBlurShader::_instance = nullptr;
+
+void GaussianBlurShader::InitShader()
+{
+    name = "GaussianBlurShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "GaussianBlur.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "GaussianBlur.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
+
+    // 特别的初始化步骤，针对特别处理着色器
+    this->Bind();
+    this->SetInt("brightMap", 0);
+    this->Unbind();
+}
+
+#pragma endregion
+
+#pragma region BloomShader
+
+BloomShader *BloomShader::_instance = nullptr;
+
+void BloomShader::InitShader()
+{
+    name = "BloomShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Bloom.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Bloom.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
+
+    // 特别的初始化步骤，针对特别处理着色器
+    this->Bind();
+    this->SetInt("lightMap", 0);
+    this->SetInt("blurMap", 1);
+    this->Unbind();
+}
+
+#pragma endregion
+
+#pragma region SkyBoxShader
+SkyBoxShader *SkyBoxShader::_instance = nullptr;
+
+void SkyBoxShader::InitShader()
+{
+    name = "SkyboxShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Skybox.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Skybox.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
+
+    // 特别的初始化步骤，针对特别处理着色器
+    this->Bind();
+    this->SetInt("skybox", 0);
+    this->Unbind();
+
+    GLuint SharedMatrcesBlock = glGetUniformBlockIndex(ID, "SharedMatrices");
+    glUniformBlockBinding(ID, SharedMatrcesBlock, 0);
+}
+#pragma endregion
+
+#pragma region HdrBoxShader
+HdrBoxShader *HdrBoxShader::_instance = nullptr;
+
+void HdrBoxShader::InitShader()
+{
+    name = "HdrBoxShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "HdrBox.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "HdrBox.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
+
+    this->Bind();
+    this->SetInt("hdrTexture", 0);
+    this->Unbind();
+}
+
+#pragma endregion
+
+#pragma region IrradianceBoxShader
+IrradianceBoxShader *IrradianceBoxShader::_instance = nullptr;
+
+void IrradianceBoxShader::InitShader()
+{
+    name = "IrradianceBoxShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "IrradianceBox.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "IrradianceBox.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
+
+    this->Bind();
+    this->SetInt("hdr_cube_map", 0);
+    this->Unbind();
+}
+
+#pragma endregion
+
+#pragma region PrefilterBoxShader
+PrefilterBoxShader *PrefilterBoxShader::_instance = nullptr;
+
+void PrefilterBoxShader::InitShader()
+{
+    name = "PrefilterBoxShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PrefilterBox.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PrefilterBox.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
+
+    this->Bind();
+    this->SetInt("hdr_cube_map", 0);
+    this->Unbind();
+}
+
+#pragma endregion
+
+#pragma region BRDFShader
+BRDFShader *BRDFShader::_instance = nullptr;
+
+void BRDFShader::InitShader()
+{
+    name = "BRDFShader";
+    ResourceManager *res = ResourceManager::GetInstance();
+    const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "BRDF.vert").c_str());
+    const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "BRDF.frag").c_str());
+    ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 }
 
 #pragma endregion

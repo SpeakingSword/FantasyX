@@ -9,5 +9,5 @@ out VS_OUT {
 void main()
 {
     vs_out.texCoord = TexCoord;
-    gl_Position = vec4(Pos, 1.0f);
-}
+    gl_Position = vec4(Pos, 1.0f); 
+} 

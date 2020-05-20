@@ -89,8 +89,7 @@ namespace fx {
 
     typedef enum {
         POST_NONE,
-        POST_INVERSE,
-        POST_MONOCHROME
+        POST_REVERSAL
     }PostProcessing;
 
     typedef enum {
@@ -110,6 +109,14 @@ namespace fx {
         DISPLAY_ONLY_POS_MAP,
         DISPLAY_ONLY_DEPTH_MAP
     }FinalDispalayType;
+
+    typedef enum {
+        IBL_CUBE_MAP,
+        IBL_IRRADIANCE_MAP,
+        IBL_PREFILTER_MAP,
+        IBL_BRDF_LUT_MAP,
+        IBL_MAP_NUM
+    }IBLTexture;
 }
 
 #endif // !TYPES_H

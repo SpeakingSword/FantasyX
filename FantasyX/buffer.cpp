@@ -1,4 +1,7 @@
 #include "buffer.h"
+#include <glm\glm.hpp>
+#include <glm\gtc\matrix_transform.hpp>
+#include <glm\gtc\type_ptr.hpp>
 
 using namespace fx;
 
@@ -368,6 +371,12 @@ void Texture2D::CreateBuffer()
         glTexParameteri(type, GL_TEXTURE_WRAP_S, wrapS);
         glTexParameteri(type, GL_TEXTURE_WRAP_T, wrapT);
             
+        if (wrapS == GL_CLAMP_TO_BORDER || wrapT == GL_CLAMP_TO_BORDER)
+        {
+            GLfloat borderColor[] = { this->borderColor.x, this->borderColor.y, this->borderColor.z, this->borderColor.w };
+            glTexParameterfv(type, GL_TEXTURE_BORDER_COLOR, borderColor);
+        }
+
         glBindTexture(type, 0);
     }
 }
@@ -382,6 +391,12 @@ void Texture2D::ResetBuffer()
         glTexParameteri(type, GL_TEXTURE_MAG_FILTER, magFilter);
         glTexParameteri(type, GL_TEXTURE_WRAP_S, wrapS);
         glTexParameteri(type, GL_TEXTURE_WRAP_T, wrapT);
+
+        if (wrapS == GL_CLAMP_TO_BORDER || wrapT == GL_CLAMP_TO_BORDER)
+        {
+            GLfloat borderColor[] = { this->borderColor.x, this->borderColor.y, this->borderColor.z, this->borderColor.w };
+            glTexParameterfv(type, GL_TEXTURE_BORDER_COLOR, borderColor);
+        }
 
         glBindTexture(type, 0);
     }
@@ -547,6 +562,7 @@ void Texture3D::CreateBuffer()
     {
         glGenTextures(1, &id);
         glBindTexture(type, id);
+        
         for (GLuint i = 0; i < 6; ++i)
         {
             glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, internalFormat, width, height, border, dataFormat, dataType, NULL);
@@ -556,6 +572,12 @@ void Texture3D::CreateBuffer()
         glTexParameteri(type, GL_TEXTURE_WRAP_S, wrapS);
         glTexParameteri(type, GL_TEXTURE_WRAP_T, wrapT);
         glTexParameteri(type, GL_TEXTURE_WRAP_R, wrapR);
+
+        if (wrapS == GL_CLAMP_TO_BORDER || wrapT == GL_CLAMP_TO_BORDER || wrapR == GL_CLAMP_TO_BORDER)
+        {
+            GLfloat borderColor[] = { this->borderColor.x, this->borderColor.y, this->borderColor.z, this->borderColor.w };
+            glTexParameterfv(type, GL_TEXTURE_BORDER_COLOR, borderColor);
+        }
 
         glBindTexture(type, 0);
     }
@@ -576,6 +598,13 @@ void Texture3D::ResetBuffer()
         glTexParameteri(type, GL_TEXTURE_WRAP_S, wrapS);
         glTexParameteri(type, GL_TEXTURE_WRAP_T, wrapT);
         glTexParameteri(type, GL_TEXTURE_WRAP_R, wrapR);
+
+        if (wrapS == GL_CLAMP_TO_BORDER || wrapT == GL_CLAMP_TO_BORDER || wrapR == GL_CLAMP_TO_BORDER)
+        {
+            GLfloat borderColor[] = { this->borderColor.x, this->borderColor.y, this->borderColor.z, this->borderColor.w };
+            glTexParameterfv(type, GL_TEXTURE_BORDER_COLOR, borderColor);
+        }
+
         glBindTexture(type, 0);
     }
     
@@ -787,5 +816,240 @@ void UniformBuffer::BindBase()
 }
 
 #pragma endregion
+
+#pragma region HdrIBLTextures
+Matrix4x4 HdrIBLTextures::renderCubeMapProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+Matrix4x4 *HdrIBLTextures::renderCubeMapViews = new Matrix4x4[6]
+{
+    glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+    glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+    glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+    glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+    glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+    glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+};
+
+HdrIBLTextures::HdrIBLTextures()
+{
+    this->cube_map_width = 1024;
+    this->irradiance_map_width = 128;
+    this->prefilter_map_width = 128;
+    this->brdf_lut_map_width = 512;
+    this->texturesInitiated = false;
+    this->textureBeenFilled = false;
+    for (GLuint i = 0; i < IBL_MAP_NUM; ++i)
+    {
+        IBLTextures[i] == nullptr;
+    }
+}
+
+HdrIBLTextures::~HdrIBLTextures()
+{
+    if (texturesInitiated)
+    {
+        for (GLuint i = 0; i < IBL_MAP_NUM; ++i)
+        {
+            IBLTextures[i]->Destroy();
+        }
+
+        glDeleteTextures(1, &hdrTexture.id);
+
+        std::cout << "HdrIBLTextures destroyed ... " << std::endl;
+    }
+    
+}
+
+void HdrIBLTextures::Destroy()
+{
+    this->~HdrIBLTextures();
+}
+
+void HdrIBLTextures::CreateTextures()
+{
+    if (!texturesInitiated)
+    {
+        Texture3D *ibl_cube_map = new Texture3D();
+        ibl_cube_map->internalFormat = GL_RGB16F;
+        ibl_cube_map->width = cube_map_width;
+        ibl_cube_map->height = ibl_cube_map->width;
+        ibl_cube_map->dataFormat = GL_RGB;
+        ibl_cube_map->minFilter = GL_LINEAR_MIPMAP_LINEAR;
+        ibl_cube_map->magFilter = GL_LINEAR;
+        ibl_cube_map->CreateBuffer();
+        IBLTextures[IBL_CUBE_MAP] = ibl_cube_map;
+
+        Texture3D *ibl_irradiance_map = new Texture3D();
+        ibl_irradiance_map->internalFormat = GL_RGB16F;
+        ibl_irradiance_map->width = irradiance_map_width;
+        ibl_irradiance_map->height = ibl_irradiance_map->width;
+        ibl_irradiance_map->minFilter = GL_LINEAR;
+        ibl_irradiance_map->magFilter = GL_LINEAR;
+        ibl_irradiance_map->CreateBuffer();
+        IBLTextures[IBL_IRRADIANCE_MAP] = ibl_irradiance_map;
+
+        Texture3D *ibl_prefilter_map = new Texture3D();
+        ibl_prefilter_map->internalFormat = GL_RGB16F;
+        ibl_prefilter_map->width = prefilter_map_width;
+        ibl_prefilter_map->height = ibl_prefilter_map->width;
+        ibl_prefilter_map->minFilter = GL_LINEAR_MIPMAP_LINEAR;
+        ibl_prefilter_map->magFilter = GL_LINEAR;
+        ibl_prefilter_map->CreateBuffer();
+        // 如果使用了 GL_LINEAR_MIPMAP_LINEAR 等应该生成mipmap
+        ibl_prefilter_map->GenerateMipmap();
+        IBLTextures[IBL_PREFILTER_MAP] = ibl_prefilter_map;
+
+        Texture2D *ibl_brdf_lut_map = new Texture2D();
+        ibl_brdf_lut_map->internalFormat = GL_RG16F;
+        ibl_brdf_lut_map->width = brdf_lut_map_width;
+        ibl_brdf_lut_map->height = ibl_brdf_lut_map->width;
+        ibl_brdf_lut_map->dataFormat = GL_RG;
+        ibl_brdf_lut_map->minFilter = GL_LINEAR;
+        ibl_brdf_lut_map->magFilter = GL_LINEAR;
+        ibl_brdf_lut_map->CreateBuffer();
+        IBLTextures[IBL_BRDF_LUT_MAP] = ibl_brdf_lut_map;
+
+        texturesInitiated = true;
+    }
+}
+
+void HdrIBLTextures::DrawTextures(const FrameBuffer *framebuffer, const RenderBuffer *rbo)
+{
+    if (hdrTexture.id != 0 && texturesInitiated)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->id);
+        glBindRenderbuffer(GL_RENDERBUFFER, rbo->id);
+        
+        // 非常重要的一行，不关闭面剔除，立方体贴图无法正常绘制
+        // 只需一次
+        glEnable(GL_DEPTH_TEST);
+        glDisable(GL_CULL_FACE);
+        //glDepthFunc(GL_LEQUAL);
+
+        // 绘制立方体贴图
+        glRenderbufferStorage(GL_RENDERBUFFER, rbo->internalFormat, cube_map_width, cube_map_width);
+        glViewport(0, 0, cube_map_width, cube_map_width);
+        
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, hdrTexture.id);
+
+        HdrBoxShader *hdrBoxShader = HdrBoxShader::GetInstance();
+        hdrBoxShader->Bind();
+        hdrBoxShader->SetMat4("projection", HdrIBLTextures::renderCubeMapProjection);
+
+        CubeMesh *cubeMesh = CubeMesh::GetInstance();
+        // 绑定立方体网格，只需一次
+        glBindVertexArray(cubeMesh->VAO);
+
+        for (GLuint i = 0; i < 6; ++i)
+        {
+            hdrBoxShader->SetMat4("view", HdrIBLTextures::renderCubeMapViews[i]);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, IBLTextures[IBL_CUBE_MAP]->id, NULL);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            if (cubeMesh->indices.size() > 0)
+                glDrawElements(GL_TRIANGLES, cubeMesh->indices.size(), GL_UNSIGNED_INT, 0);
+            else
+                glDrawArrays(GL_TRIANGLES, 0, cubeMesh->vertices.size());
+        }
+
+        // 立方体贴图生成多级渐远纹理
+        glBindTexture(GL_TEXTURE_CUBE_MAP, IBLTextures[IBL_CUBE_MAP]->id);
+        glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        hdrBoxShader->Unbind();
+
+        
+        // 绘制立方体辐照度贴图
+        glRenderbufferStorage(GL_RENDERBUFFER, rbo->internalFormat, irradiance_map_width, irradiance_map_width);
+        glViewport(0, 0, irradiance_map_width, irradiance_map_width);
+
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, this->IBLTextures[IBL_CUBE_MAP]->id);
+
+        IrradianceBoxShader *irradianceBoxShader = IrradianceBoxShader::GetInstance();
+        irradianceBoxShader->Bind();
+        irradianceBoxShader->SetMat4("projection", HdrIBLTextures::renderCubeMapProjection);
+
+        for (GLuint i = 0; i < 6; ++i)
+        {
+            irradianceBoxShader->SetMat4("view", HdrIBLTextures::renderCubeMapViews[i]);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, IBLTextures[IBL_IRRADIANCE_MAP]->id, NULL);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            if (cubeMesh->indices.size() > 0)
+                glDrawElements(GL_TRIANGLES, cubeMesh->indices.size(), GL_UNSIGNED_INT, 0);
+            else
+                glDrawArrays(GL_TRIANGLES, 0, cubeMesh->vertices.size());
+        }
+
+        irradianceBoxShader->Unbind();
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+        // 绘制预滤波镜面立方贴图
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, this->IBLTextures[IBL_CUBE_MAP]->id);
+
+        PrefilterBoxShader *prefilterBoxShader = PrefilterBoxShader::GetInstance();
+        prefilterBoxShader->Bind();
+        prefilterBoxShader->SetMat4("projection", HdrIBLTextures::renderCubeMapProjection);
+
+        GLuint maxMipLevels = 5;
+        for (GLuint mip = 0; mip < maxMipLevels; ++mip)
+        {
+            GLuint mipWidth = prefilter_map_width * std::pow(0.5f, mip);
+            GLuint mipHeight = prefilter_map_width * std::pow(0.5f, mip);
+
+            glRenderbufferStorage(GL_RENDERBUFFER, rbo->internalFormat, mipWidth, mipHeight);
+            glViewport(0, 0, mipWidth, mipHeight);
+
+            GLfloat roughness = (GLfloat)mip / (GLfloat)(maxMipLevels - 1);
+            prefilterBoxShader->SetFloat("roughness", roughness);
+            for (GLuint i = 0; i < 6; ++i)
+            {
+                prefilterBoxShader->SetMat4("view", HdrIBLTextures::renderCubeMapViews[i]);
+                glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, IBLTextures[IBL_PREFILTER_MAP]->id, mip);
+                glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+                if (cubeMesh->indices.size() > 0)
+                    glDrawElements(GL_TRIANGLES, cubeMesh->indices.size(), GL_UNSIGNED_INT, 0);
+                else
+                    glDrawArrays(GL_TRIANGLES, 0, cubeMesh->vertices.size());
+            }
+        }
+
+        prefilterBoxShader->Unbind();
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+        // 绘制BRDF贴图
+        glRenderbufferStorage(GL_RENDERBUFFER, rbo->internalFormat, brdf_lut_map_width, brdf_lut_map_width);
+        glViewport(0, 0, brdf_lut_map_width, brdf_lut_map_width);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, IBLTextures[IBL_BRDF_LUT_MAP]->id, NULL);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        BRDFShader *brdfShader = BRDFShader::GetInstance();
+        brdfShader->Bind();
+
+        RectangleMesh *rectangleMesh = RectangleMesh::GetInstance();
+        glBindVertexArray(rectangleMesh->VAO);
+        if (rectangleMesh->indices.size() > 0)
+            glDrawElements(GL_TRIANGLES, rectangleMesh->indices.size(), GL_UNSIGNED_INT, 0);
+        else
+            glDrawArrays(GL_TRIANGLES, 0, rectangleMesh->vertices.size());
+
+        glBindVertexArray(0);
+        glBindRenderbuffer(GL_RENDERBUFFER, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        brdfShader->Unbind();
+
+        // 恢复面剔除
+        glEnable(GL_CULL_FACE);
+        //glDepthFunc(GL_LESS);
+
+        textureBeenFilled = true;
+    }
+}
+
+#pragma endregion
+
 
 

@@ -63,6 +63,66 @@
     <None Include="Shaders\PBRStandard.vert">
       <Filter>resources\shaders</Filter>
     </None>
+    <None Include="Shaders\DirLightShadow.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\DirLightShadow.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\PBRLighting.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\PBRLighting.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\BrightCatch.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\BrightCatch.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\GaussianBlur.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\GaussianBlur.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\Bloom.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\Bloom.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\Skybox.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\Skybox.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\BRDF.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\BRDF.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\PrefilterBox.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\IrradianceBox.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\HdrBox.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\HdrBox.vert">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\IrradianceBox.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
+    <None Include="Shaders\PrefilterBox.frag">
+      <Filter>resources\shaders</Filter>
+    </None>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scene.h">

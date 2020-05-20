@@ -19,13 +19,13 @@ GameObject *ResourceManager::LoadModel(const GLchar *path)
     }
 
     GameObject *rootObj = new GameObject();
-
-    ProcessNode(scene->mRootNode, scene, rootObj, path);
+    Material *mat = new PBRSimpleMaterial();
+    ProcessNode(scene->mRootNode, scene, rootObj, path, mat);
 
     return rootObj;
 }
 
-void ResourceManager::ProcessNode(aiNode *node, const aiScene *scene, GameObject *obj, const GLchar *path)
+void ResourceManager::ProcessNode(aiNode *node, const aiScene *scene, GameObject *obj, const GLchar *path, Material *mat)
 {
     // 首先，根据当前节点信息初始化Gameobject
     // 第二，如果当前节点有子节点，则新建GameObject，继续遍历子节点
@@ -36,9 +36,8 @@ void ResourceManager::ProcessNode(aiNode *node, const aiScene *scene, GameObject
 
     // 给GameObject添加 Render 组件
     Render *render = new Render();
-    // 设置默认材质
-    PBRSimpleMaterial *PBRSimple = new PBRSimpleMaterial();
-    render->material = PBRSimple;
+    render->material = mat;
+
     // 如果当前节点存有 mesh 则添加
     if (node->mNumMeshes > 0)
     {
@@ -50,7 +49,7 @@ void ResourceManager::ProcessNode(aiNode *node, const aiScene *scene, GameObject
     for (GLuint i = 0; i < node->mNumChildren; i++)
     {
         GameObject *obj_child = new GameObject();
-        ProcessNode(node->mChildren[i], scene, obj_child, path);
+        ProcessNode(node->mChildren[i], scene, obj_child, path, mat);
         obj->Add(obj_child);
     }
 }
@@ -88,15 +87,27 @@ PolygonMesh *ResourceManager::ProcessMesh(aiMesh *mesh, const GLchar *path)
             vertex.texcoord = Vector2(0.0f, 0.0f);
 
         // 切线
-        mVector.x = mesh->mTangents[i].x;
-        mVector.y = mesh->mTangents[i].y;
-        mVector.z = mesh->mTangents[i].z;
-        vertex.tangent = mVector;
-        // 副切线
-        mVector.x = mesh->mBitangents[i].x;
-        mVector.y = mesh->mBitangents[i].y;
-        mVector.z = mesh->mBitangents[i].z;
-        vertex.bitangent = mVector;
+        if (mesh->mTangents)
+        {
+            mVector.x = mesh->mTangents[i].x;
+            mVector.y = mesh->mTangents[i].y;
+            mVector.z = mesh->mTangents[i].z;
+            vertex.tangent = mVector;
+        }
+        else
+            vertex.tangent = Vector3(0.0f);
+
+        if (mesh->mBitangents)
+        {
+            // 副切线
+            mVector.x = mesh->mBitangents[i].x;
+            mVector.y = mesh->mBitangents[i].y;
+            mVector.z = mesh->mBitangents[i].z;
+            vertex.bitangent = mVector;
+        }
+        else
+            vertex.bitangent = Vector3(0.0f);
+        
         // 添加一个顶点数据
         vertices.push_back(vertex);
     }
@@ -121,7 +132,6 @@ Texture ResourceManager::LoadTexture2D(const GLchar *path, const GLchar *type, b
     glGenTextures(1, &textureID);
 
     GLint width, height, numChannel;
-    // stbi_set_flip_vertically_on_load(true);
     GLboolean *data = stbi_load(path, &width, &height, &numChannel, 0);
     if (data)
     {
@@ -161,6 +171,76 @@ Texture ResourceManager::LoadTexture2D(const GLchar *path, const GLchar *type, b
     }
 
     stbi_image_free(data);
+    return tex;
+}
+
+Texture ResourceManager::LoadHdrTexture(const GLchar *path)
+{
+    Texture hdr;
+    stbi_set_flip_vertically_on_load(true);
+    GLint width, height, numComponent;
+    GLfloat *data = stbi_loadf(path, &width, &height, &numComponent, 0);
+    GLuint hdrTextureID;
+    if (data)
+    {
+        glGenTextures(1, &hdrTextureID);
+        glBindTexture(GL_TEXTURE_2D, hdrTextureID);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+        hdr.id = hdrTextureID;
+        hdr.path = path;
+        hdr.type = "_HdrMap";
+
+        std::cout << "ENGIN CORE::Loading " << path << " success." << std::endl;
+    }
+    else
+    {
+        std::cout << "Failed to load HDR image." << std::endl;
+        std::cout << path << std::endl;
+    }
+
+    stbi_set_flip_vertically_on_load(false);
+    stbi_image_free(data);
+    return hdr;
+}
+
+Texture ResourceManager::LoadCubeMap(std::vector <std::string> faces)
+{
+    Texture tex;
+    GLuint texId;
+    glGenTextures(1, &texId);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, texId);
+
+    //stbi_set_flip_vertically_on_load(true);
+    GLint width, height, numChannels;
+    for (GLuint i = 0; i < faces.size(); i++)
+    {
+        GLboolean *data = stbi_load(faces[i].c_str(), &width, &height, &numChannels, 0);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        }
+        else
+        {
+            std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+        }
+        stbi_image_free(data);
+    }
+
+    tex.id = texId;
+    tex.path = faces[0].c_str();
+    tex.type = "_CubeMap";
+
     return tex;
 }
 

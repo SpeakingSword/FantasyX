@@ -3,6 +3,7 @@
 #include "material.h"
 #include "mesh.h"
 #include "shader.h"
+#include "renderer.h"
 
 #include <glm\glm.hpp>
 #include <glm\gtc\matrix_transform.hpp>
@@ -97,30 +98,58 @@ void GameObject::Update()
 
 void GameObject::Draw()
 {
-    Render *render = (Render *)this->GetComponent("Render");
-    if (render != nullptr && render->mesh != nullptr)
+    if (this->visible)
     {
-        render->material->MappingProperty();
-        render->material->shader->Bind();
-        render->material->shader->SetMat4("modelMatrix", this->transform->modelMatrix);
-        render->material->shader->SetMat4("normalMatrix", glm::transpose(glm::inverse(this->transform->modelMatrix)));
-        glBindVertexArray(render->mesh->VAO);
-        if (render->mesh->indices.size() > 0)
+        Render *render = (Render *)this->GetComponent("Render");
+        if (render != nullptr && render->mesh != nullptr)
         {
-            glDrawElements(GL_TRIANGLES, render->mesh->indices.size(), GL_UNSIGNED_INT, 0);
+            render->material->MappingProperty();
+            render->material->shader->Bind();
+            render->material->shader->SetMat4("modelMatrix", this->transform->modelMatrix);
+            render->material->shader->SetMat4("normalMatrix", glm::transpose(glm::inverse(this->transform->modelMatrix)));
+            glBindVertexArray(render->mesh->VAO);
+            if (render->mesh->indices.size() > 0)
+            {
+                glDrawElements(GL_TRIANGLES, render->mesh->indices.size(), GL_UNSIGNED_INT, 0);
+                Renderer::vertices += render->mesh->indices.size();
+                Renderer::faces += render->mesh->indices.size() / 3;
+            }
+            else
+            {
+                glDrawArrays(GL_TRIANGLES, 0, render->mesh->vertices.size());
+                Renderer::vertices += render->mesh->vertices.size();
+                Renderer::faces += render->mesh->indices.size() / 3;
+            }
+            render->material->shader->Unbind();
+            glBindVertexArray(0);
         }
-        else
-        {
-            glDrawArrays(GL_TRIANGLES, 0, render->mesh->vertices.size());
-        }
-        render->material->shader->Unbind();
-        glBindVertexArray(0);
-    }
+    } 
 }
 
 void GameObject::Draw(Shader *shader)
 {
-    // 使用外部要求的、特殊的Shader绘制网格
+    if (this->visible)
+    {
+        Render *render = (Render *)this->GetComponent("Render");
+        if (render != nullptr && render->mesh != nullptr)
+        {
+            shader->Bind();
+            shader->SetMat4("modelMatrix", this->transform->modelMatrix);
+            glBindVertexArray(render->mesh->VAO);
+            if (render->mesh->indices.size() > 0)
+            {
+                glDrawElements(GL_TRIANGLES, render->mesh->indices.size(), GL_UNSIGNED_INT, 0);
+                Renderer::vertices += render->mesh->indices.size() / 3;
+            }
+            else
+            {
+                glDrawArrays(GL_TRIANGLES, 0, render->mesh->vertices.size());
+                Renderer::vertices += render->mesh->vertices.size();
+            }
+            shader->Unbind();
+            glBindVertexArray(0);
+        }
+    }
 }
 
 void GameObject::Destroy()
@@ -215,6 +244,76 @@ GameObject *GameObject::Cube()
     return cube;
 }
 
+void GameObject::SetMaterial(Material *mat)
+{
+    Render *render = (Render *)this->GetComponent("Render");
+    if (render != nullptr && render->material != nullptr)
+    {
+        render->material = mat;
+    }
+
+    if (child != nullptr)
+    {
+        TraverseSetMat(child, mat);
+    }
+}
+
+void GameObject::SetVisible(bool visible)
+{
+    this->visible = visible;
+    if (child != nullptr)
+    {
+        TraverseSetVisible(child, visible);
+    }
+        
+}
+
+void GameObject::TraverseSetMat(GameObject *obj, Material *mat)
+{
+    if (obj == nullptr)
+        return;
+
+    //设置材质
+    Render *render = (Render *)obj->GetComponent("Render");
+    if (render != nullptr && render->material != nullptr)
+    {
+        render->material = mat;
+    }
+
+    if (obj->child != nullptr)
+        TraverseSetMat(obj->child, mat);
+
+    if (obj->sibling != nullptr)
+        TraverseSetMat(obj->sibling, mat);
+
+}
+
+void GameObject::TraverseSetVisible(GameObject *obj, bool visible)
+{
+    if (obj == nullptr)
+        return;
+
+    //设置材质
+    obj->visible = visible;
+
+    if (obj->child != nullptr)
+        TraverseSetVisible(obj->child, visible);
+
+    if (obj->sibling != nullptr)
+        TraverseSetVisible(obj->sibling, visible);
+}
+
+Material *GameObject::GetMaterial()
+{
+    Render *render = (Render *)this->GetComponent("Render");
+    if (render != nullptr && render->material != nullptr)
+    {
+        return render->material;
+    }
+
+    return nullptr;
+}
+
 GameObject *GameObject::DirLight()
 {
     GameObject *dirLight = new GameObject();
@@ -286,4 +385,5 @@ GameObject *GameObject::Camera()
 
     return camera;
 }
+
 

@@ -12,8 +12,6 @@ using namespace std;
 
 namespace fx {
 
-    void InitGLFW(GLuint majorVersion, GLuint minorVersion);
-
     class fxWindow {
     public:
         GLuint width;
@@ -47,6 +45,9 @@ namespace fx {
                 }
 
                 this->window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+                GLfloat offsetX = (1920 - width) / 2;
+                GLfloat offsetY = (1080 - height) / 2;
+                glfwSetWindowPos(window, offsetX, offsetY);
 
                 if (window == nullptr)
                 {
@@ -85,8 +86,12 @@ namespace fx {
     private:
         static bool gladLoaded;
         static bool glfwInitiated;
+        GLfloat lastX;
+        GLfloat lastY;
+        bool firstMove;
         GLFWwindow *window;
         ~fxWindow();
+        void MouseMove(GLdouble xpos, GLdouble ypos, Camera *camera);
     };
 }
 

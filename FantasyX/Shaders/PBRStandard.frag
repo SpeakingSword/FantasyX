@@ -1,16 +1,18 @@
 #version 330 core
-#define MAX_POINT_LIGHT 8
-#define MAX_SPOT_LIGHT 8
-out vec4 FragColor;
+layout (location = 0) out vec3 gPos;
+layout (location = 1) out float gDepth;
+layout (location = 2) out vec3 gAlbedo;
+layout (location = 3) out float gMetallic;
+layout (location = 4) out vec3 gNormal;
+layout (location = 5) out float gRoughness;
+layout (location = 6) out float gAo;
 
 in VS_OUT {
 	vec2 texCoord;
 	vec3 fragPos;
-	vec3 normal; 
 	mat3 TBN;
 } fs_in;
 
-// 每个着色器的材质通道不一样
 struct Material {
     sampler2D _AlbedoMap;
     sampler2D _MetallicMap;
@@ -19,76 +21,32 @@ struct Material {
     sampler2D _AoMap;
 };
 
-// 每个着色器共享一组灯光数据
-struct DirLight {
-    vec3 color;
-    vec3 direction;
-    float ambient;
-    float diffuse;
-    float specular;
-    float strength;
-};
-
-struct PointLight {
-    vec3 color;
-    vec3 position;
-    float ambient;
-    float diffuse;
-    float specular;
-    float strength;
-    float radius;
-    float constant;
-    float linear;
-    float quadratic;
-};
-
-struct SpotLight {
-    vec3 color;
-    vec3 position;
-    vec3 direction;
-    float ambient;
-    float diffuse;
-    float specular;
-    float strength;
-    float cutOff;
-    float outerCutOff;
-    float constant;
-    float linear;
-    float quadratic;
-};
-
-// Shader 共享池
-layout (std140) uniform SharedDirLightt {
-    DirLight dirLight;
-};
-
-layout (std140) uniform SharedPointLights {
-    PointLight pointLights[MAX_POINT_LIGHT];
-};
-
-layout (std140) uniform SharedSpotLights {
-    SpotLight spotLights[MAX_SPOT_LIGHT];
-};
-
-layout (std140) uniform SharedVariable {
-    int lightNum;
-    vec3 viewPos;
-};
-
-// 着色器自有的连接外部的数据通道
 uniform Material material;
-uniform samplerCube irradianceMap;
-uniform samplerCube prefilterMap;
-uniform sampler2D brdfLUT;
 
-// 定义各种需要的光照算法 ... 
+layout (std140) uniform SharedCameraValues
+{
+    float NEAR;
+    float FAR;	
+};
 
-
-
-
+float LinearizeDepth(float depth);
 
 void main()
 {
-    // 执行光照计算并着色
+    gPos = fs_in.fragPos;
+    gDepth = LinearizeDepth(gl_FragCoord.z);
+    gAlbedo = texture(material._AlbedoMap, fs_in.texCoord).rgb;
+    gMetallic = texture(material._MetallicMap, fs_in.texCoord).r;
+    vec3 norm = normalize(texture(material._NormalMap, fs_in.texCoord).rgb);
+    norm = normalize(norm * 2.0f - 1.0f);
+    norm = normalize(fs_in.TBN * norm);
+    gNormal = norm;
+    gRoughness = texture(material._RoughnessMap, fs_in.texCoord).r;
+    gAo = texture(material._AoMap, fs_in.texCoord).r;
 }
 
+float LinearizeDepth(float depth)
+{
+    float z = depth * 2.0 - 1.0;
+    return (2.0 * NEAR * FAR) / (FAR + NEAR - z * (FAR - NEAR));
+}
