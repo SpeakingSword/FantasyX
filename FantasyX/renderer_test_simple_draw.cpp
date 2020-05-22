@@ -73,8 +73,8 @@ int main()
     zero->name = "ZeroObject";
     zero->transform->position = Vector3(0.0f, 0.0f, 0.0f);
 
-    GameObject *model = res->LoadModel("D:\\OpenGLAssets\\Models\\tiger-white\\Tiger_.fbx");
-    //GameObject *model = res->LoadModel("D:\\OpenGLAssets\\Models\\Cerberus\\fire_gun.obj");
+    //GameObject *model = res->LoadModel("D:\\OpenGLAssets\\Models\\tiger-white\\Tiger_.fbx");
+    GameObject *model = res->LoadModel("D:\\OpenGLAssets\\Models\\Cerberus\\fire_gun.obj");
     //GameObject *model = GameObject::Cube();
     model->name = "model";
     model->transform->position = Vector3(0.0f, 0.0f, 0.0f);
@@ -82,7 +82,7 @@ int main()
     GLfloat model_scale = 0.1f;
     model->transform->scale = Vector3(model_scale);
 
-    /*
+    
     PBRStandardMaterial *model_standard_mat = new PBRStandardMaterial();
     model_standard_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\Cerberus\\Textures\\Cerberus_A.tga", "_AlbedoMap", true));
     model_standard_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\Cerberus\\Textures\\Cerberus_M.tga", "_MetallicMap"));
@@ -90,10 +90,10 @@ int main()
     model_standard_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\Cerberus\\Textures\\Cerberus_R.tga", "_RoughnessMap"));
     model_standard_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\Cerberus\\Textures\\Cerberus_AO.tga", "_AoMap"));
     model->SetMaterial(model_standard_mat);
-    */
     
-    PBRSimpleMaterial *model_simple_mat = new PBRSimpleMaterial();
-    model->SetMaterial(model_simple_mat);
+    
+    //PBRSimpleMaterial *model_simple_mat = new PBRSimpleMaterial();
+    //model->SetMaterial(model_simple_mat);
     
 
     GameObject *base = GameObject::Cube();
@@ -113,6 +113,7 @@ int main()
     pointLightZero->name = "PointLightZero";
     pointLightZero->transform->position = Vector3(0.0f, 2.6f, 0.0f);
     bool p_light_rotate = false;
+    GLfloat rotateSpeed = 1.0f;
     GLfloat p_light_radius = 3.0f;
     GameObject *pointLight1 = GameObject::PointLight();
     GameObject *pointLight2 = GameObject::PointLight();
@@ -153,7 +154,7 @@ int main()
         pointLight3->transform->position = Vector3(p_light_radius, 0.0f, -p_light_radius);
         if (p_light_rotate)
         {
-            pointLightZero->transform->rotation.y += 30.0f * Time::deltaTime;
+            pointLightZero->transform->rotation.y += 30.0f * Time::deltaTime * rotateSpeed;
         }
 
         model->transform->scale = Vector3(model_scale);
@@ -237,6 +238,16 @@ int main()
                 renderer->finalDisplay = DISPLAY_ONLY_METALLIC_MAP;
             if (ImGui::Button("NORMAL"))
                 renderer->finalDisplay = DISPLAY_ONLY_NORMAL_MAP;
+            ImGui::SameLine();
+            if (ImGui::Button("ROUGHNESS"))
+                renderer->finalDisplay = DISPLAY_ONLY_ROUGHNESS_MAP;
+            ImGui::SameLine();
+            if (ImGui::Button("POS"))
+                renderer->finalDisplay = DISPLAY_ONLY_POS_MAP;
+            ImGui::SameLine();
+            if (ImGui::Button("AO"))
+                renderer->finalDisplay = DISPLAY_ONLY_AO_MAP;
+
 
             ImGui::Text("Post: ");
             ImGui::SameLine();
@@ -267,6 +278,7 @@ int main()
             ImGui::Text("PointLight Setting");
             ImGui::Checkbox("PointLightsOn", &pointLightZero->visible);
             ImGui::Checkbox("PLightRotate", &p_light_rotate);
+            ImGui::SliderFloat("PLRotateSpeed", &rotateSpeed, 0.0f, 6.0f);
             ImGui::SliderFloat("PlightRadius", &p_light_radius, 1.0f, 10.0f);
             ImGui::SliderFloat("PLightHeight", &pointLightZero->transform->position.y, 0.0f, 10.0f);
             ImGui::ColorEdit3("P1Color", (GLfloat *)&(((PointLight *)(pointLight1->GetComponent("Light")))->color));
@@ -279,9 +291,9 @@ int main()
             ImGui::SliderFloat("ModelRoateY", &model->transform->rotation.y, 0.0f, 360.0f);
             ImGui::SliderFloat("ModelScale", &model_scale, 0.0f, 1.0f);
             
-            ImGui::ColorEdit3("ModelColor", (GLfloat *)&model_simple_mat->baseColor);
-            ImGui::SliderFloat("ModelMetallic", &model_simple_mat->metallic, 0.0f, 1.0f);
-            ImGui::SliderFloat("ModelRoughness", &model_simple_mat->roughness, 0.0f, 1.0f);
+            //ImGui::ColorEdit3("ModelColor", (GLfloat *)&model_simple_mat->baseColor);
+            //ImGui::SliderFloat("ModelMetallic", &model_simple_mat->metallic, 0.0f, 1.0f);
+            //ImGui::SliderFloat("ModelRoughness", &model_simple_mat->roughness, 0.0f, 1.0f);
 
             ImGui::Text("Base Setting");
             ImGui::SliderFloat3("BaseRoate", (GLfloat *)&base->transform->rotation, 0.0f, 360.0f);

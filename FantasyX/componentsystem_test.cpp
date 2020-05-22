@@ -12,14 +12,14 @@ int main()
 {
     GameObject *man = new GameObject("Man", GT_OPAQUE);
     man->AddComponent(new Transform());
-    man->AddComponent(new MeshFilter());
+    man->AddComponent(new Render());
     man->ShowAllComponent();
     
-    man->AddComponent(new MeshFilter());
+    man->AddComponent(new Render());
     man->AddComponent(new Transform());
 
     man->RemoveComponent("Light");
-    man->RemoveComponent("MeshFilter");
+    man->RemoveComponent("Render");
 
     Component *trans = man->GetComponent("Transform");
     trans->Print();

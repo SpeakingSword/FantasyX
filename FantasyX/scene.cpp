@@ -32,6 +32,16 @@ void Scene::Destroy()
     this->~Scene();
 }
 
+const BiTree<GameObject*>& fx::Scene::GetOpaqueTree()
+{
+    return opaqueTree;
+}
+
+const BiTree<GameObject*>& fx::Scene::GetTransparentTree()
+{
+    return transparentTree;
+}
+
 GameObject *Scene::Start() const
 {
     return this->root->child;
@@ -288,4 +298,19 @@ void Scene::Render()
     }
     
 }
+void fx::Scene::InorderPrintBSP(BiTreeNode<GameObject*> *treeNode)
+{
+    if (treeNode == nullptr)
+        return;
+
+    InorderPrintBSP(treeNode->left);
+
+    if (treeNode->data != nullptr)
+    {
+        treeNode->data->PrintName();
+    }
+
+    InorderPrintBSP(treeNode->right);
+}
+
 #pragma endregion

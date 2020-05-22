@@ -309,6 +309,7 @@ void Renderer::GeomatryMapping()
     glBindFramebuffer(GL_FRAMEBUFFER, buffer[G_BUFFER]->id);
     glViewport(0, 0, canvaWidth, canvaHeight);
     glEnable(GL_DEPTH_TEST);
+    glClearColor(backGroundColor.x, backGroundColor.y, backGroundColor.z, 1.0f);
     glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
     GameObject *camera = sceneData.cameras->front();
@@ -571,29 +572,33 @@ void Renderer::ForwardRender()
     glBindFramebuffer(GL_FRAMEBUFFER, buffer[FORWARDRENDER_BUFFER]->id);
     glViewport(0, 0, canvaWidth, canvaHeight);
     glEnable(GL_DEPTH_TEST);
-    glDisable(GL_CULL_FACE);
-    glDepthFunc(GL_LEQUAL);
 
-    // 绑定需要显示的天空盒子
-    glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_CUBE_MAP, publicHdrIBLTextures != nullptr ? publicHdrIBLTextures->IBLTextures[IBL_CUBE_MAP]->id : skyboxTexture.id);
+    // 是否绘制天空盒子
+    if (((Camera *)sceneData.cameras->front()->GetComponent("Camera"))->projection == CAM_PERSPECTIVE)
+    {
+        glDisable(GL_CULL_FACE);
+        glDepthFunc(GL_LEQUAL);
+        // 绑定需要显示的天空盒子
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, publicHdrIBLTextures != nullptr ? publicHdrIBLTextures->IBLTextures[IBL_CUBE_MAP]->id : skyboxTexture.id);
 
-    SkyBoxShader *skyboxShader = SkyBoxShader::GetInstance();
-    skyboxShader->Bind();
+        SkyBoxShader *skyboxShader = SkyBoxShader::GetInstance();
+        skyboxShader->Bind();
 
-    CubeMesh *mesh = CubeMesh::GetInstance();
-    glBindVertexArray(mesh->VAO);
+        CubeMesh *mesh = CubeMesh::GetInstance();
+        glBindVertexArray(mesh->VAO);
 
-    if (mesh->indices.size() > 0)
-        glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
-    else
-        glDrawArrays(GL_TRIANGLES, 0, mesh->vertices.size());
+        if (mesh->indices.size() > 0)
+            glDrawElements(GL_TRIANGLES, mesh->indices.size(), GL_UNSIGNED_INT, 0);
+        else
+            glDrawArrays(GL_TRIANGLES, 0, mesh->vertices.size());
 
-    skyboxShader->Unbind();
-    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-    glBindVertexArray(0);
-    glEnable(GL_CULL_FACE);
-    glDepthFunc(GL_LESS);
+        skyboxShader->Unbind();
+        glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+        glBindVertexArray(0);
+        glEnable(GL_CULL_FACE);
+        glDepthFunc(GL_LESS);
+    }
 }
 
 void Renderer::CatchBright()

@@ -257,8 +257,20 @@ void Render::Print()
     std::cout << "Component Name: " << this->name.c_str() << std::endl;
     const GLchar *host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
     std::cout << "Host Name: " << host_name << std::endl;
-    this->mesh->Print();
-    this->material->Print();
+    if (this->mesh != nullptr)
+    {
+        this->mesh->Print();
+    }
+    else
+        std::cout << "Mesh: NULL" << std::endl;
+
+    if (this->material != nullptr)
+    {
+        this->material->Print();
+    }
+    else
+        std::cout << "Material: NULL" << std::endl;
+    
 }
 #pragma endregion
 

@@ -176,6 +176,11 @@ void GameObject::Print(const GLchar *prefix)
     std::cout << prefix << "GameObject Sibling: " << (void *)sibling << std::endl;
 }
 
+void GameObject::PrintName()
+{
+    std::cout << "GameObject Name: " << name.c_str() << std::endl;
+}
+
 void GameObject::PrintAll(GameObject *root, std::string &prefix)
 {
     // ÏÈÐò±éÀú

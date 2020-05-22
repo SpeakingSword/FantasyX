@@ -47,7 +47,7 @@ void TestObjectTree()
     man_head->Add(left_eye);
     man_head->Add(right_eye);
 
-    std::string prefix = "";
+    std::string prefix = "-";
     GameObject::PrintAllName(man, prefix);
 }
 

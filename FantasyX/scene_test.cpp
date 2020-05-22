@@ -60,7 +60,8 @@ int main()
     cube_2->name = "Cube2";
     GameObject *cube_3 = GameObject::Cube();
     cube_3->name = "Cube3";
-    GameObject *solder = res->LoadModel("D:\\OpenGL3DModels\\nanosuit\\nanosuit.obj");
+    GameObject *cube_4 = GameObject::Cube();
+    cube_4->name = "Cube4";
 
     GameObject *dirLight = GameObject::DirLight();
     dirLight->name = "DirLight";
@@ -72,20 +73,22 @@ int main()
     pointLight_2->name = "PointLight2";
     pointLight_2->transform->position = Vector3(-4.0f, 0.0f, 0.0f);
 
-    cube_1->transform->position = Vector3(0.0f, 0.0f, 4.0f);
-    cube_2->transform->position = Vector3(0.0f, 0.0f, 2.0f);
-    cube_3->transform->position = Vector3(0.0f, 0.0f, -2.0f);
-    solder->transform->position = Vector3(0.0f, 0.0f, -4.0f);
+    cube_1->transform->position = Vector3(0.0f, 0.0f, 2.0f);
+    cube_2->transform->position = Vector3(0.0f, 0.0f, 4.0f);
+    cube_3->transform->position = Vector3(0.0f, 0.0f, -8.0f);
+    cube_4->transform->position = Vector3(0.0f, 0.0f, -4.0f);
 
     scene->Add(cube_1);
     scene->Add(cube_2);
     scene->Add(cube_3);
-    scene->Add(solder);
+    scene->Add(cube_4);
     scene->Add(dirLight);
     scene->Add(pointLight_1);
     scene->Add(pointLight_2);
 
     scene->Init();
+
+    Scene::InorderPrintBSP(scene->GetOpaqueTree().root);
 
     GLfloat timer = 0.0f;
 

@@ -40,6 +40,7 @@ namespace fx {
         void Draw(Shader *shader);
         void Destroy();
         void Print();
+        void PrintName();
         void Print(const GLchar *prefix);
         static void PrintAll(GameObject *root, string &prefix);
         static void PrintAllName(GameObject *root, string &prefix);
