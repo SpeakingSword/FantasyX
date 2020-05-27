@@ -142,8 +142,8 @@ namespace fx {
         FrameBuffer();
         bool CheckCompleteness();
         void DeclearBuffer();
-        // void Bind();
-        // void Unbind();
+        void Bind();
+        void Unbind();
         void CreateBuffer();
         void ClearBuffer();
         void ResetBuffer();
@@ -154,6 +154,9 @@ namespace fx {
         void ReleaseDepthAttachment();
         void ReleaseStencilAttachment();
         void Destroy();
+
+        static void BlitColorBuffer(GLuint src, GLuint srcAttach, GLuint dst, GLuint dstAttach, GLuint srcWid, GLuint srcHgt, GLuint dstWid, GLuint dstHgt);
+        static void BlitDepthBuffer(GLuint src, GLuint dst, GLuint srcWid, GLuint srcHgt, GLuint dstWid, GLuint dstHgt);
 
     private:
         ~FrameBuffer();

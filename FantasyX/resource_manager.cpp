@@ -14,7 +14,7 @@ GameObject *ResourceManager::LoadModel(const GLchar *path)
     const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
     if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
     {
-        cout << "ENGIN CORE::ERROR::RESOURCE MANAGER: " << importer.GetErrorString() << endl;
+        cout << "ENGIN CORE::ERROR::RESOURCE MANAGER::" << importer.GetErrorString() << endl;
         return nullptr;
     }
 
@@ -34,7 +34,6 @@ void ResourceManager::ProcessNode(aiNode *node, const aiScene *scene, GameObject
     obj->name = node->mName.C_Str();
     obj->tag = GT_OPAQUE;
 
-    // 给GameObject添加 Render 组件
     Render *render = new Render();
     render->material = mat;
 
@@ -44,6 +43,8 @@ void ResourceManager::ProcessNode(aiNode *node, const aiScene *scene, GameObject
         aiMesh *mesh = scene->mMeshes[node->mMeshes[0]];
         render->mesh = ProcessMesh(mesh, path);
     }
+
+    // 给GameObject添加 Render 组件
     obj->AddComponent(render);
 
     for (GLuint i = 0; i < node->mNumChildren; i++)
@@ -128,84 +129,113 @@ PolygonMesh *ResourceManager::ProcessMesh(aiMesh *mesh, const GLchar *path)
 Texture ResourceManager::LoadTexture2D(const GLchar *path, const GLchar *type, bool gamma)
 {
     Texture tex;
-    GLuint textureID;
-    glGenTextures(1, &textureID);
+    auto got = loaded.find(path);
 
-    GLint width, height, numChannel;
-    GLboolean *data = stbi_load(path, &width, &height, &numChannel, 0);
-    if (data)
+    if (got == loaded.end())
     {
-        GLenum interFormat;
-        GLenum dataFormat;
-        if (numChannel == 1)
-            interFormat = dataFormat = GL_RED;
-        else if (numChannel == 3)
+        GLuint textureID;
+        glGenTextures(1, &textureID);
+
+        GLint width, height, numChannel;
+        GLboolean *data = stbi_load(path, &width, &height, &numChannel, 0);
+        if (data)
         {
-            interFormat = gamma ? GL_SRGB : GL_RGB;
-            dataFormat = GL_RGB;
+            GLenum interFormat;
+            GLenum dataFormat;
+            if (numChannel == 1)
+                interFormat = dataFormat = GL_RED;
+            else if (numChannel == 3)
+            {
+                interFormat = gamma ? GL_SRGB : GL_RGB;
+                dataFormat = GL_RGB;
+            }
+            else if (numChannel == 4)
+            {
+                interFormat = gamma ? GL_SRGB_ALPHA : GL_RGBA;
+                dataFormat = GL_RGBA;
+            }
+
+            glBindTexture(GL_TEXTURE_2D, textureID);
+            glTexImage2D(GL_TEXTURE_2D, 0, interFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+
+            tex.id = textureID;
+            tex.path = path;
+            tex.type = type;
+
+            // 放入容器保存，从插入记录
+            textures.push_back(tex);
+            std::pair<string, GLuint> p(path, textures.size() - 1);
+            loaded.insert(p);
+
+            std::cout << "ENGIN CORE::RESOURCE MANAGER::" << path << " successfully loaded ... " << std::endl;
         }
-        else if (numChannel == 4)
+        else
         {
-            interFormat = gamma ? GL_SRGB_ALPHA : GL_RGBA;
-            dataFormat = GL_RGBA;
+            std::cout << "ENGIN CORE::ERROR::RESOURCE MANAGER::Texture failed to load: " << path << std::endl;
         }
 
-        glBindTexture(GL_TEXTURE_2D, textureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, interFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
-        glGenerateMipmap(GL_TEXTURE_2D);
-
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-
-        tex.id = textureID;
-        tex.path = path;
-        tex.type = type;
-
-        std::cout << "ENGIN CORE::RESOURCE MANAGER: " << path << " successfully loaded ... " << std::endl;
+        stbi_image_free(data);
+        
     }
     else
     {
-        std::cout << "ENGIN CORE::ERROR::RESOURCE MANAGER: Texture failed to load: " << path << std::endl;
+        tex = textures[(*got).second];
     }
 
-    stbi_image_free(data);
     return tex;
 }
 
 Texture ResourceManager::LoadHdrTexture(const GLchar *path)
 {
     Texture hdr;
-    stbi_set_flip_vertically_on_load(true);
-    GLint width, height, numComponent;
-    GLfloat *data = stbi_loadf(path, &width, &height, &numComponent, 0);
-    GLuint hdrTextureID;
-    if (data)
+    auto got = loaded.find(path);
+
+    if (got == loaded.end())
     {
-        glGenTextures(1, &hdrTextureID);
-        glBindTexture(GL_TEXTURE_2D, hdrTextureID);
-        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+        stbi_set_flip_vertically_on_load(true);
+        GLint width, height, numChanel;
+        GLfloat *data = stbi_loadf(path, &width, &height, &numChanel, 0);
+        GLuint hdrTextureID;
+        if (data)
+        {
+            glGenTextures(1, &hdrTextureID);
+            glBindTexture(GL_TEXTURE_2D, hdrTextureID);
+            glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
 
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+            glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-        hdr.id = hdrTextureID;
-        hdr.path = path;
-        hdr.type = "_HdrMap";
+            hdr.id = hdrTextureID;
+            hdr.path = path;
+            hdr.type = "_HdrMap";
 
-        std::cout << "ENGIN CORE::Loading " << path << " success." << std::endl;
+            textures.push_back(hdr);
+            std::pair<string, GLuint> p(path, textures.size() - 1);
+            loaded.insert(p);
+
+            std::cout << "ENGIN CORE::RESOURCE MANAGER::" << path << " successfully loaded ... " << std::endl;
+        }
+        else
+        {
+            std::cout << "ENGIN CORE::ERROR::RESOURCE MANAGER::Texture failed to load: " << path << std::endl;
+        }
+
+        stbi_set_flip_vertically_on_load(false);
+        stbi_image_free(data);
     }
     else
     {
-        std::cout << "Failed to load HDR image." << std::endl;
-        std::cout << path << std::endl;
+        hdr = textures[(*got).second];
     }
-
-    stbi_set_flip_vertically_on_load(false);
-    stbi_image_free(data);
+    
     return hdr;
 }
 
@@ -232,7 +262,7 @@ Texture ResourceManager::LoadCubeMap(std::vector <std::string> faces)
         }
         else
         {
-            std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
+            std::cout << "ENGIN CORE::ERROR::RESOURCE MANAGER::Texture failed to load: " << faces[i] << std::endl;
         }
         stbi_image_free(data);
     }
@@ -267,6 +297,8 @@ const GLchar *ResourceManager::GetImageDir()
 
 GLchar *ResourceManager::GetFileString(const GLchar *path)
 {
+    GLchar *str = nullptr;
+
     std::string fileString;
     std::ifstream inputFile;
 
@@ -279,15 +311,15 @@ GLchar *ResourceManager::GetFileString(const GLchar *path)
         fileStream << inputFile.rdbuf();
         inputFile.close();
         fileString = fileStream.str();
+
+        str =  new GLchar[fileString.size() + 1];
+        strcpy_s(str, fileString.size() + 1, fileString.c_str());
     }
     catch (std::ifstream::failure e)
     {
-        std::cout << "ENGIN CORE::ERROR::REOURCE MANAGER: File not successfully read !" << std::endl;
+        std::cout << "ENGIN CORE::ERROR::REOURCE MANAGER::File not successfully read !" << std::endl;
         std::cout << path << std::endl;
     }
-
-    GLchar *str = new GLchar[fileString.size() + 1];
-    strcpy_s(str, fileString.size() + 1, fileString.c_str());
 
     return str;
 }

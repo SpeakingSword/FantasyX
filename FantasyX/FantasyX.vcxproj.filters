@@ -256,14 +256,17 @@
     <ClCompile Include="renderer.cpp">
       <Filter>sources\core</Filter>
     </ClCompile>
-    <ClCompile Include="renderer_test_simple_draw.cpp">
-      <Filter>sources\test</Filter>
-    </ClCompile>
     <ClCompile Include="demo.cpp">
       <Filter>sources\test</Filter>
     </ClCompile>
     <ClCompile Include="context.cpp">
       <Filter>sources\core</Filter>
+    </ClCompile>
+    <ClCompile Include="renderer_test.cpp">
+      <Filter>sources\test</Filter>
+    </ClCompile>
+    <ClCompile Include="loadcheck_test.cpp">
+      <Filter>sources\test</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

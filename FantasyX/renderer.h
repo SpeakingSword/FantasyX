@@ -40,6 +40,7 @@ namespace fx {
         BLOOM_BUFFER,
         FXAA_BUFFER,
         POSTPROCESSING_BUFFER,
+        TRANSMITION_BUFFER,
         RENDERER_BUFFER_NUM
     }RendererBuffer;
 
@@ -67,6 +68,7 @@ namespace fx {
         UniformBuffer *shaderBuffer[SHADER_BUFFER_NUM];
         unordered_map<string, HdrIBLTextures *> hdrIBLTextureStorage;
         HdrIBLTextures *publicHdrIBLTextures;
+        bool singleColor;
 
         ~Renderer();
         void BeforeRender();
@@ -91,6 +93,7 @@ namespace fx {
         GLuint bloomWidth;
         GLuint fxaa;
         GLuint postProcessing;
+        GLfloat postStrength;
         GLuint finalDisplay;
 
         GLfloat gamma;
@@ -98,8 +101,7 @@ namespace fx {
 
         GLuint drawMode;
         bool shadowOn;
-        bool softShadow;
-        GLfloat dirLightShadowMapWidth;
+        GLuint dirLightShadowMapWidth;
         GLfloat dirLightViewNear;
         GLfloat dirLightViewFar;
 

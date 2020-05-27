@@ -32,27 +32,26 @@ namespace fx {
         string shaderDir;
         string imageDir;
 
-        // 使用哈希表防止重复导入网格和贴图等数据
-        // string 保存的是文件的路径
-        unordered_map<string, GLuint> store;
+        // 资源加载记录
+        unordered_map<string, GLuint> loaded;
 
         static ResourceManager *_instance;
         ResourceManager()
         {
-            cout << "ENGIN CORE: ResourceManager created ... " << endl;
+            cout << "ENGIN CORE::ResourceManager created ... " << endl;
         }
 
         class GC {
         public:
-            GC() { cout << "ENGIN CORE: ResourceManager GC created ... " << endl; }
+            GC() { cout << "ENGIN CORE::ResourceManager GC created ... " << endl; }
             ~GC()
             {
-                cout << "ENGIN CORE: ResourceManager GC destroyed ..." << endl;
+                cout << "ENGIN CORE::ResourceManager GC destroyed ..." << endl;
                 if (_instance != nullptr)
                 {
                     delete _instance;
                     _instance = nullptr;
-                    cout << "ENGIN CORE: ResourceManager destroyed ... " << endl;
+                    cout << "ENGIN CORE::ResourceManager destroyed ... " << endl;
                 }
             }
         };

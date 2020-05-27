@@ -89,7 +89,11 @@ namespace fx {
 
     typedef enum {
         POST_NONE,
-        POST_REVERSAL
+        POST_REVERSAL,
+        POST_GREY,
+        POST_SHARPEN,
+        POST_BLUR,
+        POST_EDGE_DETECTION
     }PostProcessing;
 
     typedef enum {
@@ -100,7 +104,6 @@ namespace fx {
 
     typedef enum {
         DISPLAY_ALL,
-        DISPLAY_ALL_NO_POST_EFFECT,
         DISPLAY_ONLY_ALBEDO_MAP,
         DISPLAY_ONLY_NORMAL_MAP,
         DISPLAY_ONLY_METALLIC_MAP,

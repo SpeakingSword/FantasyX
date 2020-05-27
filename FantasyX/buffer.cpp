@@ -42,7 +42,6 @@ void FrameBuffer::Destroy()
     this->~FrameBuffer();
 }
 
-/*
 void FrameBuffer::Bind()
 {
     if (id != 0)
@@ -58,7 +57,6 @@ void FrameBuffer::Unbind()
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 }
-*/
 
 void FrameBuffer::CreateBuffer()
 {
@@ -316,6 +314,28 @@ void FrameBuffer::ReleaseStencilAttachment()
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+}
+
+void FrameBuffer::BlitColorBuffer(GLuint src, GLuint srcAttach, GLuint dst, GLuint dstAttach, GLuint srcWid, GLuint srcHgt, GLuint dstWid, GLuint dstHgt)
+{
+    if (src != 0 && dst != 0 && src != dst)
+    {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, src);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dst);
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + srcAttach);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0 + dstAttach);
+        glBlitFramebuffer(0, 0, srcWid, srcHgt, 0, 0, dstWid, dstHgt, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    }
+}
+
+void FrameBuffer::BlitDepthBuffer(GLuint src, GLuint dst, GLuint srcWid, GLuint srcHgt, GLuint dstWid, GLuint dstHgt)
+{
+    if (src != 0 && dst != 0 && src != dst)
+    {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, src);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, dst);
+        glBlitFramebuffer(0, 0, srcWid, srcHgt, 0, 0, dstWid, dstHgt, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
     }
 }
 

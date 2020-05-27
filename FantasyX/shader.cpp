@@ -293,6 +293,7 @@ void PBRLightingShader::InitShader()
     this->SetInt("irradianceMap", 7);
     this->SetInt("prefilterMap", 8);
     this->SetInt("brdfLutMap", 9);
+    this->SetInt("dirLightShadowMap", 12);
     this->Unbind();
 }
 

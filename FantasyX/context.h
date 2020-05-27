@@ -18,61 +18,8 @@ namespace fx {
         GLuint height;
         string title;
 
-        fxWindow(GLuint width = 1280, GLuint height = 720, const GLchar *title = "FantasyX")
-        {
-            window = nullptr;
-            this->width = width;
-            this->height = height;
-            this->title = title;
-            std::cout << "ENGIN CORE: A window was created ... " << std::endl;
-        }
-        void Init(GLuint contextMajorVersion = 3, GLuint contextMinorVersion = 3)
-        {
-
-            if (window == nullptr)
-            {
-                // 只需要初始化一次
-                if (!glfwInitiated)
-                {
-                    glfwInit();
-                    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-                    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-                    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-#ifdef __APPLE__
-                    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif
-                    glfwInitiated = true;
-                }
-
-                this->window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
-                GLfloat offsetX = (1920 - width) / 2;
-                GLfloat offsetY = (1080 - height) / 2;
-                glfwSetWindowPos(window, offsetX, offsetY);
-
-                if (window == nullptr)
-                {
-                    std::cout << "ENGIN CORE: Failed to created a glfw window ... " << std::endl;
-                    glfwTerminate();
-                    system("pause");
-                    exit(0);
-                }
-
-                glfwMakeContextCurrent(window);
-
-                // 只需要初始化一次
-                if (!gladLoaded)
-                {
-                    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-                    {
-                        std::cout << "ENGIN CORE: Failed to initialize GLAD" << std::endl;
-                        system("pause");
-                        exit(0);
-                    }
-
-                    gladLoaded = true;
-                }
-            }
-        }
+        fxWindow(GLuint width = 1280, GLuint height = 720, const GLchar *title = "FantasyX");
+        void Init(bool fullScreen, GLuint contextMajorVersion = 3, GLuint contextMinorVersion = 3);
         void Destroy();
         bool ShouldClose();
         void SwapBuffers();

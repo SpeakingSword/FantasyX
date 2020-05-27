@@ -7,7 +7,69 @@ bool fxWindow::glfwInitiated = false;
 
 fxWindow::~fxWindow()
 {
-    std::cout << "ENGIN CORE: A window was closed ... " << std::endl;
+    std::cout << "ENGIN CORE::A window was closed ... " << std::endl;
+}
+
+fx::fxWindow::fxWindow(GLuint width, GLuint height, const GLchar *title)
+{
+    window = nullptr;
+    this->width = width;
+    this->height = height;
+    this->title = title;
+    std::cout << "ENGIN CORE::A window was created ... " << std::endl;
+}
+
+void fx::fxWindow::Init(bool fullScreen, GLuint contextMajorVersion, GLuint contextMinorVersion)
+{
+    if (window == nullptr)
+    {
+        // 只需要初始化一次
+        if (!glfwInitiated)
+        {
+            glfwInit();
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+            glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+            glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+#ifdef __APPLE__
+            glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+#endif
+            glfwWindowHint(GLFW_DECORATED, !fullScreen);
+            glfwInitiated = true;
+        }
+
+        this->window = glfwCreateWindow(width, height, title.c_str(), NULL, NULL);
+        
+        GLfloat offsetX = (1920 - width) / 2;
+        GLfloat offsetY = (1080 - height) / 2;
+        // 30px 是标题栏的高度
+        if (!fullScreen)
+            offsetY += 30;
+
+        glfwSetWindowPos(window, offsetX, offsetY);
+
+        if (window == nullptr)
+        {
+            std::cout << "ENGIN CORE: Failed to created a glfw window ... " << std::endl;
+            glfwTerminate();
+            system("pause");
+            exit(0);
+        }
+
+        glfwMakeContextCurrent(window);
+
+        // 只需要初始化一次
+        if (!gladLoaded)
+        {
+            if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+            {
+                std::cout << "ENGIN CORE: Failed to initialize GLAD" << std::endl;
+                system("pause");
+                exit(0);
+            }
+
+            gladLoaded = true;
+        }
+    }
 }
 
 void fxWindow::Destroy()

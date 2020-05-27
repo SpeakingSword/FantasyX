@@ -41,17 +41,20 @@ uniform samplerCube prefilterMap;
 uniform sampler2D brdfLutMap;
 
 uniform vec3 viewPos;
-uniform vec4 backColor;
 uniform bool IBL;
 
 uniform DirLight dirLight;
 uniform bool dirLightOn;
+uniform bool dirLightShadowOn;
+uniform mat4 dirLightSpaceMatrix;
+uniform sampler2D dirLightShadowMap;
 
 uniform PointLight pointLights[MAX_POINT_LIGHT];
 uniform int pointLightNum;
 
 const float PI = 3.14159265359;
 
+float DirLightShadowCalculation(vec4 fragPosLightSpace, float bias);
 vec3 FresnelSchlickRoughness(float cosTheta, vec3 F0, float roughness);
 vec3 FresnelSchlick(float cosTheta, vec3 F0);
 float DistributionGGX(vec3 N, vec3 H, float roughness);
@@ -99,7 +102,16 @@ void main()
         kD *= (1.0f - metallic);
 
         float NdotL = max(dot(N, L), 0.0f);
-        Lo += (kD * albedo / PI + specular) * NdotL * dirLight.strength * dirLight.color;
+        vec3 dirLightResult = (kD * albedo / PI + specular) * NdotL * dirLight.strength * dirLight.color;
+        
+        if (dirLightShadowOn)
+        {
+            float bias = max(0.008 * (1.0 - dot(N, L)), 0.005);
+            float shadow = DirLightShadowCalculation(dirLightSpaceMatrix * vec4(fragPos, 1.0f), bias);
+            dirLightResult = dirLightResult * (1.0f - shadow);
+        }
+
+        Lo += dirLightResult;
     }
 
     if (pointLightNum > 0)
@@ -196,4 +208,29 @@ float GeomatrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 	float ggx2 = GeomatrySchlickGGX(NdotL, roughness);
 
 	return ggx1 * ggx2;
+}
+
+float DirLightShadowCalculation(vec4 fragPosLightSpace, float bias)
+{
+	float shadow;
+
+    vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
+
+    projCoords = projCoords * 0.5 + 0.5;
+
+    float currentDepth = projCoords.z;
+
+	vec2 texelSize = 1.0f / textureSize(dirLightShadowMap, 0);
+	for (int x = -1; x <= 1; ++x)
+		for (int y = -1; y <= 1; ++y)
+		{
+			float pcfDepth = texture(dirLightShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+			shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
+		}
+    shadow /= 9.0f;
+
+	if (projCoords.z > 1.0f)
+		shadow = 0.0f;
+
+    return shadow;
 }

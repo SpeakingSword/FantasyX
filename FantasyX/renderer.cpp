@@ -17,18 +17,19 @@ Renderer::Renderer()
 {
     this->bloomLevel = 6;
     this->bloomWidth = 1;
+    this->singleColor = false;
     this->IBL = false;
     this->shadowOn = false;
-    this->softShadow = false;
-    this->dirLightShadowMapWidth = 10.0f;
+    this->dirLightShadowMapWidth = 1024;
     this->dirLightViewNear = 0.1f;
-    this->dirLightViewFar = 1000.0f;
+    this->dirLightViewFar = 10.0f;
     this->drawMode = DRAW_WITH_FACES;
     this->exposure = 1.0f;
     this->finalDisplay = DISPLAY_ALL;
     this->fxaa = 0;
     this->gamma = 2.2f;
     this->postProcessing = POST_NONE;
+    this->postStrength = 0.0f;
     this->windowWith = 1280;
     this->windowHeight = 720;
     this->canvaHeight = windowWith;
@@ -69,15 +70,62 @@ void Renderer::RenderScene(SceneData data)
     sceneData = data;
     vertices = 0;
     faces = 0;
+
     BeforeRender();
     GeomatryMapping();
-    ShadowMapCalculate();
-    Lighting();
-    ForwardRender();
-    CatchBright();
-    GaussianBlur();
-    Bloom();
-    Fxaa();
+    switch (finalDisplay)
+    {
+    case DISPLAY_ALL:
+        ShadowMapCalculate();
+        Lighting();
+        ForwardRender();
+        if (bloomLevel > 0)
+        {
+            CatchBright();
+            GaussianBlur();
+            Bloom();
+        }
+        Fxaa();
+        singleColor = false;
+        break;
+
+    case DISPLAY_ONLY_ALBEDO_MAP:
+        FrameBuffer::BlitColorBuffer(buffer[G_BUFFER]->id, G_TEX_ALBEDO, buffer[TRANSMITION_BUFFER]->id, 0, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
+        singleColor = false;
+        break;
+
+    case DISPLAY_ONLY_AO_MAP:
+        FrameBuffer::BlitColorBuffer(buffer[G_BUFFER]->id, G_TEX_AO, buffer[TRANSMITION_BUFFER]->id, 0, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
+        singleColor = true;
+        break;
+
+    case DISPLAY_ONLY_METALLIC_MAP:
+        FrameBuffer::BlitColorBuffer(buffer[G_BUFFER]->id, G_TEX_METALLIC, buffer[TRANSMITION_BUFFER]->id, 0, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
+        singleColor = true;
+        break;
+
+    case DISPLAY_ONLY_NORMAL_MAP:
+        FrameBuffer::BlitColorBuffer(buffer[G_BUFFER]->id, G_TEX_NORMAL, buffer[TRANSMITION_BUFFER]->id, 0, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
+        singleColor = false;
+        break;
+
+    case DISPLAY_ONLY_ROUGHNESS_MAP:
+        FrameBuffer::BlitColorBuffer(buffer[G_BUFFER]->id, G_TEX_ROUGHNESS, buffer[TRANSMITION_BUFFER]->id, 0, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
+        singleColor = true;
+        break;
+
+    case DISPLAY_ONLY_POS_MAP:
+        FrameBuffer::BlitColorBuffer(buffer[G_BUFFER]->id, G_TEX_POS, buffer[TRANSMITION_BUFFER]->id, 0, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
+        singleColor = false;
+        break;
+
+    case DISPLAY_ONLY_DEPTH_MAP:
+        FrameBuffer::BlitColorBuffer(buffer[G_BUFFER]->id, G_TEX_DEPTH, buffer[TRANSMITION_BUFFER]->id, 0, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
+        singleColor = true;
+        break;
+    default:
+        break;
+    }
     Display();
     AfterRender();
 }
@@ -131,12 +179,29 @@ void Renderer::ReverseInorderTraverse(BiTreeNode<GameObject *> *node, Shader *sh
 
 void Renderer::BeforeRender()
 {
-    // 状态开关
-    glEnable(GL_CULL_FACE);
-    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
-    // 更新着色器共享内存变量值
-#pragma region UpdateShaderdMatrices
+#pragma region 初始化过渡缓冲
+
+    if (buffer[TRANSMITION_BUFFER] == nullptr)
+    {
+        buffer[TRANSMITION_BUFFER] = new FrameBuffer();
+        buffer[TRANSMITION_BUFFER]->CreateBuffer();
+
+        Texture2D *colorTex = new Texture2D();
+        colorTex->width = canvaWidth;
+        colorTex->height = canvaHeight;
+        //colorTex->minFilter = GL_NEAREST;
+        //colorTex->magFilter = GL_NEAREST;
+        colorTex->CreateBuffer();
+        buffer[TRANSMITION_BUFFER]->AddTexture2D(colorTex, COLOR_ATTACHMENT);
+
+        buffer[TRANSMITION_BUFFER]->DeclearBuffer();
+        buffer[TRANSMITION_BUFFER]->CheckCompleteness();
+    }
+
+#pragma endregion
+
+#pragma region 更新着色器共享变量
 
     if (shaderBuffer[SHARED_MATRICES] == nullptr)
     {
@@ -177,8 +242,7 @@ void Renderer::BeforeRender()
         projection = glm::perspective(glm::radians(camera->fov), (GLfloat)camera->width / (GLfloat)camera->height, camera->near, camera->far);
         break;
     case CAM_ORTHOGRAPHIC:
-        projection = glm::ortho(-(GLfloat)(camera->width / i), (GLfloat)(camera->width / i),
-            -(GLfloat)(camera->height / i), (GLfloat)(camera->height / i), camera->near, camera->far);
+        projection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, camera->near, camera->far);
         break;
     default:
         break;
@@ -196,6 +260,15 @@ void Renderer::BeforeRender()
     glBindBuffer(GL_UNIFORM_BUFFER, 0);
 
 #pragma endregion
+
+#pragma region 设置OpenGL的状态
+
+    // 状态开关
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+#pragma endregion
+
 }
 
 void Renderer::GeomatryMapping()
@@ -306,7 +379,7 @@ void Renderer::GeomatryMapping()
     }
 
     // 使用G缓冲
-    glBindFramebuffer(GL_FRAMEBUFFER, buffer[G_BUFFER]->id);
+    buffer[G_BUFFER]->Bind();
     glViewport(0, 0, canvaWidth, canvaHeight);
     glEnable(GL_DEPTH_TEST);
     glClearColor(backGroundColor.x, backGroundColor.y, backGroundColor.z, 1.0f);
@@ -325,7 +398,7 @@ void Renderer::GeomatryMapping()
         InorderTraverse(sceneData.opaqueTree->root);
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    buffer[G_BUFFER]->Unbind();
     glPolygonMode(GL_FRONT_AND_BACK, GL_FILL);
 }
 
@@ -339,9 +412,9 @@ void Renderer::ShadowMapCalculate()
         buffer[SHADOWMAP_CALCULATE_BUFFER]->CreateBuffer();
 
         Texture2D *shadowMap = new Texture2D();
-        shadowMap->internalFormat = GL_DEPTH_COMPONENT;
-        shadowMap->width = canvaWidth;
-        shadowMap->height = canvaHeight;
+        shadowMap->internalFormat = GL_DEPTH_COMPONENT24;
+        shadowMap->width = dirLightShadowMapWidth;
+        shadowMap->height = dirLightShadowMapWidth;
         shadowMap->dataFormat = GL_DEPTH_COMPONENT;
         shadowMap->minFilter = GL_NEAREST;
         shadowMap->magFilter = GL_NEAREST;
@@ -357,22 +430,25 @@ void Renderer::ShadowMapCalculate()
 #pragma endregion
 
     // 如果满足条件才绘制
-    if (sceneData.dirLights->size() > 0 && shadowOn && (finalDisplay == DISPLAY_ALL || finalDisplay == DISPLAY_ALL_NO_POST_EFFECT))
+    if (sceneData.dirLights->size() > 0 && shadowOn)
     {
         // 使用阴影贴图绘制缓冲
-        glBindFramebuffer(GL_FRAMEBUFFER, buffer[SHADOWMAP_CALCULATE_BUFFER]->id);
-        glViewport(0, 0, canvaWidth, canvaHeight);
+        buffer[SHADOWMAP_CALCULATE_BUFFER]->Bind();
+        glViewport(0, 0, dirLightShadowMapWidth, dirLightShadowMapWidth);
         glEnable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT);
 
         // 计算定向光源位置的变换矩阵
-        Matrix4x4 dirLightProjection = glm::ortho(-(dirLightShadowMapWidth / 2), dirLightShadowMapWidth / 2, -(dirLightShadowMapWidth * canvaHeight / canvaWidth), 
-            dirLightShadowMapWidth * canvaHeight / canvaWidth, dirLightViewNear, dirLightViewFar);
+        GLfloat near = 0.1f, far = 10.0f;
+        Matrix4x4 dirLightProjection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, near, far);
         Matrix4x4 dirLightView = glm::lookAt(sceneData.dirLights->front()->transform->worldPos, Vector3(0.0f), WORLD_UP);
+        Matrix4x4 dirLightSpaceMatrix = dirLightProjection * dirLightView;
 
         DirLightShadowShader *shader = DirLightShadowShader::GetInstance();
         shader->Bind();
-        shader->SetMat4("lightSpaceMatrix", dirLightProjection * dirLightView);
+        shader->SetMat4("lightSpaceMatrix", dirLightSpaceMatrix);
+        shader->SetFloat("NEAR", near);
+        shader->SetFloat("FAR", far);
 
         // 确定遍历顺序
         GLfloat r = glm::dot(sceneData.dirLights->front()->transform->front, WORLD_FRONT);
@@ -386,7 +462,13 @@ void Renderer::ShadowMapCalculate()
         }
 
         shader->Unbind();
-        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        buffer[SHADOWMAP_CALCULATE_BUFFER]->Unbind();
+
+        // 顺便设置定向光的空间投影矩阵
+        PBRLightingShader *lighting_shader = PBRLightingShader::GetInstance();
+        lighting_shader->Bind();
+        lighting_shader->SetMat4("dirLightSpaceMatrix", dirLightSpaceMatrix);
+        lighting_shader->Unbind();
     }
 }
 
@@ -455,11 +537,12 @@ void Renderer::Lighting()
         for (GLuint i = G_TEX_NUM, j = IBL_IRRADIANCE_MAP; j < IBL_MAP_NUM; ++i, ++j)
         {
             glActiveTexture(GL_TEXTURE0 + i);
-            glBindTexture(currentHdrIBLTextures->IBLTextures[j]->type, currentHdrIBLTextures->IBLTextures[j]->id);
+            GLuint type = currentHdrIBLTextures->IBLTextures[j]->type;
+            glBindTexture(type, currentHdrIBLTextures->IBLTextures[j]->id);
         }
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, buffer[LIGHTING_BUFFER]->id);
+    buffer[LIGHTING_BUFFER]->Bind();
     glViewport(0, 0, canvaWidth, canvaHeight);
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -473,7 +556,7 @@ void Renderer::Lighting()
     PBRLightingShader *shader = PBRLightingShader::GetInstance();
     shader->Bind();
     shader->SetVec3("viewPos", sceneData.cameras->front()->transform->worldPos);
-    shader->SetVec4("backColor", backGroundColor);
+
     if (IBL && currentHdrIBLTextures != nullptr && currentHdrIBLTextures->textureBeenFilled)
     {
         shader->SetBool("IBL", true);
@@ -489,6 +572,18 @@ void Renderer::Lighting()
         shader->SetVec3("dirLight.direction", ((DirLight *)(sceneData.dirLights->front()->GetComponent("Light")))->direction);
         shader->SetFloat("dirLight.strength", ((DirLight *)(sceneData.dirLights->front()->GetComponent("Light")))->strength);
         shader->SetBool("dirLightOn", true);
+
+        if (shadowOn)
+        {
+            // 设置需要绘制阴影的变量
+            glActiveTexture(GL_TEXTURE0 + 12);
+            glBindTexture(GL_TEXTURE_2D, buffer[SHADOWMAP_CALCULATE_BUFFER]->depthAttachment->id);
+            shader->SetBool("dirLightShadowOn", true);
+        }
+        else
+        {
+            shader->SetBool("dirLightShadowOn", false);
+        }
     }
     else
     {
@@ -530,7 +625,7 @@ void Renderer::Lighting()
     shader->Unbind();
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    buffer[LIGHTING_BUFFER]->Unbind();
 
 }
 
@@ -559,17 +654,10 @@ void Renderer::ForwardRender()
         buffer[FORWARDRENDER_BUFFER]->CheckCompleteness();
     }
 
-    // 传送数据
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, buffer[LIGHTING_BUFFER]->id);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, buffer[FORWARDRENDER_BUFFER]->id);
-    glBlitFramebuffer(0, 0, canvaWidth, canvaHeight, 0, 0, canvaWidth, canvaHeight, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+    FrameBuffer::BlitColorBuffer(buffer[LIGHTING_BUFFER]->id, 0, buffer[FORWARDRENDER_BUFFER]->id, 0, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
+    FrameBuffer::BlitDepthBuffer(buffer[G_BUFFER]->id, buffer[FORWARDRENDER_BUFFER]->id, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
 
-    glBindFramebuffer(GL_READ_FRAMEBUFFER, buffer[G_BUFFER]->id);
-    glBindFramebuffer(GL_DRAW_FRAMEBUFFER, buffer[FORWARDRENDER_BUFFER]->id);
-    glBlitFramebuffer(0, 0, canvaWidth, canvaHeight, 0, 0, canvaWidth, canvaHeight, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-    
-    
-    glBindFramebuffer(GL_FRAMEBUFFER, buffer[FORWARDRENDER_BUFFER]->id);
+    buffer[FORWARDRENDER_BUFFER]->Bind();
     glViewport(0, 0, canvaWidth, canvaHeight);
     glEnable(GL_DEPTH_TEST);
 
@@ -580,7 +668,7 @@ void Renderer::ForwardRender()
         glDepthFunc(GL_LEQUAL);
         // 绑定需要显示的天空盒子
         glActiveTexture(GL_TEXTURE0);
-        glBindTexture(GL_TEXTURE_CUBE_MAP, publicHdrIBLTextures != nullptr ? publicHdrIBLTextures->IBLTextures[IBL_CUBE_MAP]->id : skyboxTexture.id);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, publicHdrIBLTextures != nullptr ? publicHdrIBLTextures->IBLTextures[IBL_IRRADIANCE_MAP]->id : skyboxTexture.id);
 
         SkyBoxShader *skyboxShader = SkyBoxShader::GetInstance();
         skyboxShader->Bind();
@@ -599,6 +687,10 @@ void Renderer::ForwardRender()
         glEnable(GL_CULL_FACE);
         glDepthFunc(GL_LESS);
     }
+
+    buffer[FORWARDRENDER_BUFFER]->Unbind();
+
+    FrameBuffer::BlitColorBuffer(buffer[FORWARDRENDER_BUFFER]->id, 0, buffer[TRANSMITION_BUFFER]->id, 0, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
 }
 
 void Renderer::CatchBright()
@@ -614,8 +706,6 @@ void Renderer::CatchBright()
         bright->width = canvaWidth / bloomWidth;
         bright->height = canvaHeight / bloomWidth;
         bright->dataFormat = GL_RGB;
-        bright->minFilter = GL_LINEAR;
-        bright->magFilter = GL_LINEAR;
         bright->CreateBuffer();
         buffer[BRIGHT_BUFFER]->AddTexture2D(bright, COLOR_ATTACHMENT);
 
@@ -624,16 +714,17 @@ void Renderer::CatchBright()
 
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, buffer[BRIGHT_BUFFER]->id);
+    buffer[BRIGHT_BUFFER]->Bind();
     glViewport(0, 0, canvaWidth / bloomWidth, canvaHeight / bloomWidth);
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glActiveTexture(GL_TEXTURE0);
-    glBindTexture(GL_TEXTURE_2D, buffer[FORWARDRENDER_BUFFER]->colorAttachments.front()->id);
+    glBindTexture(GL_TEXTURE_2D, buffer[TRANSMITION_BUFFER]->colorAttachments.front()->id);
 
     BrightCatchShader *shader = BrightCatchShader::GetInstance();
     shader->Bind();
+    shader->SetFloat("exposure", this->exposure);
 
     RectangleMesh *mesh = RectangleMesh::GetInstance();
     glBindVertexArray(mesh->VAO);
@@ -646,6 +737,7 @@ void Renderer::CatchBright()
     shader->Unbind();
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
+    buffer[BRIGHT_BUFFER]->Unbind();
 }
 
 void Renderer::GaussianBlur()
@@ -660,8 +752,6 @@ void Renderer::GaussianBlur()
         ping->width = canvaWidth / bloomWidth;
         ping->height = canvaHeight / bloomWidth;
         ping->dataFormat = GL_RGB;
-        ping->minFilter = GL_LINEAR;
-        ping->magFilter = GL_LINEAR;
         ping->CreateBuffer();
         buffer[PING_BUFFER]->AddTexture2D(ping, COLOR_ATTACHMENT);
         buffer[PING_BUFFER]->DeclearBuffer();
@@ -675,8 +765,6 @@ void Renderer::GaussianBlur()
         pong->width = canvaWidth / bloomWidth;
         pong->height = canvaHeight / bloomWidth;
         pong->dataFormat = GL_RGB;
-        pong->minFilter = GL_LINEAR;
-        pong->magFilter = GL_LINEAR;
         pong->CreateBuffer();
         buffer[PONG_BUFFER]->AddTexture2D(pong, COLOR_ATTACHMENT);
         buffer[PONG_BUFFER]->DeclearBuffer();
@@ -689,7 +777,7 @@ void Renderer::GaussianBlur()
     shader->Bind();
     for (GLuint i = 0; i < bloomLevel; i++)
     {
-        glBindFramebuffer(GL_FRAMEBUFFER, buffer[PING_BUFFER + horizontal]->id);
+        buffer[PING_BUFFER + horizontal]->Bind();
         glViewport(0, 0, canvaWidth / bloomWidth, canvaHeight / bloomWidth);
         glDisable(GL_DEPTH_TEST);
         shader->SetBool("horizontal", horizontal);
@@ -705,6 +793,8 @@ void Renderer::GaussianBlur()
         if (first_blur)
             first_blur = false;
     }
+
+    buffer[PING_BUFFER]->Unbind();
 }
 
 void Renderer::Bloom()
@@ -719,8 +809,6 @@ void Renderer::Bloom()
         bloomLevel->width = canvaWidth;
         bloomLevel->height = canvaHeight;
         bloomLevel->dataFormat = GL_RGB;
-        bloomLevel->minFilter = GL_LINEAR;
-        bloomLevel->magFilter = GL_LINEAR;
         bloomLevel->CreateBuffer();
         buffer[BLOOM_BUFFER]->AddTexture2D(bloomLevel, COLOR_ATTACHMENT);
 
@@ -728,7 +816,7 @@ void Renderer::Bloom()
         buffer[BLOOM_BUFFER]->CheckCompleteness();
     }
 
-    glBindFramebuffer(GL_FRAMEBUFFER, buffer[BLOOM_BUFFER]->id);
+    buffer[BLOOM_BUFFER]->Bind();
     glViewport(0, 0, canvaWidth, canvaHeight);
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
@@ -760,6 +848,9 @@ void Renderer::Bloom()
 
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
+    buffer[BLOOM_BUFFER]->Unbind();
+
+    FrameBuffer::BlitColorBuffer(buffer[BLOOM_BUFFER]->id, 0, buffer[TRANSMITION_BUFFER]->id, 0, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
 }
 
 void Renderer::Fxaa()
@@ -773,52 +864,16 @@ void Renderer::Display()
     glViewport(0, 0, windowWith, windowHeight);
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
-    //buffer[BLOOM_BUFFER]->colorAttachments.front()->id
     glActiveTexture(GL_TEXTURE0);
-    bool displaySingleColor = false;
-    switch (finalDisplay)
-    {
-    case DISPLAY_ALL:
-        glBindTexture(GL_TEXTURE_2D, buffer[BLOOM_BUFFER]->colorAttachments.front()->id);
-        break;
-    case DISPLAY_ALL_NO_POST_EFFECT:
-        glBindTexture(GL_TEXTURE_2D, buffer[BLOOM_BUFFER]->colorAttachments.front()->id);
-        break;
-    case DISPLAY_ONLY_ALBEDO_MAP:
-        glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_ALBEDO]->id);
-        break;
-    case DISPLAY_ONLY_AO_MAP:
-        glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_AO]->id);
-        displaySingleColor = true;
-        break;
-    case DISPLAY_ONLY_METALLIC_MAP:
-        glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_METALLIC]->id);
-        displaySingleColor = true;
-        break;
-    case DISPLAY_ONLY_NORMAL_MAP:
-        glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_NORMAL]->id);
-        break;
-    case DISPLAY_ONLY_ROUGHNESS_MAP:
-        glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_ROUGHNESS]->id);
-        displaySingleColor = true;
-        break;
-    case DISPLAY_ONLY_POS_MAP:
-        glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_POS]->id);
-        break;
-    case DISPLAY_ONLY_DEPTH_MAP:
-        glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments[G_TEX_DEPTH]->id);
-        displaySingleColor = true;
-        break;
-    default:
-        break;
-    }
+    glBindTexture(GL_TEXTURE_2D, buffer[TRANSMITION_BUFFER]->colorAttachments.front()->id);
 
     DisplayShader *shader = DisplayShader::GetInstance();
     shader->Bind();
-    shader->SetFloat("gamma", this->gamma);
-    shader->SetFloat("exposure", this->exposure);
-    shader->SetBool("displaySingleColor", displaySingleColor);
+    shader->SetFloat("gamma", gamma);
+    shader->SetFloat("exposure", exposure);
+    shader->SetBool("displaySingleColor", singleColor);
     shader->SetInt("postType", postProcessing);
+    shader->SetFloat("postStrength", postStrength);
 
     RectangleMesh *mesh = RectangleMesh::GetInstance();
     glBindVertexArray(mesh->VAO);
