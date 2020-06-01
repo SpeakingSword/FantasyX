@@ -92,6 +92,28 @@ void fxWindow::Resize(GLuint width, GLuint height)
     
 }
 
+void fxWindow::Clear(Vector3 color, bool depth, bool stencil)
+{
+    
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, width, height);
+    glClearColor(color.x, color.y, color.y, 1.0f);
+    GLbitfield mask = GL_COLOR_BUFFER_BIT;
+    if (depth)
+    {
+        glEnable(GL_DEPTH_TEST);
+        mask |= GL_DEPTH_BUFFER_BIT;
+    }
+        
+    if (stencil)
+    {
+        glEnable(GL_STENCIL_TEST);
+        mask |= GL_STENCIL_BUFFER_BIT;
+    }    
+
+    glClear(mask);
+}
+
 void fxWindow::SwapBuffers()
 {
     glfwSwapBuffers(window);
@@ -178,4 +200,9 @@ void fxWindow::ProcessInput(GameObject *sceneRoot, GameObject *camera)
     {
         camera->transform->position += camera->transform->right * Time::deltaTime;
     }
+}
+
+void fxWindow::Update()
+{
+    
 }

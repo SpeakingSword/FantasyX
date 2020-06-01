@@ -10,22 +10,23 @@
 #include "clocker.h"
 #include "resource_manager.h"
 #include "material.h"
-#include "imgui.h"
-#include "imgui_impl_glfw.h"
-#include "imgui_impl_opengl3.h"
+
 
 using namespace std;
 using namespace fx;
 
-const GLuint SCR_WIDTH = 1920;
-const GLuint SCR_HEIGHT = 1080;
+const GLuint WINDOW_WIDTH = 1920;
+const GLuint WINDOW_HEIGHT = 1080;
+
+const GLuint CANVA_WIDTH = 1366;
+const GLuint CANVA_HEIGHT = 768;
 
 int main()
 {
     fxWindow *window = new fxWindow();
-    window->width = SCR_WIDTH;
-    window->height = SCR_HEIGHT;
-    window->Init(true);
+    window->width = WINDOW_WIDTH;
+    window->height = WINDOW_HEIGHT;
+    window->Init(true, 4, 0);
 
 #pragma region 初始化imgui
     IMGUI_CHECKVERSION();
@@ -57,10 +58,8 @@ int main()
     Scene *scene = new Scene();
     ResourceManager *res = ResourceManager::GetInstance();
     Renderer *renderer = new Renderer();
-    renderer->windowWith = window->width;
-    renderer->windowHeight = window->height;
-    renderer->canvaWidth = 1366;
-    renderer->canvaHeight = 768;
+    renderer->canvaWidth = CANVA_WIDTH;
+    renderer->canvaHeight = CANVA_HEIGHT;
     renderer->drawMode = DRAW_WITH_FACES;
     renderer->finalDisplay = DISPLAY_ALL;
     renderer->bloomWidth = 2;
@@ -68,6 +67,7 @@ int main()
     renderer->shadowOn = true;
     renderer->exposure = 0.5f;
     renderer->dirLightShadowMapWidth = 2048;
+    renderer->dirLightShadowBias = 0.001f;
     renderer->hdrTexture = res->LoadHdrTexture("D:\\OpenGLAssets\\Images\\HDR\\Brooklyn_Bridge_Planks\\Brooklyn_Bridge_Planks_2k.hdr");
     renderer->skyboxTexture = res->LoadCubeMap(skyboxFaces);
     scene->renderer = renderer;
@@ -81,9 +81,7 @@ int main()
     //GameObject *model = GameObject::Cube();
     model->name = "model";
     model->transform->position = Vector3(0.0f, 0.0f, 0.0f);
-    model->transform->rotation.y = 0.0f;
-    GLfloat model_scale = 0.1f;
-    model->transform->scale = Vector3(model_scale);
+    GLfloat model_scale = 0.0f;
 
     /*
     PBRStandardMaterial *model_standard_mat = new PBRStandardMaterial();
@@ -95,8 +93,15 @@ int main()
     model->SetMaterial(model_standard_mat);
     */
     
-    
+    // Tiger 模型相关设置
+    model_scale = 0.005f;
+    model->transform->scale = Vector3(model_scale);
+    model->transform->position.y = -1.089f;
+    model->transform->rotation.y = 90.0f;
     PBRSimpleMaterial *model_simple_mat = new PBRSimpleMaterial();
+    model_simple_mat->metallic = 0.012f;
+    model_simple_mat->roughness = 0.512f;
+    model_simple_mat->baseColor = Vector3(1.0f);
     model->SetMaterial(model_simple_mat);
     
 
@@ -113,7 +118,7 @@ int main()
     dirLight->transform->position = Vector3(1.5f);
     dirLight->transform->rotation.x = -40.0f;
     dirLight->transform->rotation.y = 230.0f;
-    ((DirLight *)dirLight->GetComponent("Light"))->strength = 1.0f;
+    ((DirLight *)dirLight->GetComponent("Light"))->strength = 5.0f;
 
     GameObject *pointLightZero = new GameObject();
     pointLightZero->name = "PointLightZero";
@@ -131,8 +136,6 @@ int main()
     camera_obj->transform->rotation.x = 0.0f;
     camera_obj->transform->rotation.y = -90.0f;
     Camera *camera = (Camera *)camera_obj->GetComponent("Camera");
-    camera->width = SCR_WIDTH;
-    camera->height = SCR_HEIGHT;
     
     zero->Add(model);
     zero->Add(base);
@@ -153,7 +156,6 @@ int main()
     while (!window->ShouldClose())
     {
         Time::UpdateClocker();
-        window->ProcessInput(zero, camera_obj);
 
         pointLight1->transform->position = Vector3(-p_light_radius, 0.0f, -p_light_radius);
         pointLight2->transform->position = Vector3(0.0f, 0.0f, p_light_radius);
@@ -179,14 +181,18 @@ int main()
         scene->Update();
         scene->Render();
 
+        window->Clear(Vector3(0.2f));
+
+#pragma region 绘制GUI
+
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
         ImGui::NewFrame();
 
-#pragma region 绘制GUI
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 
+#pragma region 渲染设置
         {
             ImGui::Begin("Setting");
             ImGui::Checkbox("Help Window", &show_demo_window);
@@ -289,6 +295,8 @@ int main()
             ImGui::Checkbox("IBL", &renderer->IBL);
             ImGui::Text("DirLight Setting: ");
             ImGui::Checkbox("DirLightOn", &dirLight->visible);
+            ImGui::Checkbox("DirLightShadowOn", &renderer->shadowOn);
+            ImGui::SliderFloat("DLightShadowBias", &renderer->dirLightShadowBias, 0.0f, 0.01f);
             ImGui::SliderFloat3("DLightPos", (GLfloat *)&dirLight->transform->position, -10.0f, 10.0f);
             ImGui::ColorEdit3("DLightColor", (GLfloat *)&(((DirLight *)(dirLight->GetComponent("Light")))->color));
             ImGui::SliderFloat3("DLightRotate", (GLfloat *)&dirLight->transform->rotation, -360.0f, 360.0f);
@@ -310,7 +318,7 @@ int main()
             ImGui::SliderFloat("ModelPosY", &model->transform->position.y, -2.0f, 3.0f);
             ImGui::SliderFloat("ModelRoateY", &model->transform->rotation.y, 0.0f, 360.0f);
             ImGui::SliderFloat("ModelScale", &model_scale, 0.0f, 1.0f);
-            
+
             ImGui::ColorEdit3("ModelColor", (GLfloat *)&model_simple_mat->baseColor);
             ImGui::SliderFloat("ModelMetallic", &model_simple_mat->metallic, 0.0f, 1.0f);
             ImGui::SliderFloat("ModelRoughness", &model_simple_mat->roughness, 0.0f, 1.0f);
@@ -324,6 +332,22 @@ int main()
 
             ImGui::End();
         }
+#pragma endregion
+
+#pragma region 场景
+
+        {
+            ImGui::Begin("Scene");
+            if (ImGui::IsWindowFocused())
+                window->ProcessInput(zero, camera_obj);
+            ImGui::SetWindowSize(ImVec2(renderer->canvaWidth, renderer->canvaHeight));
+            ImVec2 scene_window_pos = ImGui::GetCursorScreenPos();
+            ImGui::GetWindowDrawList()->AddImage((void *)renderer->buffer[DISPLAY_BUFFER]->colorAttachments.front()->id, scene_window_pos,
+                ImVec2(scene_window_pos.x + renderer->canvaWidth, scene_window_pos.y + renderer->canvaHeight), ImVec2(0, 1), ImVec2(1, 0));
+            ImGui::End();
+        }
+
+#pragma endregion
 
         // 渲染ImGui
         ImGui::Render();

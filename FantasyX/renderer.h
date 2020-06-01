@@ -41,6 +41,7 @@ namespace fx {
         FXAA_BUFFER,
         POSTPROCESSING_BUFFER,
         TRANSMITION_BUFFER,
+        DISPLAY_BUFFER,
         RENDERER_BUFFER_NUM
     }RendererBuffer;
 
@@ -64,7 +65,6 @@ namespace fx {
     class Renderer {
     private:
         SceneData sceneData;
-        FrameBuffer *buffer[RENDERER_BUFFER_NUM];
         UniformBuffer *shaderBuffer[SHADER_BUFFER_NUM];
         unordered_map<string, HdrIBLTextures *> hdrIBLTextureStorage;
         HdrIBLTextures *publicHdrIBLTextures;
@@ -86,6 +86,8 @@ namespace fx {
         void ReverseInorderTraverse(BiTreeNode<GameObject *> *node, Shader *shader);
 
     public:
+        FrameBuffer *buffer[RENDERER_BUFFER_NUM];
+
         bool IBL;
         Texture hdrTexture;
         Texture skyboxTexture;
@@ -104,11 +106,10 @@ namespace fx {
         GLuint dirLightShadowMapWidth;
         GLfloat dirLightViewNear;
         GLfloat dirLightViewFar;
+        GLfloat dirLightShadowBias;
 
         GLuint canvaWidth;
         GLuint canvaHeight;
-        GLuint windowWith;
-        GLuint windowHeight;
 
         Vector4 backGroundColor;
         static GLuint vertices;

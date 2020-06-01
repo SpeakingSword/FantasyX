@@ -23,6 +23,7 @@ Renderer::Renderer()
     this->dirLightShadowMapWidth = 1024;
     this->dirLightViewNear = 0.1f;
     this->dirLightViewFar = 10.0f;
+    this->dirLightShadowBias = 0.0f;
     this->drawMode = DRAW_WITH_FACES;
     this->exposure = 1.0f;
     this->finalDisplay = DISPLAY_ALL;
@@ -30,10 +31,8 @@ Renderer::Renderer()
     this->gamma = 2.2f;
     this->postProcessing = POST_NONE;
     this->postStrength = 0.0f;
-    this->windowWith = 1280;
-    this->windowHeight = 720;
-    this->canvaHeight = windowWith;
-    this->canvaWidth = windowHeight;
+    this->canvaHeight = 1366;
+    this->canvaWidth = 768;
     this->backGroundColor = Vector4(0.2f, 0.3f, 0.3f, 1.0f);
     this->publicHdrIBLTextures = nullptr;
 
@@ -239,7 +238,7 @@ void Renderer::BeforeRender()
     switch (camera->projection)
     {
     case CAM_PERSPECTIVE:
-        projection = glm::perspective(glm::radians(camera->fov), (GLfloat)camera->width / (GLfloat)camera->height, camera->near, camera->far);
+        projection = glm::perspective(glm::radians(camera->fov), (GLfloat)canvaWidth / (GLfloat)canvaHeight, camera->near, camera->far);
         break;
     case CAM_ORTHOGRAPHIC:
         projection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, camera->near, camera->far);
@@ -438,9 +437,10 @@ void Renderer::ShadowMapCalculate()
         glEnable(GL_DEPTH_TEST);
         glClear(GL_DEPTH_BUFFER_BIT);
 
+
         // 计算定向光源位置的变换矩阵
         GLfloat near = 0.1f, far = 10.0f;
-        Matrix4x4 dirLightProjection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, near, far);
+        Matrix4x4 dirLightProjection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, near, far);
         Matrix4x4 dirLightView = glm::lookAt(sceneData.dirLights->front()->transform->worldPos, Vector3(0.0f), WORLD_UP);
         Matrix4x4 dirLightSpaceMatrix = dirLightProjection * dirLightView;
 
@@ -579,6 +579,7 @@ void Renderer::Lighting()
             glActiveTexture(GL_TEXTURE0 + 12);
             glBindTexture(GL_TEXTURE_2D, buffer[SHADOWMAP_CALCULATE_BUFFER]->depthAttachment->id);
             shader->SetBool("dirLightShadowOn", true);
+            shader->SetFloat("dirLightShadowBias", dirLightShadowBias);
         }
         else
         {
@@ -860,8 +861,24 @@ void Renderer::Fxaa()
 
 void Renderer::Display()
 {
-    glBindFramebuffer(GL_FRAMEBUFFER, 0);
-    glViewport(0, 0, windowWith, windowHeight);
+    if (buffer[DISPLAY_BUFFER] == nullptr)
+    {
+        buffer[DISPLAY_BUFFER] = new FrameBuffer();
+        buffer[DISPLAY_BUFFER]->CreateBuffer();
+
+        Texture2D *color = new Texture2D();
+        color->internalFormat = GL_RGB;
+        color->width = canvaWidth;
+        color->height = canvaHeight;
+        color->CreateBuffer();
+        buffer[DISPLAY_BUFFER]->AddTexture2D(color, COLOR_ATTACHMENT);
+
+        buffer[DISPLAY_BUFFER]->DeclearBuffer();
+        buffer[DISPLAY_BUFFER]->CheckCompleteness();
+    }
+
+    buffer[DISPLAY_BUFFER]->Bind();
+    glViewport(0, 0, canvaWidth, canvaHeight);
     glDisable(GL_DEPTH_TEST);
     glClear(GL_COLOR_BUFFER_BIT);
     glActiveTexture(GL_TEXTURE0);
@@ -886,6 +903,7 @@ void Renderer::Display()
     shader->Unbind();
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
+    buffer[DISPLAY_BUFFER]->Unbind();
 }
 
 void Renderer::AfterRender()

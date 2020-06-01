@@ -7,6 +7,9 @@
 #include "clocker.h"
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 using namespace std;
 
@@ -22,6 +25,8 @@ namespace fx {
         void Init(bool fullScreen, GLuint contextMajorVersion = 3, GLuint contextMinorVersion = 3);
         void Destroy();
         bool ShouldClose();
+        void Clear(Vector3 color, bool depth = false, bool stencil = false);
+        void Update();
         void SwapBuffers();
         void PollEvent();
         void Terminate();

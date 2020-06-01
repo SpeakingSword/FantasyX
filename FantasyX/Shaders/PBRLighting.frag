@@ -45,6 +45,7 @@ uniform bool IBL;
 
 uniform DirLight dirLight;
 uniform bool dirLightOn;
+uniform float dirLightShadowBias;
 uniform bool dirLightShadowOn;
 uniform mat4 dirLightSpaceMatrix;
 uniform sampler2D dirLightShadowMap;
@@ -106,8 +107,8 @@ void main()
         
         if (dirLightShadowOn)
         {
-            float bias = max(0.008 * (1.0 - dot(N, L)), 0.005);
-            float shadow = DirLightShadowCalculation(dirLightSpaceMatrix * vec4(fragPos, 1.0f), bias);
+            //float bias = max(0.008 * (1.0 - dot(N, L)), 0.005);
+            float shadow = DirLightShadowCalculation(dirLightSpaceMatrix * vec4(fragPos, 1.0f), dirLightShadowBias);
             dirLightResult = dirLightResult * (1.0f - shadow);
         }
 
