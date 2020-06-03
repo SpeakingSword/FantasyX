@@ -2,15 +2,19 @@
 #ifdef RENDERER_TEST_H
 
 #include <glad\glad.h>
-#include <GLFW\glfw3.h>
 #include <iostream>
+
 #include "context.h"
 #include "scene.h"
+#include "renderer.h"
 #include "gameobject.h"
 #include "clocker.h"
 #include "resource_manager.h"
 #include "material.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
 
 using namespace std;
 using namespace fx;
@@ -20,6 +24,11 @@ const GLuint WINDOW_HEIGHT = 1080;
 
 const GLuint CANVA_WIDTH = 1366;
 const GLuint CANVA_HEIGHT = 768;
+
+const GLuint HIERARCHY_WIDTH = 200;
+
+void SetGuiStyle();
+void DrawObjectTree(GameObject *obj);
 
 int main()
 {
@@ -36,6 +45,7 @@ int main()
 
     // 设置ImGui风格
     ImGui::StyleColorsDark();
+    SetGuiStyle();
 
     // 为ImGui绑定渲染平台
     const char *glsl_version = "#version 330 core";
@@ -63,6 +73,7 @@ int main()
     renderer->drawMode = DRAW_WITH_FACES;
     renderer->finalDisplay = DISPLAY_ALL;
     renderer->bloomWidth = 2;
+    renderer->bloomStrength = 0.05f;
     renderer->IBL = true;
     renderer->shadowOn = true;
     renderer->exposure = 0.5f;
@@ -76,13 +87,15 @@ int main()
     zero->name = "ZeroObject";
     zero->transform->position = Vector3(0.0f, 0.0f, 0.0f);
 
-    GameObject *model = res->LoadModel("D:\\OpenGLAssets\\Models\\tiger-white\\Tiger_.fbx");
+    GameObject *model = res->LoadModel("D:\\OpenGLAssets\\Models\\hawk\\EagleStaff.fbx");
+    //GameObject *model = res->LoadModel("D:\\OpenGLAssets\\Models\\tiger-white\\Tiger_.fbx");
     //GameObject *model = res->LoadModel("D:\\OpenGLAssets\\Models\\Cerberus\\fire_gun.obj");
     //GameObject *model = GameObject::Cube();
     model->name = "model";
     model->transform->position = Vector3(0.0f, 0.0f, 0.0f);
     GLfloat model_scale = 0.0f;
 
+    // 火枪相关设置
     /*
     PBRStandardMaterial *model_standard_mat = new PBRStandardMaterial();
     model_standard_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\Cerberus\\Textures\\Cerberus_A.tga", "_AlbedoMap", true));
@@ -92,8 +105,19 @@ int main()
     model_standard_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\Cerberus\\Textures\\Cerberus_AO.tga", "_AoMap"));
     model->SetMaterial(model_standard_mat);
     */
+
+    // 鹰相关设置
+    PBRStandardMaterial *model_standard_mat = new PBRStandardMaterial();
+    model_standard_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\hawk\\textures\\BaseColor.jpg", "_AlbedoMap", true));
+    model_standard_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\hawk\\textures\\Metallic.jpg", "_MetallicMap"));
+    model_standard_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\hawk\\textures\\NormalMap.jpg", "_NormalMap"));
+    model_standard_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\hawk\\textures\\Roughness.jpg", "_RoughnessMap"));
+    model_standard_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\hawk\\textures\\AO.jpg", "_AoMap"));
+    model->SetMaterial(model_standard_mat);
+    model_scale = 0.3f;
     
     // Tiger 模型相关设置
+    /*
     model_scale = 0.005f;
     model->transform->scale = Vector3(model_scale);
     model->transform->position.y = -1.089f;
@@ -103,6 +127,7 @@ int main()
     model_simple_mat->roughness = 0.512f;
     model_simple_mat->baseColor = Vector3(1.0f);
     model->SetMaterial(model_simple_mat);
+    */
     
 
     GameObject *base = GameObject::Cube();
@@ -192,9 +217,61 @@ int main()
         if (show_demo_window)
             ImGui::ShowDemoWindow(&show_demo_window);
 
-#pragma region 渲染设置
-        {
-            ImGui::Begin("Setting");
+        ImGui::SetNextWindowSize(ImVec2(window->width, window->height));
+        ImGui::SetNextWindowPos(ImVec2(0, 0));
+
+        // 主窗口
+        ImGuiStyle& gui_style = ImGui::GetStyle();
+        ImGui::Begin("Main", (bool *)1, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+
+            // 菜单栏
+            GLfloat MenuBarHeightWidthSpacing;
+            if (ImGui::BeginMenuBar())
+            {
+                MenuBarHeightWidthSpacing = ImGui::GetFrameHeightWithSpacing();
+                if (ImGui::BeginMenu("File"))
+                {
+                    if (ImGui::MenuItem("Close"))
+                    {
+                        window->Close();
+                    }
+                    ImGui::EndMenu();
+                }
+                ImGui::EndMenuBar();
+            }
+
+            // 布局左边
+            GLfloat LeftWidthWithSpacing;
+            ImGui::BeginChild("Left", ImVec2(HIERARCHY_WIDTH, window->height - MenuBarHeightWidthSpacing), true);
+            DrawObjectTree(scene->Start());
+            ImGui::EndChild();
+            ImGui::SameLine();
+
+            // 布局中间
+            ImGui::BeginChild("Middle", ImVec2(renderer->canvaWidth, window->height - MenuBarHeightWidthSpacing), true);
+                
+                // 场景视图
+                ImGui::BeginChild("MiddleUp", ImVec2(renderer->canvaWidth, renderer->canvaHeight), true);
+                if (ImGui::IsWindowFocused())
+                {
+                    window->ProcessInput(zero, camera_obj);
+                }
+                    
+                ImVec2 scene_window_pos = ImGui::GetWindowPos();
+                ImGui::GetWindowDrawList()->AddImage((void *)renderer->buffer[DISPLAY_BUFFER]->colorAttachments.front()->id, scene_window_pos,
+                    ImVec2(scene_window_pos.x + renderer->canvaWidth, scene_window_pos.y + renderer->canvaHeight), ImVec2(0, 1), ImVec2(1, 0));
+                ImGui::EndChild();
+
+                // 控制台视图
+                ImGui::BeginChild("MiddleDown", ImVec2(renderer->canvaWidth,
+                    window->height - MenuBarHeightWidthSpacing - renderer->canvaHeight - gui_style.ItemSpacing.y * 2), true);
+                ImGui::EndChild();
+
+            ImGui::EndChild();
+
+            // 渲染器视图
+            ImGui::SameLine();
+            ImGui::BeginChild("Right", ImVec2(window->width - renderer->canvaWidth - HIERARCHY_WIDTH, 0), true);
             ImGui::Checkbox("Help Window", &show_demo_window);
             ImGui::Text("Render Status --------------------------------");
             ImGui::Text("Aplication average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
@@ -216,7 +293,8 @@ int main()
             if (ImGui::Button("FACES"))
                 renderer->drawMode = DRAW_WITH_FACES;
 
-            ImGui::Text("Bloom: ");
+            ImGui::SliderFloat("BloomStrength", &renderer->bloomStrength, 0.0f, 1.0f);
+            ImGui::Text("BloomLevel: ");
             ImGui::SameLine();
             if (ImGui::Button("x0"))
                 renderer->bloomLevel = 0;
@@ -319,9 +397,9 @@ int main()
             ImGui::SliderFloat("ModelRoateY", &model->transform->rotation.y, 0.0f, 360.0f);
             ImGui::SliderFloat("ModelScale", &model_scale, 0.0f, 1.0f);
 
-            ImGui::ColorEdit3("ModelColor", (GLfloat *)&model_simple_mat->baseColor);
-            ImGui::SliderFloat("ModelMetallic", &model_simple_mat->metallic, 0.0f, 1.0f);
-            ImGui::SliderFloat("ModelRoughness", &model_simple_mat->roughness, 0.0f, 1.0f);
+            //ImGui::ColorEdit3("ModelColor", (GLfloat *)&model_simple_mat->baseColor);
+            //ImGui::SliderFloat("ModelMetallic", &model_simple_mat->metallic, 0.0f, 1.0f);
+            //ImGui::SliderFloat("ModelRoughness", &model_simple_mat->roughness, 0.0f, 1.0f);
 
             ImGui::Text("Base Setting: ");
             ImGui::SliderFloat3("BaseRoate", (GLfloat *)&base->transform->rotation, 0.0f, 360.0f);
@@ -330,24 +408,11 @@ int main()
             ImGui::SliderFloat("BaseMetallic", &base_simple_mat->metallic, 0.0f, 1.0f);
             ImGui::SliderFloat("BaseRoughness", &base_simple_mat->roughness, 0.0f, 1.0f);
 
-            ImGui::End();
-        }
-#pragma endregion
+            // 渲染器窗口结束
+            ImGui::EndChild();
 
-#pragma region 场景
-
-        {
-            ImGui::Begin("Scene");
-            if (ImGui::IsWindowFocused())
-                window->ProcessInput(zero, camera_obj);
-            ImGui::SetWindowSize(ImVec2(renderer->canvaWidth, renderer->canvaHeight));
-            ImVec2 scene_window_pos = ImGui::GetCursorScreenPos();
-            ImGui::GetWindowDrawList()->AddImage((void *)renderer->buffer[DISPLAY_BUFFER]->colorAttachments.front()->id, scene_window_pos,
-                ImVec2(scene_window_pos.x + renderer->canvaWidth, scene_window_pos.y + renderer->canvaHeight), ImVec2(0, 1), ImVec2(1, 0));
-            ImGui::End();
-        }
-
-#pragma endregion
+        // 主窗口结束
+        ImGui::End();
 
         // 渲染ImGui
         ImGui::Render();
@@ -360,6 +425,49 @@ int main()
 
     window->Terminate();
     return 0;
+}
+
+void SetGuiStyle()
+{
+    ImGuiStyle& gui_style = ImGui::GetStyle();
+    gui_style.WindowPadding = ImVec2(2, 2);
+    gui_style.WindowBorderSize = 0;
+    gui_style.WindowRounding = 0;
+
+    gui_style.FramePadding = ImVec2(4, 3);
+    gui_style.FrameRounding = 6;
+
+    gui_style.ItemSpacing = ImVec2(1, 4);
+    gui_style.ItemInnerSpacing = ImVec2(4, 4);
+    
+    gui_style.GrabRounding = 6;
+}
+
+void DrawObjectTree(GameObject *obj)
+{
+    ImGui::PushID(obj);
+    ImGui::AlignTextToFramePadding();
+
+    if (obj->child != nullptr)
+    {
+        bool node_open = ImGui::TreeNode(obj->name.c_str());
+        if (node_open)
+        {
+            DrawObjectTree(obj->child);
+            ImGui::TreePop();
+        }
+    }
+    else
+    {
+        ImGui::TreeNodeEx(obj->name.c_str(), ImGuiTreeNodeFlags_Leaf | ImGuiTreeNodeFlags_NoTreePushOnOpen | ImGuiTreeNodeFlags_Bullet);
+    }
+
+    if (obj->sibling != nullptr)
+    {
+        DrawObjectTree(obj->sibling);
+    }
+
+    ImGui::PopID();
 }
 
 #endif // RENDERER_TEST_SIMPLE_DRAW_H

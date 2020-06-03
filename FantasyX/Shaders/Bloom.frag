@@ -7,10 +7,11 @@ in VS_OUT {
 
 uniform sampler2D lightMap;
 uniform sampler2D blurMap;
+uniform float bloomStrength;
 
 void main()
 {             
      vec3 color = texture(lightMap, fs_in.texCoord).rgb;
      vec3 blur = texture(blurMap, fs_in.texCoord).rgb;
-     FragColor = vec4(color + blur, 1.0f);
+     FragColor = vec4(mix(color, blur, bloomStrength), 1.0f);
 }

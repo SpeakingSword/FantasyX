@@ -16,8 +16,8 @@ void main()
     // É«µ÷Ó³Éä
     float brightness = 1.0f - exp(-grey * exposure);
 
-    if (brightness > 0.8f)
+    if (brightness >= 0.95f)
         FragColor = vec4(color, 1.0f);
     else
-        FragColor = vec4(vec3(0.0f), 1.0f);
+        FragColor = vec4(0.0f);
 }

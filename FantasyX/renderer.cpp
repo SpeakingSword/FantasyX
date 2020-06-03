@@ -17,6 +17,7 @@ Renderer::Renderer()
 {
     this->bloomLevel = 6;
     this->bloomWidth = 1;
+    this->bloomStrength = 0.02f;
     this->singleColor = false;
     this->IBL = false;
     this->shadowOn = false;
@@ -820,6 +821,7 @@ void Renderer::Bloom()
     buffer[BLOOM_BUFFER]->Bind();
     glViewport(0, 0, canvaWidth, canvaHeight);
     glDisable(GL_DEPTH_TEST);
+    glEnable(GL_BLEND);
     glClear(GL_COLOR_BUFFER_BIT);
 
     glActiveTexture(GL_TEXTURE0);
@@ -838,6 +840,7 @@ void Renderer::Bloom()
 
     BloomShader *shader = BloomShader::GetInstance();
     shader->Bind();
+    shader->SetFloat("bloomStrength", bloomStrength);
     
     RectangleMesh *mesh = RectangleMesh::GetInstance();
     glBindVertexArray(mesh->VAO);
@@ -850,6 +853,7 @@ void Renderer::Bloom()
     glBindTexture(GL_TEXTURE_2D, 0);
     glBindVertexArray(0);
     buffer[BLOOM_BUFFER]->Unbind();
+    glDisable(GL_BLEND);
 
     FrameBuffer::BlitColorBuffer(buffer[BLOOM_BUFFER]->id, 0, buffer[TRANSMITION_BUFFER]->id, 0, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
 }

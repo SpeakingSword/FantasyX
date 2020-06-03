@@ -91,6 +91,7 @@ namespace fx {
         bool IBL;
         Texture hdrTexture;
         Texture skyboxTexture;
+        GLfloat bloomStrength;
         GLuint bloomLevel;
         GLuint bloomWidth;
         GLuint fxaa;
