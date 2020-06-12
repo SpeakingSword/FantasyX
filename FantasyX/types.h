@@ -43,7 +43,8 @@ namespace fx {
         GT_OPAQUE,
         GT_TRANSPARENT,
         GT_LIGHT,
-        GT_CAMERA
+        GT_CAMERA,
+        GT_TAG_NUM
     }GameObjectTagType;
 
     // 三个常数会控制光的衰减距离

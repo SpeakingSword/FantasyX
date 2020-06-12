@@ -28,9 +28,11 @@ namespace fx {
         GameObject *child;
         GameObject *sibling;
         Transform *transform;
+        ComponentSystem *componentSystem;
 
         GameObject();
         GameObject(const GLchar *name, GLuint tag);
+        void Init();
         void Add(GameObject *);
         void Add(GameObject *, GLuint index);
         void Release(const GLchar *name);
@@ -61,7 +63,6 @@ namespace fx {
 
     private:
         static GLuint gameObjectCount;
-        ComponentSystem *componentSystem;
         ~GameObject();
         static void TraverseSetMat(GameObject *obj, Material *mat);
         static void TraverseSetVisible(GameObject *obj, bool visible);

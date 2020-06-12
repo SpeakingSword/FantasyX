@@ -70,33 +70,15 @@ void Scene::Init()
 
 void Scene::TraverseInit(GameObject *obj)
 {
-    // 先序遍历层次结构树
-    // 如果当前节点为空则返回
     if (obj == nullptr)
         return;
 
-    // 先将父对象的 modelMatrix 压入栈
-    modelMatrixStack.push(modelMatrix);
-
-    // 更新当前对象 transform 的 modelMatrix
-    modelMatrix = glm::translate(modelMatrix, obj->transform->position);
-    // 旋转顺序为 y->x->z
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(obj->transform->rotation.y), Vector3(0.0f, 1.0f, 0.0f));
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(obj->transform->rotation.x), Vector3(1.0f, 0.0f, 0.0f));
-    modelMatrix = glm::rotate(modelMatrix, glm::radians(obj->transform->rotation.z), Vector3(0.0f, 0.0f, 1.0f));
-    modelMatrix = glm::scale(modelMatrix, obj->transform->scale);
-    obj->transform->modelMatrix = this->modelMatrix;
-    obj->Update();
-    // 将对象放入对应的容器
+    obj->Init();
     AddTo(obj);
 
-    // 如果左孩子不为空遍历左孩子
     if (obj->child != nullptr)
         TraverseInit(obj->child);
     
-    // 如果右兄弟不为空遍历右兄弟，但遍历之前先将 modelMatrix 恢复到父对象的
-    modelMatrix = modelMatrixStack.top();
-    modelMatrixStack.pop();
     if (obj->sibling != nullptr)
         TraverseInit(obj->sibling);
     
@@ -122,7 +104,7 @@ void Scene::TraverseUpdate(GameObject *obj)
     obj->transform->modelMatrix = this->modelMatrix;
     obj->Update();
     // 将对象放入对应的容器
-    // AddTo(obj);
+    AddTo(obj);
 
     // 如果左孩子不为空遍历左孩子
     if (obj->child != nullptr)
@@ -276,6 +258,15 @@ void Scene::Add(GameObject *obj, GLuint index)
 
 void Scene::Update()
 {
+    opaqueTree.remove(opaqueTree.root->left);
+    opaqueTree.remove(opaqueTree.root->right);
+    transparentTree.remove(transparentTree.root->left);
+    transparentTree.remove(transparentTree.root->right);
+    dirLights.clear();
+    pointLights.clear();
+    spotLights.clear();
+    cameras.clear();
+
     TraverseUpdate(root);
 }
 

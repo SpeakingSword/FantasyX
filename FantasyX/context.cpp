@@ -169,36 +169,27 @@ void fxWindow::ProcessInput(GameObject *sceneRoot, GameObject *camera)
 
     GLdouble xpos, ypos;
     glfwGetCursorPos(window, &xpos, &ypos);
-    MouseMove(xpos, ypos, (Camera *)camera->GetComponent("Camera"));
-
-    if (glfwGetKey(window, GLFW_KEY_UP) == GLFW_PRESS)
-    {
-        camera->transform->position += WORLD_UP * Time::deltaTime;
-    }
-
-    if (glfwGetKey(window, GLFW_KEY_DOWN) == GLFW_PRESS)
-    {
-        camera->transform->position -= WORLD_UP * Time::deltaTime;
-    }
+    Camera *mCamera = (Camera *)camera->GetComponent("Camera");
+    MouseMove(xpos, ypos, mCamera);
 
     if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
     {
-        camera->transform->position += camera->transform->front * Time::deltaTime;
+        mCamera->ProcessKeyboard(CAM_FORWARD, Time::deltaTime);
     }
 
     if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
     {
-        camera->transform->position -= camera->transform->front * Time::deltaTime;
+        mCamera->ProcessKeyboard(CAM_BACKWARD, Time::deltaTime);
     }
 
     if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
     {
-        camera->transform->position -= camera->transform->right * Time::deltaTime;
+        mCamera->ProcessKeyboard(CAM_LEFT, Time::deltaTime);
     }
 
     if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
     {
-        camera->transform->position += camera->transform->right * Time::deltaTime;
+        mCamera->ProcessKeyboard(CAM_RIGHT, Time::deltaTime);
     }
 }
 

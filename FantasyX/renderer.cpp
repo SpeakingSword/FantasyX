@@ -441,7 +441,7 @@ void Renderer::ShadowMapCalculate()
 
         // 计算定向光源位置的变换矩阵
         GLfloat near = 0.1f, far = 10.0f;
-        Matrix4x4 dirLightProjection = glm::ortho(-1.0f, 1.0f, -1.0f, 1.0f, near, far);
+        Matrix4x4 dirLightProjection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, near, far);
         Matrix4x4 dirLightView = glm::lookAt(sceneData.dirLights->front()->transform->worldPos, Vector3(0.0f), WORLD_UP);
         Matrix4x4 dirLightSpaceMatrix = dirLightProjection * dirLightView;
 

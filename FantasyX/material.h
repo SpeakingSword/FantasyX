@@ -8,6 +8,10 @@
 #include "texture.h"
 #include "resource_manager.h"
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 using namespace std;
 
 namespace fx {
@@ -20,6 +24,7 @@ namespace fx {
 
         virtual void InitMaterial() = 0;
         virtual void MappingProperty() = 0;
+        virtual void DrawUIElements() = 0;
         virtual void Print() = 0;
         virtual void Destroy() = 0;
     };
@@ -27,11 +32,12 @@ namespace fx {
     class LegacySimpleMaterial : public Material {
     public:
         Vector3 baseColor;
-        GLuint specularStrength;
+        GLfloat specularStrength;
 
         LegacySimpleMaterial();
         void Destroy() override;
         void MappingProperty() override;
+        void DrawUIElements() override;
         void Print() override;
 
     private:
@@ -41,11 +47,11 @@ namespace fx {
 
     class LegacyStandardMaterial : public Material {
     public:
-        GLuint specularStrength;
         vector<Texture> textures2D;
 
         LegacyStandardMaterial();
         void Destroy() override;
+        void DrawUIElements() override;
         void MappingProperty() override;
         void Print() override;
 
@@ -63,6 +69,7 @@ namespace fx {
 
         PBRSimpleMaterial();
         void Destroy() override;
+        void DrawUIElements() override;
         void MappingProperty() override;
         void Print() override;
 
@@ -77,6 +84,7 @@ namespace fx {
 
         PBRStandardMaterial();
         void Destroy() override;
+        void DrawUIElements() override;
         void MappingProperty() override;
         void Print() override;
 

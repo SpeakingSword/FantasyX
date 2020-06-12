@@ -44,6 +44,15 @@ void LegacySimpleMaterial::Print()
     std::cout << "Shader ID: " << this->shader->ID << std::endl;
     std::cout << "Shader Name: " << this->shader->name.c_str() << std::endl;
 }
+
+void LegacySimpleMaterial::DrawUIElements()
+{
+    ImGui::Text("Material: %s", name.c_str());
+    ImGui::ColorEdit3("BaseColor", (GLfloat *)&baseColor);
+    ImGui::SliderFloat("SpecStrength", &specularStrength, 0.0f, 1.0f);
+    ImGui::Text("Shader: %s", shader->name.c_str());
+}
+
 #pragma endregion
 
 #pragma region LegacyStandardMaterial
@@ -66,14 +75,12 @@ void LegacyStandardMaterial::Destroy()
 void LegacyStandardMaterial::InitMaterial()
 {
     name = "LegacyStandardMaterial";
-    specularStrength = 32;
     shader = LegacyStandardShader::GetInstance();
 }
 
 void LegacyStandardMaterial::MappingProperty()
 {
     shader->Bind();
-    shader->SetInt("material._SpecularStrength", specularStrength);
     for (int i = 0; i < textures2D.size(); i++)
     {
         glActiveTexture(GL_TEXTURE0 + i);
@@ -90,9 +97,21 @@ void LegacyStandardMaterial::Print()
     {
         std::cout << "Texture" << i << " Type: " << textures2D[i].type.c_str() << std::endl;
     }
-    std::cout << "SpecularStrength: " << this->specularStrength << std::endl;
     std::cout << "Shader ID: " << this->shader->ID << std::endl;
     std::cout << "Shader Name: " << this->shader->name.c_str() << std::endl;
+}
+
+void LegacyStandardMaterial::DrawUIElements()
+{
+    ImGui::Text("Material: %s", name.c_str());
+    for (auto iter = textures2D.cbegin(); iter != textures2D.cend(); iter++)
+    {
+        ImGui::Separator();
+        ImGui::Text("%s", (*iter).type.c_str());
+        ImGui::SameLine();
+        ImGui::Text("%s", (*iter).path.c_str());
+    }
+    ImGui::Text("Shader: %s", shader->name.c_str());
 }
 #pragma endregion
 
@@ -145,6 +164,16 @@ void PBRSimpleMaterial::Print()
     std::cout << "Shader Name: " << this->shader->name.c_str() << std::endl;
 }
 
+void PBRSimpleMaterial::DrawUIElements()
+{
+    ImGui::Text("Material: %s", name.c_str());
+    ImGui::ColorEdit3("BaseColor", (GLfloat *)&baseColor);
+    ImGui::SliderFloat("Metallic", &metallic, 0.0f, 1.0f);
+    ImGui::SliderFloat("Roughness", &roughness, 0.0f, 1.0f);
+    ImGui::SliderFloat("Ao", &ao, 0.0f, 1.0f);
+    ImGui::Text("Shader: %s", shader->name.c_str());
+}
+
 #pragma endregion
 
 #pragma region PBRStandradMaterial
@@ -183,10 +212,22 @@ void PBRStandardMaterial::MappingProperty()
     shader->Unbind();
 }
 
-
 void PBRStandardMaterial::Print()
 {
     // wait ...
+}
+
+void PBRStandardMaterial::DrawUIElements()
+{
+    ImGui::Text("Material: %s", name.c_str());
+    for (auto iter = textures2D.cbegin(); iter != textures2D.cend(); iter++)
+    {
+        ImGui::Separator();
+        ImGui::Text("%s", (*iter).type.c_str());
+        ImGui::SameLine();
+        ImGui::Text("%s", (*iter).path.c_str());
+    }
+    ImGui::Text("Shader: %s", shader->name.c_str());
 }
 #pragma endregion
 

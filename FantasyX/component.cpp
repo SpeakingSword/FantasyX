@@ -28,6 +28,14 @@ void ComponentSystem::Destroy()
     this->~ComponentSystem();
 }
 
+void ComponentSystem::Start()
+{
+    for (auto iter = componentMap.cbegin(); iter != componentMap.cend(); iter++)
+    {
+        iter->second->Start();
+    }
+}
+
 void ComponentSystem::Update()
 {
     for (auto iter = componentMap.cbegin(); iter != componentMap.cend(); iter++)
@@ -46,6 +54,14 @@ bool ComponentSystem::Contain(const GLchar *name) const
     }
 
     return false;
+}
+
+void ComponentSystem::DrawUIElements()
+{
+    for (auto iter = componentMap.cbegin(); iter != componentMap.cend(); iter++)
+    {
+        iter->second->DrawUIElements();
+    }
 }
 
 Component *ComponentSystem::GetComponent(const GLchar *name) const
@@ -160,7 +176,11 @@ void Transform::Finish()
 
 void Transform::DrawUIElements()
 {
-    
+    ImGui::Separator();
+    ImGui::Text("Transform");
+    ImGui::DragFloat3("position", (GLfloat *)&this->position, 0.1f);
+    ImGui::DragFloat3("rotation", (GLfloat *)&this->rotation, 0.1f);
+    ImGui::DragFloat3("scale", (GLfloat *)&this->scale, 0.1f);
 }
 
 void Transform::Translate(Vector3 dir, GLfloat far, Space mode)
@@ -244,6 +264,18 @@ void Render::Update()
 
 void Render::DrawUIElements()
 {
+    ImGui::Separator();
+    ImGui::Text("Render");
+    if (material != nullptr)
+    {
+        material->DrawUIElements();
+    }
+    if (mesh != nullptr)
+    {
+        ImGui::Text("Mesh: %s", mesh->name.c_str());
+        ImGui::Text("Path: %s", mesh->path.c_str());
+    }
+
 
 }
 
@@ -322,7 +354,11 @@ void DirLight::Finish()
 
 void DirLight::DrawUIElements()
 {
-
+    ImGui::Separator();
+    ImGui::Text("Lighting");
+    ImGui::Text("LightType: %s", name.c_str());
+    ImGui::ColorEdit3("LightColor", (GLfloat *)&color);
+    ImGui::SliderFloat("LightStrength", &strength, 0.0f, 5.0f);
 }
 
 const GLchar *DirLight::GetType()
@@ -397,7 +433,11 @@ void PointLight::Finish()
 
 void PointLight::DrawUIElements()
 {
-
+    ImGui::Separator();
+    ImGui::Text("Lighting");
+    ImGui::Text("LightType: %s", name.c_str());
+    ImGui::ColorEdit3("LightColor", (GLfloat *)&color);
+    ImGui::SliderFloat("LightStrength", &strength, 0.0f, 5.0f);
 }
 
 const GLchar *PointLight::GetType()
@@ -479,7 +519,11 @@ void SpotLight::Finish()
 
 void SpotLight::DrawUIElements()
 {
-
+    ImGui::Separator();
+    ImGui::Text("Lighting");
+    ImGui::Text("LightType: %s", name.c_str());
+    ImGui::ColorEdit3("LightColor", (GLfloat *)&color);
+    ImGui::SliderFloat("LightStrength", &strength, 0.0f, 5.0f);
 }
 
 const GLchar *SpotLight::GetType()
@@ -521,21 +565,19 @@ void Camera::Destroy()
 
 void Camera::ProcessKeyboard(CameraMovement movement, GLfloat deltaTime)
 {
-
-    GLfloat velocity = moveSpeed * deltaTime;
     switch (movement)
     {
     case CAM_FORWARD:
-        this->gameObject->transform->position += this->gameObject->transform->front * velocity;
+        this->gameObject->transform->position += this->gameObject->transform->front * moveSpeed * deltaTime;
         break;
     case CAM_BACKWARD:
-        this->gameObject->transform->position -= this->gameObject->transform->front * velocity;
+        this->gameObject->transform->position -= this->gameObject->transform->front * moveSpeed * deltaTime;
         break;
     case CAM_RIGHT:
-        this->gameObject->transform->position += this->gameObject->transform->right * velocity;
+        this->gameObject->transform->position += this->gameObject->transform->right * moveSpeed * deltaTime;
         break;
     case CAM_LEFT:
-        this->gameObject->transform->position -= this->gameObject->transform->right * velocity;
+        this->gameObject->transform->position -= this->gameObject->transform->right * moveSpeed * deltaTime;
         break;
     default:
         break;
@@ -648,7 +690,29 @@ void Camera::Finish()
 
 void Camera::DrawUIElements()
 {
-
+    ImGui::Separator();
+    ImGui::Text("Camera");
+    ImGui::SliderFloat("MoveSpeed", &moveSpeed, 0.0f, 10.0f);
+    ImGui::SliderFloat("Sensitivity", &sensitivity, 0.0f, 10.0f);
+    ImGui::SliderFloat("Fov", &fov, 0.0f, 120.0f);
+    ImGui::SliderFloat("ZoomSpeed", &zoomSpeed, 0.0f, 10.0f);
+    ImGui::SliderFloat("Near", &near, 0.0f, 10.0f);
+    ImGui::SliderFloat("Far", &far, 10.0f, 10000.0f);
+    ImGui::Text("OperationMode:");
+    ImGui::SameLine();
+    if (ImGui::Button("FIRST PERSON"))
+        operationMode = CAM_FIRST_PERSON;
+    ImGui::SameLine();
+    if (ImGui::Button("ORBIT"))
+        operationMode = CAM_ORBIT;
+    ImGui::Text("Projection:");
+    ImGui::SameLine();
+    if (ImGui::Button("PERSPECTIVE"))
+        projection = CAM_PERSPECTIVE;
+    ImGui::SameLine();
+    if (ImGui::Button("ORTHOGRAPHIC"))
+        projection = CAM_ORTHOGRAPHIC;
+    ImGui::Checkbox("ConstrainPitch", &constrainPitch);
 }
 
 void Camera::Print()

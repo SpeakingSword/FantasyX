@@ -9,6 +9,10 @@
 
 #include <glad\glad.h>
 
+#include "imgui.h"
+#include "imgui_impl_glfw.h"
+#include "imgui_impl_opengl3.h"
+
 using namespace std;
 
 namespace fx {
@@ -36,12 +40,14 @@ namespace fx {
 
         ComponentSystem();
         
+        void Start();
         void Update();
         bool Contain(const GLchar *name) const;
         Component *GetComponent(const GLchar *name) const;
         void AddComponent(Component *);
         void RemoveComponent(const GLchar *name);
         void ShowAllComponents() const;
+        void DrawUIElements();
         void Destroy();
 
     private:

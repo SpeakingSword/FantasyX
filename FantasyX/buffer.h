@@ -16,7 +16,7 @@ namespace fx {
         DEPTH_ATTACHMENT,
         STENCIL_ATTACHMENT,
         DEPTH_STENCIL_ATTACHMENT
-    };
+    }FrameBufferAttachment;
 
     class TextureBuffer {
     public:

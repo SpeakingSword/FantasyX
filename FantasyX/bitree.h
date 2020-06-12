@@ -103,7 +103,8 @@ bool BiTree<T>::remove(BiTreeNode<T>* &node) {
     /*之所以要传入指针的引用，是因为不但要释放node指向的空间，
     同样也需要将node内保存的地址更改为nullptr*/
     if (node == nullptr)
-        return false;
+        return true;
+
     if (remove(node->left) && remove(node->right)) {
         delete node;//释放p指向的空间
         node = nullptr;//清空p内的地址

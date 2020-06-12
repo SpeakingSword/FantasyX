@@ -56,6 +56,12 @@ GameObject::~GameObject()
     std::cout << "ENGIN CORE::GameObject destroyed ... " << std::endl;
 }
 
+void GameObject::Init()
+{
+    this->transform->Start();
+    componentSystem->Start();
+}
+
 void GameObject::Add(GameObject *obj)
 {
     GameObject *child = this->child;
