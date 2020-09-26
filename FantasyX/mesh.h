@@ -87,7 +87,6 @@ namespace fx {
         void Destroy() override;
     };
     
-    // ¶à±ßÐÎÍø¸ñ
     class PolygonMesh : public Mesh {
     public:
         PolygonMesh(const vector<Vertex> &vertices, const vector<GLuint> &indices, const GLchar* path);

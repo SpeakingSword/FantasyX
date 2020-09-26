@@ -1,7 +1,7 @@
 #define RENDERER_TEST_H
 #ifdef RENDERER_TEST_H
 
-#include <glad\glad.h>
+// #include <glad\glad.h>
 #include <iostream>
 
 #include "context.h"
@@ -48,7 +48,7 @@ int main()
     fxWindow *window = new fxWindow();
     window->width = WINDOW_WIDTH;
     window->height = WINDOW_HEIGHT;
-    window->Init(true, 4, 0);
+    window->Init(true, 3, 3);
 
 #pragma region 初始化imgui
     IMGUI_CHECKVERSION();
@@ -96,7 +96,7 @@ int main()
     renderer->skyboxTexture = res->LoadCubeMap(skyboxFaces);
     scene->renderer = renderer;
 
-    // zero
+    // zero object
     GameObject *zero = new GameObject();
     zero->name = "ZeroObject";
     zero->transform->position = Vector3(0.0f, 0.0f, 0.0f);
@@ -196,21 +196,11 @@ int main()
     {
         Time::UpdateClocker();
 
-        /*
-        pointLight1->transform->position = Vector3(-p_light_radius, 0.0f, -p_light_radius);
-        pointLight2->transform->position = Vector3(0.0f, 0.0f, p_light_radius);
-        pointLight3->transform->position = Vector3(p_light_radius, 0.0f, -p_light_radius);
-        if (p_light_rotate)
-        {
-            pointLightZero->transform->rotation.y += 30.0f * Time::deltaTime * rotateSpeed;
-        }
-        */
+        window->Clear(Vector3(0.2f));
 
-        // 渲染循环 ... 
+        // 更新场景 ... 
         scene->Update();
         scene->Render();
-
-        window->Clear(Vector3(0.2f));
 
 #pragma region 绘制GUI
 
