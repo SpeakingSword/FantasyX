@@ -1,4 +1,4 @@
-#version 330 core
+﻿#version 330 core
 #define MAX_POINT_LIGHT 8
 #define MAX_SPOT_LIGHT 8
 out vec4 FragColor;

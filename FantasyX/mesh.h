@@ -1,4 +1,4 @@
-#ifndef MESH_H
+﻿#ifndef MESH_H
 #define MESH_H
 
 #include <vector>

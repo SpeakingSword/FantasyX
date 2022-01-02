@@ -1,4 +1,4 @@
-#ifndef RESOURCE_MANAGER_H
+﻿#ifndef RESOURCE_MANAGER_H
 #define RESOURCE_MANAGER_H
 
 #include <fstream>

@@ -121,6 +121,7 @@
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>
+    <None Include="FantasyX.licenseheader" />
     <None Include="Shaders\Bloom.frag" />
     <None Include="Shaders\Bloom.vert" />
     <None Include="Shaders\BRDF.frag" />

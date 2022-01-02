@@ -1,4 +1,4 @@
-#ifndef COMPONENT_H
+﻿#ifndef COMPONENT_H
 #define COMPONENT_H
 
 #include <unordered_map>

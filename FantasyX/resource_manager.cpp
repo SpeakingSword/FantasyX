@@ -1,4 +1,4 @@
-#include "resource_manager.h"
+﻿#include "resource_manager.h"
 #include "material.h"
 #define STB_IMAGE_IMPLEMENTATION
 #include <stb_image.h>

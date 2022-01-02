@@ -1,4 +1,4 @@
-#version 330 core
+﻿#version 330 core
 #define MAX_POINT_LIGHT 8
 
 layout (location = 0) out vec4 FragColor;

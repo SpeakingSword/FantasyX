@@ -1,4 +1,4 @@
-//#define LOADCHECK_TEST_H
+﻿//#define LOADCHECK_TEST_H
 #ifdef LOADCHECK_TEST_H
 
 #define DEBUG

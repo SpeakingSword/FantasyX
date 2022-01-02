@@ -1,4 +1,4 @@
-#ifndef CLOCKER_H
+﻿#ifndef CLOCKER_H
 #define CLOCKER_H
 
 #include <iostream>

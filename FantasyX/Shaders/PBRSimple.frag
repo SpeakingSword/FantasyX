@@ -1,4 +1,4 @@
-#version 330 core
+﻿#version 330 core
 layout (location = 0) out vec3 gPos;
 layout (location = 1) out float gDepth;
 layout (location = 2) out vec3 gAlbedo;

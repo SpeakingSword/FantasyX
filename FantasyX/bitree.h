@@ -1,4 +1,4 @@
-#ifndef BITREE_H
+﻿#ifndef BITREE_H
 #define BITREE_H
 
 #include <iostream>

@@ -1,4 +1,4 @@
-#ifndef TYPES_H
+﻿#ifndef TYPES_H
 #define TYPES_H
 
 #include <list>

@@ -1,4 +1,4 @@
-#define RENDERER_TEST_H
+﻿#define RENDERER_TEST_H
 #ifdef RENDERER_TEST_H
 
 // #include <glad\glad.h>

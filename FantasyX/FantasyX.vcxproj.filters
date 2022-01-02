@@ -123,6 +123,7 @@
     <None Include="Shaders\PrefilterBox.frag">
       <Filter>resources\shaders</Filter>
     </None>
+    <None Include="FantasyX.licenseheader" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="scene.h">

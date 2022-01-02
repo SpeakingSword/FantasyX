@@ -1,4 +1,4 @@
-//#define DEMO
+﻿//#define DEMO
 #ifdef DEMO
 // 标准库
 #include <iostream>

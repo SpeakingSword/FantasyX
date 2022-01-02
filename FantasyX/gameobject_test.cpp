@@ -1,4 +1,4 @@
-//#define GAMEOBJECT_TEST
+﻿//#define GAMEOBJECT_TEST
 #ifdef GAMEOBJECT_TEST
 
 #include <iostream>

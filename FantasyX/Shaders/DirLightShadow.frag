@@ -1,4 +1,4 @@
-#version 330 core
+﻿#version 330 core
 
 uniform float NEAR;
 uniform float FAR;

@@ -1,4 +1,4 @@
-//#define COMPONENTSYSTEM_TEST
+﻿//#define COMPONENTSYSTEM_TEST
 #ifdef COMPONENTSYSTEM_TEST
 
 #include <iostream>
