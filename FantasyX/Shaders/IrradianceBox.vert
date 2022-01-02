@@ -10,6 +10,6 @@ uniform mat4 view;
 
 void main()
 {
-	localPos = Pos;
-	gl_Position = projection * view  * vec4(Pos, 1.0f);
+    localPos = Pos;
+    gl_Position = projection * view  * vec4(Pos, 1.0f);
 }

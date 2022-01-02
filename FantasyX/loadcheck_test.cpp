@@ -13,17 +13,17 @@ using namespace std;
 
 int main()
 {
-    fxWindow *window = new fxWindow();
+    fxWindow* window = new fxWindow();
     window->Init();
-    ResourceManager *res = ResourceManager::GetInstance();
+    ResourceManager* res = ResourceManager::GetInstance();
 
-    // 测试加载纹理/贴图
+    // 娴嬭瘯鍔犺浇绾圭悊/璐村浘
     Texture awosomeface = res->LoadTexture2D("D:\\OpenGLAssets\\Images\\awesomeface.png", "_AlbedoMap", true);
     Texture awosomeface_2 = res->LoadTexture2D("D:\\OpenGLAssets\\Images\\awesomeface.png", "_AlbedoMap", true);
     Texture alyx_apt = res->LoadHdrTexture("D:\\OpenGLAssets\\Images\\HDR\\Alexs_Apartment\\Alexs_Apt_2k.hdr");
     Texture alyx_apt_2 = res->LoadHdrTexture("D:\\OpenGLAssets\\Images\\HDR\\Alexs_Apartment\\Alexs_Apt_2k.hdr");
 
-    // 输出两个纹理
+    // 杈撳嚭涓や釜绾圭悊
 #ifdef DEBUG
     std::cout << "awosomeface: id = " << awosomeface.id << std::endl;
     std::cout << "awosomeface_2: id = " << awosomeface_2.id << std::endl;

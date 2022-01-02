@@ -1,64 +1,41 @@
-//#define LOADMODEL_TEST_H
-#ifdef LOADMODEL_TEST_H
+//#define LOADCHECK_TEST_H
+#ifdef LOADCHECK_TEST_H
+
+#define DEBUG
 
 #include <iostream>
-
-#include "scene.h"
+#include "context.h"
 #include "resource_manager.h"
-#include "gameobject.h"
+#include "texture.h"
 
-#include <glad\glad.h>
-#include <GLFW\glfw3.h>
-
-using namespace std;
 using namespace fx;
+using namespace std;
 
 int main()
 {
-#pragma region 必须的初始化部分
-    // GLFW: 初始化与配置
-    // ------------------------------------------
-    glfwInit();
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-    //glfwWindowHint(GLFW_SAMPLES, 4);
+    fxWindow* window = new fxWindow();
+    window->Init();
+    ResourceManager* res = ResourceManager::GetInstance();
 
-#ifdef __APPLE__
-    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
-#endif // __APPLE__
+    // 娴嬭瘯鍔犺浇绾圭悊/璐村浘
+    Texture awosomeface = res->LoadTexture2D("D:\\OpenGLAssets\\Images\\awesomeface.png", "_AlbedoMap", true);
+    Texture awosomeface_2 = res->LoadTexture2D("D:\\OpenGLAssets\\Images\\awesomeface.png", "_AlbedoMap", true);
+    Texture alyx_apt = res->LoadHdrTexture("D:\\OpenGLAssets\\Images\\HDR\\Alexs_Apartment\\Alexs_Apt_2k.hdr");
+    Texture alyx_apt_2 = res->LoadHdrTexture("D:\\OpenGLAssets\\Images\\HDR\\Alexs_Apartment\\Alexs_Apt_2k.hdr");
 
-    // GLFW: 创建窗口
-    // -------------------------------------------------------------------------------------
-    GLFWwindow* window = glfwCreateWindow(800, 600, "FantasyX", NULL, NULL);
-    if (window == NULL)
-    {
-        std::cout << "Failed to Create GLFW window" << std::endl;
-        glfwTerminate();
-        return -1;
-    }
+    // 杈撳嚭涓や釜绾圭悊
+#ifdef DEBUG
+    std::cout << "awosomeface: id = " << awosomeface.id << std::endl;
+    std::cout << "awosomeface_2: id = " << awosomeface_2.id << std::endl;
+    std::cout << "alyx_apt: id = " << alyx_apt.id << std::endl;
+    std::cout << "alyx_apt_2: id = " << alyx_apt_2.id << std::endl;
+#endif // DEBUG
 
-    glfwMakeContextCurrent(window);
 
-    // GLAD: 加载所有的OpenGL函数
-    // -----------------------------------------------------
-    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-    {
-        std::cout << "Failed to initialize GLAD" << std::endl;
-        return -1;
-    }
-#pragma endregion
 
-    ResourceManager *res = ResourceManager::GetInstance();
-    GameObject *solder = res->LoadModel("D:\\OpenGL3DModels\\nanosuit\\nanosuit.obj");
-    GameObject *gril = res->LoadModel("D:\\OpenGL3DModels\\matilda\\matilda.obj");
-    string prefix = "-";
-    GameObject::PrintAllName(solder, prefix);
-    GameObject::PrintAllName(gril, prefix);
+    system("pause");
 
-    while (!glfwWindowShouldClose(window))
-    {
-        // 渲染循环 ... 
-    }
+    return 0;
 }
-#endif // LOADMODEL_TEST_H
+
+#endif // !LOADCHECK_TEST_H

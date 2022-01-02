@@ -4,19 +4,19 @@
 out vec4 FragColor;
 
 in VS_OUT {
-	vec2 texCoord;
-	vec3 fragPos;
-	vec3 normal; 
-	mat3 TBN;
+    vec2 texCoord;
+    vec3 fragPos;
+    vec3 normal; 
+    mat3 TBN;
 } fs_in;
 
-// Ã¿¸ö×ÅÉ«Æ÷µÄ²ÄÖÊÍ¨µÀ²»Ò»Ñù
+// æ¯ä¸ªç€è‰²å™¨çš„æè´¨é€šé“ä¸ä¸€æ ·
 struct Material {
     vec3 _BaseColor;
     int _SpecularStrength;
 };
 
-// Ã¿¸ö×ÅÉ«Æ÷¹²ÏíÒ»×éµÆ¹âÊı¾İ
+// æ¯ä¸ªç€è‰²å™¨å…±äº«ä¸€ç»„ç¯å…‰æ•°æ®
 struct DirLight {
     vec3 color;
     vec3 direction;
@@ -54,7 +54,7 @@ struct SpotLight {
     float quadratic;
 };
 
-// Shader ¹²Ïí³Ø
+// Shader å…±äº«æ± 
 layout (std140) uniform SharedDirLightt {
     DirLight dirLight;
 };
@@ -73,10 +73,10 @@ layout (std140) uniform SharedVariable {
     vec3 viewPos;
 };
 
-// ×ÅÉ«Æ÷×ÔÓĞµÄÁ¬½ÓÍâ²¿µÄÊı¾İÍ¨µÀ
+// ç€è‰²å™¨è‡ªæœ‰çš„è¿æ¥å¤–éƒ¨çš„æ•°æ®é€šé“
 uniform Material material;
 
-// ¶¨Òå±ØĞëµÄ¹âÕÕËã·¨ ... 
+// å®šä¹‰å¿…é¡»çš„å…‰ç…§ç®—æ³• ... 
 vec3 CalculateDirLight(DirLight light, vec3 normal, vec3 viewDir);
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
 vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir);
@@ -104,94 +104,94 @@ vec3 CalculateDirLight(DirLight light, vec3 normal, vec3 viewDir)
 {
     vec3 lightDir = normalize(-light.direction);
 
-	// Âş·´Éä
-	float diff = max(dot(normal, lightDir), 0.0f);
+    // æ¼«åå°„
+    float diff = max(dot(normal, lightDir), 0.0f);
 
-	// ²¼ÁÖ-·ë¸ß¹â
-	vec3 halfwayDir = normalize(lightDir + viewDir);
-	float spec = pow(max(dot(normal, halfwayDir), 0.0f), material._SpecularStrength);
+    // å¸ƒæ—-å†¯é«˜å…‰
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0f), material._SpecularStrength);
 
 
-	vec3 ambient = light.color * light.ambient * material._BaseColor;
-	vec3 diffuse = light.color * light.diffuse * diff * material._BaseColor;
-	vec3 specular = light.color * light.specular * spec; // ÎÊÌâ£ºÊÇ·ñÓ¦¸Ã³ËÉÏÎïÌåÑÕÉ«£¿
+    vec3 ambient = light.color * light.ambient * material._BaseColor;
+    vec3 diffuse = light.color * light.diffuse * diff * material._BaseColor;
+    vec3 specular = light.color * light.specular * spec; // é—®é¢˜ï¼šæ˜¯å¦åº”è¯¥ä¹˜ä¸Šç‰©ä½“é¢œè‰²ï¼Ÿ
 
-	ambient *= light.strength;
-	diffuse *= light.strength;
-	specular *= light.strength;
+    ambient *= light.strength;
+    diffuse *= light.strength;
+    specular *= light.strength;
 
-	return (ambient + diffuse + specular);
+    return (ambient + diffuse + specular);
 }
 
 vec3 CalculatePointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.position - fragPos);
 
-	// Âş·´Éä
-	float diff = max(dot(normal, lightDir), 0.0f);
+    // æ¼«åå°„
+    float diff = max(dot(normal, lightDir), 0.0f);
 
-	// ²¼ÁÖ-·ë¸ß¹â
-	vec3 halfwayDir = normalize(lightDir + viewDir);
-	float spec = pow(max(dot(normal, halfwayDir), 0.0f), material._SpecularStrength);
+    // å¸ƒæ—-å†¯é«˜å…‰
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0f), material._SpecularStrength);
 
-	// ¹âË¥¼õ
-	float lightDistance = length(light.position - fragPos);
-	float lightAttenuation = 1.0f / (light.constant + light.linear * lightDistance + light.quadratic * (lightDistance * lightDistance));
+    // å…‰è¡°å‡
+    float lightDistance = length(light.position - fragPos);
+    float lightAttenuation = 1.0f / (light.constant + light.linear * lightDistance + light.quadratic * (lightDistance * lightDistance));
 
 
-	vec3 ambient = light.color * light.ambient * material._BaseColor;
-	vec3 diffuse = light.color * light.diffuse * diff * material._BaseColor;
-	vec3 specular = light.color * light.specular * spec;
+    vec3 ambient = light.color * light.ambient * material._BaseColor;
+    vec3 diffuse = light.color * light.diffuse * diff * material._BaseColor;
+    vec3 specular = light.color * light.specular * spec;
 
-	// ½«¹âÕÕ½á¹û³ËÉÏ¹âÕÕÇ¿¶È
-	ambient *= light.strength;
-	diffuse *= light.strength;
-	specular *= light.strength;
+    // å°†å…‰ç…§ç»“æœä¹˜ä¸Šå…‰ç…§å¼ºåº¦
+    ambient *= light.strength;
+    diffuse *= light.strength;
+    specular *= light.strength;
 
-	// ¹âÕÕ½á¹û³ËÉÏ¹âË¥¼õÏµÊı
-	ambient *= lightAttenuation;
-	diffuse *= lightAttenuation;
-	specular *= lightAttenuation;
+    // å…‰ç…§ç»“æœä¹˜ä¸Šå…‰è¡°å‡ç³»æ•°
+    ambient *= lightAttenuation;
+    diffuse *= lightAttenuation;
+    specular *= lightAttenuation;
 
-	return (ambient + diffuse + specular);
+    return (ambient + diffuse + specular);
 }
 
 vec3 CalculateSpotLight(SpotLight light, vec3 normal, vec3 fragPos, vec3 viewDir)
 {
     vec3 lightDir = normalize(light.position - fragPos);
 
-	// Âş·´Éä
-	float diff = max(dot(normal, lightDir), 0.0f);
+    // æ¼«åå°„
+    float diff = max(dot(normal, lightDir), 0.0f);
 
-	// ²¼ÁÖ-·ë¸ß¹â
-	vec3 halfwayDir = normalize(lightDir + viewDir);
-	float spec = pow(max(dot(normal, halfwayDir), 0.0f), material._SpecularStrength);
+    // å¸ƒæ—-å†¯é«˜å…‰
+    vec3 halfwayDir = normalize(lightDir + viewDir);
+    float spec = pow(max(dot(normal, halfwayDir), 0.0f), material._SpecularStrength);
 
-	// ¾Û¹âĞ§¹û
-	float theta = dot(lightDir, normalize(-light.direction));
-	float epsilon = (light.cutOff - light.outerCutOff);
-	float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0f, 1.0f);
+    // èšå…‰æ•ˆæœ
+    float theta = dot(lightDir, normalize(-light.direction));
+    float epsilon = (light.cutOff - light.outerCutOff);
+    float intensity = clamp((theta - light.outerCutOff) / epsilon, 0.0f, 1.0f);
 
-	// ¹âË¥¼õ
-	float lightDistance = length(light.position - fragPos);
-	float lightAttenuation = 1.0f / (light.constant + light.linear * lightDistance + light.quadratic * (lightDistance * lightDistance));
+    // å…‰è¡°å‡
+    float lightDistance = length(light.position - fragPos);
+    float lightAttenuation = 1.0f / (light.constant + light.linear * lightDistance + light.quadratic * (lightDistance * lightDistance));
 
-	// ºÏ²¢¹âÕÕĞ§¹û
-	vec3 ambient = light.color * light.ambient * material._BaseColor;
-	vec3 diffuse = light.color * light.diffuse * diff * material._BaseColor;
-	vec3 specular = light.color * light.specular * spec;
+    // åˆå¹¶å…‰ç…§æ•ˆæœ
+    vec3 ambient = light.color * light.ambient * material._BaseColor;
+    vec3 diffuse = light.color * light.diffuse * diff * material._BaseColor;
+    vec3 specular = light.color * light.specular * spec;
 
-	// ½«¹âÕÕ½á¹û³ËÉÏ¹âÕÕÇ¿¶È
-	ambient *= light.strength;
-	diffuse *= light.strength;
-	specular *= light.strength;
+    // å°†å…‰ç…§ç»“æœä¹˜ä¸Šå…‰ç…§å¼ºåº¦
+    ambient *= light.strength;
+    diffuse *= light.strength;
+    specular *= light.strength;
 
-	diffuse *= intensity;
-	specular *= intensity;
+    diffuse *= intensity;
+    specular *= intensity;
 
-	ambient *= lightAttenuation;
-	diffuse *= lightAttenuation;
-	specular *= lightAttenuation;
+    ambient *= lightAttenuation;
+    diffuse *= lightAttenuation;
+    specular *= lightAttenuation;
 
-	return (ambient + diffuse + specular);
+    return (ambient + diffuse + specular);
 }

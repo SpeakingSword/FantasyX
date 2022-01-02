@@ -23,7 +23,7 @@ namespace fx {
     class Component {
     public:
         string name;
-        GameObject *gameObject;
+        GameObject* gameObject;
 
         virtual void Awake() = 0;
         virtual void Start() = 0;
@@ -36,23 +36,23 @@ namespace fx {
 
     class ComponentSystem {
     public:
-        GameObject *host;
+        GameObject* host;
 
         ComponentSystem();
-        
+
         void Start();
         void Update();
-        bool Contain(const GLchar *name) const;
-        Component *GetComponent(const GLchar *name) const;
-        void AddComponent(Component *);
-        void RemoveComponent(const GLchar *name);
+        bool Contain(const GLchar* name) const;
+        Component* GetComponent(const GLchar* name) const;
+        void AddComponent(Component*);
+        void RemoveComponent(const GLchar* name);
         void ShowAllComponents() const;
         void DrawUIElements();
         void Destroy();
 
     private:
         ~ComponentSystem();
-        unordered_map<string, Component *> componentMap;
+        unordered_map<string, Component*> componentMap;
     };
 
     class Transform : public Component {
@@ -63,24 +63,24 @@ namespace fx {
         Vector3 rotation;
         Vector3 scale;
 
-        // ÏÂÃæµÄ±äÁ¿ĞèÒªÔÚÃ¿Ò»Ö¡¶¼¸üĞÂ
+        // ä¸‹é¢çš„å˜é‡éœ€è¦åœ¨æ¯ä¸€å¸§éƒ½æ›´æ–°
         Vector3 up;
         Vector3 right;
         Vector3 front;
         Vector3 worldUp;
 
-        // ¶ÔÏóµÄÊÀ½çÎ»ÖÃÎªÄ£ĞÍ±ä»»¾ØÕó³ËÉÏÄ£ĞÍ¾Ö²¿¿Õ¼äµÄÔ­µã
-        // Ò»°ãÎª×ø±êÔ­µã(0, 0, 0)
+        // å¯¹è±¡çš„ä¸–ç•Œä½ç½®ä¸ºæ¨¡å‹å˜æ¢çŸ©é˜µä¹˜ä¸Šæ¨¡å‹å±€éƒ¨ç©ºé—´çš„åŸç‚¹
+        // ä¸€èˆ¬ä¸ºåæ ‡åŸç‚¹(0, 0, 0)
         Vector3 worldPos;
 
-        // µ±Ç°¶ÔÏóµÄÄ£ĞÍ±ä»»¾ØÕóÎªÔÚ¸¸¶ÔÏóµÄÄ£ĞÍ¾ØÕó»ù´¡ÉÏ
-        // ½Ó×Å×öËõ·Å¡¢Ğı×ª¡¢Î»ÒÆ±ä»»Ö®ºóµÄ¾ØÕó
-        // ËùÒÔ±éÀú²ã¼¶½á¹¹Ê±£¬»á¸üĞÂµ±Ç°½ÚµãµÄÄ£ĞÍ±ä»»¾ØÕó
+        // å½“å‰å¯¹è±¡çš„æ¨¡å‹å˜æ¢çŸ©é˜µä¸ºåœ¨çˆ¶å¯¹è±¡çš„æ¨¡å‹çŸ©é˜µåŸºç¡€ä¸Š
+        // æ¥ç€åšç¼©æ”¾ã€æ—‹è½¬ã€ä½ç§»å˜æ¢ä¹‹åçš„çŸ©é˜µ
+        // æ‰€ä»¥éå†å±‚çº§ç»“æ„æ—¶ï¼Œä¼šæ›´æ–°å½“å‰èŠ‚ç‚¹çš„æ¨¡å‹å˜æ¢çŸ©é˜µ
         Matrix4x4 modelMatrix;
 
         Transform();
-        Transform(GameObject *host);
-        ~Transform();   
+        Transform(GameObject* host);
+        ~Transform();
         void Awake() override;
         void Start() override;
         void Update() override;
@@ -96,8 +96,8 @@ namespace fx {
 
     class Render : public Component {
     public:
-        Mesh *mesh;
-        Material *material;
+        Mesh* mesh;
+        Material* material;
 
         Render();
         void Awake() override;
@@ -122,7 +122,7 @@ namespace fx {
         virtual void DrawUIElements() = 0;
         virtual void Destroy() = 0;
         virtual void Print() = 0;
-        virtual const GLchar *GetType() = 0;
+        virtual const GLchar* GetType() = 0;
     };
 
     class DirLight : public Lighting {
@@ -146,7 +146,7 @@ namespace fx {
         void DrawUIElements() override;
         void Destroy() override;
         void Print() override;
-        const GLchar *GetType() override;
+        const GLchar* GetType() override;
 
     private:
         ~DirLight();
@@ -164,7 +164,7 @@ namespace fx {
 
         // position eq transform.worldPos
         Vector3 position;
-        
+
         PointLight();
         void Awake() override;
         void Start() override;
@@ -173,7 +173,7 @@ namespace fx {
         void DrawUIElements() override;
         void Destroy() override;
         void Print() override;
-        const GLchar *GetType() override;
+        const GLchar* GetType() override;
 
     private:
         ~PointLight();
@@ -193,7 +193,7 @@ namespace fx {
         // direction eq transform.front, position eq transform.worldPos
         Vector3 position;
         Vector3 direction;
-        
+
         SpotLight();
         void Awake() override;
         void Start() override;
@@ -202,13 +202,13 @@ namespace fx {
         void DrawUIElements() override;
         void Destroy() override;
         void Print() override;
-        const GLchar *GetType() override;
+        const GLchar* GetType() override;
 
     private:
         ~SpotLight();
     };
 
-    // ÉãÏñ»ú³£Á¿£¬ÓÃÀ´¿ìËÙ»Ö¸´³õÊ¼µÄ×´Ì¬
+    // æ‘„åƒæœºå¸¸é‡ï¼Œç”¨æ¥å¿«é€Ÿæ¢å¤åˆå§‹çš„çŠ¶æ€
     const GLfloat YAW = -90.0f;
     const GLfloat PITCH = 0.0f;
     const GLfloat MOVE_SPEED = 2.5f;
@@ -235,7 +235,7 @@ namespace fx {
         GLfloat yaw;
         GLfloat pitch;
 
-        // Ïà»ú¿ÉÅäÖÃÑ¡Ïî
+        // ç›¸æœºå¯é…ç½®é€‰é¡¹
         GLfloat moveSpeed;
         GLfloat sensitivity;
         GLfloat fov;
@@ -296,9 +296,9 @@ namespace fx {
         void ProcessMouseScroll(GLfloat yoffset, GLfloat deltaTime);
         Matrix4x4 lookAt(Vector3 cameraPos, Vector3 cameraTargetPos, Vector3 up);
 
-        private:
-            ~Camera();
-            void UpdateCameraVectors();
+    private:
+        ~Camera();
+        void UpdateCameraVectors();
     };
 
 }

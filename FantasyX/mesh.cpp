@@ -5,12 +5,12 @@ namespace fx {
 #pragma region Mesh
     void Mesh::SetupMesh()
     {
-        // ´´½¨»º´æ¶ÔÏó
+        // åˆ›å»ºç¼“å­˜å¯¹è±¡
         glGenVertexArrays(1, &VAO);
         glGenBuffers(1, &VBO);
         glGenBuffers(1, &EBO);
 
-        // ·¢ËÍÊı¾İ¸ø»º´æ¶ÔÏó
+        // å‘é€æ•°æ®ç»™ç¼“å­˜å¯¹è±¡
         glBindVertexArray(VAO);
 
         glBindBuffer(GL_ARRAY_BUFFER, VBO);
@@ -19,20 +19,20 @@ namespace fx {
         glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, EBO);
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, indices.size() * sizeof(unsigned int), &indices[0], GL_STATIC_DRAW);
 
-        /* ÉèÖÃ¶¥µãÊôĞÔÖ¸Õë */
-        // ¶¥µãÎ»ÖÃ
+        /* è®¾ç½®é¡¶ç‚¹å±æ€§æŒ‡é’ˆ */
+        // é¡¶ç‚¹ä½ç½®
         glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)0);
         glEnableVertexAttribArray(0);
-        // ¶¥µãÎÆÀí×ø±ê
+        // é¡¶ç‚¹çº¹ç†åæ ‡
         glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, texcoord));
         glEnableVertexAttribArray(1);
-        // ¶¥µã·¨Ïß
+        // é¡¶ç‚¹æ³•çº¿
         glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, normal));
         glEnableVertexAttribArray(2);
-        // ¶¥µãÇĞÏß
+        // é¡¶ç‚¹åˆ‡çº¿
         glVertexAttribPointer(3, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, tangent));
         glEnableVertexAttribArray(3);
-        // ¶¥µã¸±ÇĞÏß
+        // é¡¶ç‚¹å‰¯åˆ‡çº¿
         glVertexAttribPointer(4, 3, GL_FLOAT, GL_FALSE, sizeof(Vertex), (void*)offsetof(Vertex, bitangent));
         glEnableVertexAttribArray(4);
 
@@ -41,7 +41,7 @@ namespace fx {
 #pragma endregion
 
 #pragma region CubeMesh
-    CubeMesh *CubeMesh::_instance = nullptr;
+    CubeMesh* CubeMesh::_instance = nullptr;
 
     CubeMesh::CubeMesh()
     {
@@ -59,7 +59,7 @@ namespace fx {
         name = "CubeMesh";
         path = "\\CubeMesh";
         GLfloat cube[] = {
-            // ¶¥µãÎ»ÖÃ£¨ÄæÊ±Õë£©	  // ÎÆÀí×ø±ê  // ¶¥µã·¨ÏòÁ¿
+            // é¡¶ç‚¹ä½ç½®ï¼ˆé€†æ—¶é’ˆï¼‰	  // çº¹ç†åæ ‡  // é¡¶ç‚¹æ³•å‘é‡
             // Back face
             -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, -1.0f,// Bottom-left
              0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f, 0.0f, -1.0f,// top-right
@@ -158,7 +158,7 @@ namespace fx {
         SetupMesh();
     }
 
-    CubeMesh *CubeMesh::GetInstance()
+    CubeMesh* CubeMesh::GetInstance()
     {
         if (_instance == nullptr)
         {
@@ -175,7 +175,7 @@ namespace fx {
 #pragma endregion
 
 #pragma region RectangleMesh
-    RectangleMesh *RectangleMesh::_instance = nullptr;
+    RectangleMesh* RectangleMesh::_instance = nullptr;
 
     RectangleMesh::RectangleMesh()
     {
@@ -193,7 +193,7 @@ namespace fx {
         name = "RectangleMesh";
         path = "\\RectangleMesh";
         float rectangle[] = {
-            // ¶¥µãÎ»ÖÃ           // ÎÆÀí×ø±ê  //¶¥µã·¨ÏòÁ¿
+            // é¡¶ç‚¹ä½ç½®           // çº¹ç†åæ ‡  //é¡¶ç‚¹æ³•å‘é‡
             -1.0f,  1.0f, 0.0f,  0.0f, 1.0f, 0.0f, 0.0f, 1.0f,
             -1.0f, -1.0f, 0.0f,  0.0f, 0.0f, 0.0f, 0.0f, 1.0f,
              1.0f, -1.0f, 0.0f,  1.0f, 0.0f, 0.0f, 0.0f, 1.0f,
@@ -257,7 +257,7 @@ namespace fx {
         SetupMesh();
     }
 
-    RectangleMesh *RectangleMesh::GetInstance()
+    RectangleMesh* RectangleMesh::GetInstance()
     {
         if (_instance == nullptr)
         {
@@ -276,7 +276,7 @@ namespace fx {
 #pragma endregion
 
 #pragma region PolygonMesh
-    PolygonMesh::PolygonMesh(const vector<Vertex> &vertices, const vector<GLuint> &indices, const GLchar* path)
+    PolygonMesh::PolygonMesh(const vector<Vertex>& vertices, const vector<GLuint>& indices, const GLchar* path)
     {
         InitMeshData(vertices, indices, path);
         InitMesh();
@@ -298,7 +298,7 @@ namespace fx {
         SetupMesh();
     }
 
-    void PolygonMesh::InitMeshData(const vector<Vertex> &vertices, const vector<GLuint> &indices, const GLchar *path)
+    void PolygonMesh::InitMeshData(const vector<Vertex>& vertices, const vector<GLuint>& indices, const GLchar* path)
     {
         this->path = path;
 

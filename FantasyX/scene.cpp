@@ -11,12 +11,12 @@ namespace fx {
         this->name = "untitle";
         this->renderer = nullptr;
 
-        // ³õÊ¼»¯²ã¼¶½á¹¹Ê÷£¨K²æÊ÷£©,´´½¨¸ù½Úµã
+        // åˆå§‹åŒ–å±‚çº§ç»“æ„æ ‘ï¼ˆKå‰æ ‘ï¼‰,åˆ›å»ºæ ¹èŠ‚ç‚¹
         this->root = new GameObject();
-        fx::Render *render = new fx::Render();
+        fx::Render* render = new fx::Render();
         this->root->AddComponent(render);
 
-        opaqueTree.root = new BiTreeNode<GameObject *>(this->root);
+        opaqueTree.root = new BiTreeNode<GameObject*>(this->root);
         transparentTree.root = opaqueTree.root;
 
         std::cout << "ENGIN CORE: Scene created ... " << std::endl;
@@ -42,14 +42,14 @@ namespace fx {
         return transparentTree;
     }
 
-    GameObject *Scene::Start() const
+    GameObject* Scene::Start() const
     {
         return this->root->child;
     }
 
-    GameObject *Scene::End() const
+    GameObject* Scene::End() const
     {
-        GameObject *p = this->root->child;
+        GameObject* p = this->root->child;
         while (p->sibling != nullptr)
         {
             p = p->sibling;
@@ -58,7 +58,7 @@ namespace fx {
         return p;
     }
 
-    GameObject *Scene::Root() const
+    GameObject* Scene::Root() const
     {
         return root;
     }
@@ -68,7 +68,7 @@ namespace fx {
         TraverseInit(root);
     }
 
-    void Scene::TraverseInit(GameObject *obj)
+    void Scene::TraverseInit(GameObject* obj)
     {
         if (obj == nullptr)
             return;
@@ -84,40 +84,40 @@ namespace fx {
 
     }
 
-    void Scene::TraverseUpdate(GameObject *obj)
+    void Scene::TraverseUpdate(GameObject* obj)
     {
-        // ÏÈĞò±éÀú²ã´Î½á¹¹Ê÷
-        // Èç¹ûµ±Ç°½ÚµãÎª¿ÕÔò·µ»Ø
+        // å…ˆåºéå†å±‚æ¬¡ç»“æ„æ ‘
+        // å¦‚æœå½“å‰èŠ‚ç‚¹ä¸ºç©ºåˆ™è¿”å›
         if (obj == nullptr)
             return;
 
-        // ÏÈ½«¸¸¶ÔÏóµÄ modelMatrix Ñ¹ÈëÕ»
+        // å…ˆå°†çˆ¶å¯¹è±¡çš„ modelMatrix å‹å…¥æ ˆ
         modelMatrixStack.push(modelMatrix);
 
-        // ¸üĞÂµ±Ç°¶ÔÏó transform µÄ modelMatrix
+        // æ›´æ–°å½“å‰å¯¹è±¡ transform çš„ modelMatrix
         modelMatrix = glm::translate(modelMatrix, obj->transform->position);
-        // Ğı×ªË³ĞòÎª y->x->z
+        // æ—‹è½¬é¡ºåºä¸º y->x->z
         modelMatrix = glm::rotate(modelMatrix, glm::radians(obj->transform->rotation.y), Vector3(0.0f, 1.0f, 0.0f));
         modelMatrix = glm::rotate(modelMatrix, glm::radians(obj->transform->rotation.x), Vector3(1.0f, 0.0f, 0.0f));
         modelMatrix = glm::rotate(modelMatrix, glm::radians(obj->transform->rotation.z), Vector3(0.0f, 0.0f, 1.0f));
         modelMatrix = glm::scale(modelMatrix, obj->transform->scale);
         obj->transform->modelMatrix = this->modelMatrix;
         obj->Update();
-        // ½«¶ÔÏó·ÅÈë¶ÔÓ¦µÄÈİÆ÷
+        // å°†å¯¹è±¡æ”¾å…¥å¯¹åº”çš„å®¹å™¨
         AddTo(obj);
 
-        // Èç¹û×óº¢×Ó²»Îª¿Õ±éÀú×óº¢×Ó
+        // å¦‚æœå·¦å­©å­ä¸ä¸ºç©ºéå†å·¦å­©å­
         if (obj->child != nullptr)
             TraverseUpdate(obj->child);
 
-        // Èç¹ûÓÒĞÖµÜ²»Îª¿Õ±éÀúÓÒĞÖµÜ£¬µ«±éÀúÖ®Ç°ÏÈ½« modelMatrix »Ö¸´µ½¸¸¶ÔÏóµÄ
+        // å¦‚æœå³å…„å¼Ÿä¸ä¸ºç©ºéå†å³å…„å¼Ÿï¼Œä½†éå†ä¹‹å‰å…ˆå°† modelMatrix æ¢å¤åˆ°çˆ¶å¯¹è±¡çš„
         modelMatrix = modelMatrixStack.top();
         modelMatrixStack.pop();
         if (obj->sibling != nullptr)
             TraverseUpdate(obj->sibling);
     }
 
-    void Scene::AddTo(GameObject *obj)
+    void Scene::AddTo(GameObject* obj)
     {
         switch (obj->tag)
         {
@@ -137,10 +137,10 @@ namespace fx {
         }
     }
 
-    void Scene::AddToLights(GameObject *obj)
+    void Scene::AddToLights(GameObject* obj)
     {
-        Lighting *light = (Lighting *)obj->GetComponent("Light");
-        const GLchar *type = light->GetType();
+        Lighting* light = (Lighting*)obj->GetComponent("Light");
+        const GLchar* type = light->GetType();
         if (strcmp(type, "DirLight") == 0)
         {
             AddToList(obj, dirLights);
@@ -155,36 +155,36 @@ namespace fx {
         }
     }
 
-    void Scene::AddToList(GameObject *obj, list<GameObject *> &mList)
+    void Scene::AddToList(GameObject* obj, list<GameObject*>& mList)
     {
         mList.push_back(obj);
     }
 
-    void Scene::AddToBSPTree(GameObject *obj, BiTree<GameObject *> &tree, BiTreeNode<GameObject *> *treeNode)
+    void Scene::AddToBSPTree(GameObject* obj, BiTree<GameObject*>& tree, BiTreeNode<GameObject*>* treeNode)
     {
-        // Èç¹û¸ù½ÚµãÎª¿Õ£¬Ö±½Ó½«¶ÔÏó²åÈë¸ù½Úµã
+        // å¦‚æœæ ¹èŠ‚ç‚¹ä¸ºç©ºï¼Œç›´æ¥å°†å¯¹è±¡æ’å…¥æ ¹èŠ‚ç‚¹
         if (tree.root == nullptr)
         {
-            tree.root = new BiTreeNode<GameObject *>(obj);
+            tree.root = new BiTreeNode<GameObject*>(obj);
             return;
         }
 
-        // Èç¹û¸ù½Úµã²»Îª¿Õ£¬»ñÈ¡µ±Ç°½Úµã±£´æµÄ¶ÔÏóºÍÄ¿±ê¶ÔÏóµÄÊÀ½çÎ»ÖÃ
+        // å¦‚æœæ ¹èŠ‚ç‚¹ä¸ä¸ºç©ºï¼Œè·å–å½“å‰èŠ‚ç‚¹ä¿å­˜çš„å¯¹è±¡å’Œç›®æ ‡å¯¹è±¡çš„ä¸–ç•Œä½ç½®
         Vector3 nodeObjPosition = treeNode->data->transform->worldPos;
         Vector3 targetObjPosition = obj->transform->worldPos;
 
-        // Èç¹ûÄ¿±ê¶ÔÏóÔÚµ±Ç°½Úµã±£´æµÄ¶ÔÏóÇ°Ãæ
+        // å¦‚æœç›®æ ‡å¯¹è±¡åœ¨å½“å‰èŠ‚ç‚¹ä¿å­˜çš„å¯¹è±¡å‰é¢
         if (targetObjPosition.z > nodeObjPosition.z)
         {
             if (tree.insert_left(treeNode, obj))
                 return;
             else
             {
-                // ·ñÔò¼ÌĞø±éÀú×ó½Úµã
+                // å¦åˆ™ç»§ç»­éå†å·¦èŠ‚ç‚¹
                 AddToBSPTree(obj, tree, treeNode->left);
             }
         }
-        else    // Èç¹ûÏàµÈ»òÕßÔÚºóÃæ
+        else    // å¦‚æœç›¸ç­‰æˆ–è€…åœ¨åé¢
         {
             if (tree.insert_right(treeNode, obj))
                 return;
@@ -196,32 +196,32 @@ namespace fx {
 
     }
 
-    // ½«¶ÔÏóÌí¼Óµ½Ê÷¸ùµÄº¢×Ó¶ÓÁĞÖ®ºó
-    void Scene::Add(GameObject *obj)
+    // å°†å¯¹è±¡æ·»åŠ åˆ°æ ‘æ ¹çš„å­©å­é˜Ÿåˆ—ä¹‹å
+    void Scene::Add(GameObject* obj)
     {
-        // Ê×ÏÈÅĞ¶ÏÊ÷¸ù×óº¢×Ó£¬Èç¹ûÎª¿Õ£¬ÔòÖ±½ÓÌí¼Ó¡£
-        // ²»Îª¿ÕÔò»ñµÃÊ÷¸ù×óº¢×Ó£¬½«¶ÔÏóÌí¼ÓÎªÊ÷¸ù×óº¢×ÓµÄ×îÓÒĞÖµÜ¡£
-        GameObject *root_child = this->root->child;
+        // é¦–å…ˆåˆ¤æ–­æ ‘æ ¹å·¦å­©å­ï¼Œå¦‚æœä¸ºç©ºï¼Œåˆ™ç›´æ¥æ·»åŠ ã€‚
+        // ä¸ä¸ºç©ºåˆ™è·å¾—æ ‘æ ¹å·¦å­©å­ï¼Œå°†å¯¹è±¡æ·»åŠ ä¸ºæ ‘æ ¹å·¦å­©å­çš„æœ€å³å…„å¼Ÿã€‚
+        GameObject* root_child = this->root->child;
         if (root_child == nullptr)
         {
             this->root->child = obj;
         }
         else
         {
-            GameObject *p = this->root->child;
+            GameObject* p = this->root->child;
             while (p->sibling != nullptr)
             {
                 p = p->sibling;
             }
-            // ´ËÊ± p Ö¸Ïò×îÓÒµÄ¶ÔÏó
+            // æ­¤æ—¶ p æŒ‡å‘æœ€å³çš„å¯¹è±¡
             p->sibling = obj;
         }
     }
 
-    // ½«¶ÔÏóÌí¼Óµ½Ê÷¸ùº¢×Ó¶ÓÁĞµÄÖ¸¶¨Î»ÖÃ
-    void Scene::Add(GameObject *obj, GLuint index)
+    // å°†å¯¹è±¡æ·»åŠ åˆ°æ ‘æ ¹å­©å­é˜Ÿåˆ—çš„æŒ‡å®šä½ç½®
+    void Scene::Add(GameObject* obj, GLuint index)
     {
-        GameObject *root_child = this->root->child;
+        GameObject* root_child = this->root->child;
         if (root_child == nullptr)
         {
             this->root->child = obj;
@@ -234,8 +234,8 @@ namespace fx {
                 this->root->child = obj;
             }
 
-            GameObject *p = root_child;
-            GameObject *last;
+            GameObject* p = root_child;
+            GameObject* last;
             GLuint i = 1;
             while (p->sibling != nullptr)
             {
@@ -289,7 +289,7 @@ namespace fx {
         }
 
     }
-    void fx::Scene::InorderPrintBSP(BiTreeNode<GameObject*> *treeNode)
+    void fx::Scene::InorderPrintBSP(BiTreeNode<GameObject*>* treeNode)
     {
         if (treeNode == nullptr)
             return;

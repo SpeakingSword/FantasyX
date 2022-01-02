@@ -15,7 +15,7 @@ float DistributionGGX(vec3 N, vec3 H, float roughness);
 
 void main()
 {
-	vec3 N = normalize(localPos);    
+    vec3 N = normalize(localPos);    
     vec3 R = N;
     vec3 V = R;
 
@@ -28,16 +28,16 @@ void main()
         vec3 H  = ImportanceSampleGGX(Xi, N, roughness);
         vec3 L  = normalize(2.0 * dot(V, H) * H - V);
 
-		float NdotH = max(dot(N, H), 0.0f);
-		float HdotV = max(dot(H, V), 0.0f);
-		float D   = DistributionGGX(N, H, roughness);
-		float pdf = (D * NdotH / (4.0 * HdotV)) + 0.0001; 
-		
-		float resolution = 1024.0;
-		float saTexel  = 4.0 * PI / (6.0 * resolution * resolution);
-		float saSample = 1.0 / (float(SAMPLE_COUNT) * pdf + 0.0001);
-		
-		float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel); 
+        float NdotH = max(dot(N, H), 0.0f);
+        float HdotV = max(dot(H, V), 0.0f);
+        float D   = DistributionGGX(N, H, roughness);
+        float pdf = (D * NdotH / (4.0 * HdotV)) + 0.0001; 
+        
+        float resolution = 1024.0;
+        float saTexel  = 4.0 * PI / (6.0 * resolution * resolution);
+        float saSample = 1.0 / (float(SAMPLE_COUNT) * pdf + 0.0001);
+        
+        float mipLevel = roughness == 0.0 ? 0.0 : 0.5 * log2(saSample / saTexel); 
 
         float NdotL = max(dot(N, L), 0.0);
         if(NdotL > 0.0)
@@ -54,7 +54,7 @@ void main()
 
 float RadicalInverse_VdC(uint bits)
 {
-	bits = (bits << 16u) | (bits >> 16u);
+    bits = (bits << 16u) | (bits >> 16u);
     bits = ((bits & 0x55555555u) << 1u) | ((bits & 0xAAAAAAAAu) >> 1u);
     bits = ((bits & 0x33333333u) << 2u) | ((bits & 0xCCCCCCCCu) >> 2u);
     bits = ((bits & 0x0F0F0F0Fu) << 4u) | ((bits & 0xF0F0F0F0u) >> 4u);
@@ -65,7 +65,7 @@ float RadicalInverse_VdC(uint bits)
 
 float VanDerCorpus(uint n, uint base)
 {
-	float invBase = 1.0 / float(base);
+    float invBase = 1.0 / float(base);
     float denom   = 1.0;
     float result  = 0.0;
 
@@ -86,13 +86,13 @@ float VanDerCorpus(uint n, uint base)
 
 vec2 Hammersley(uint i, uint N)
 {
-	return vec2(float(i) / float(N), RadicalInverse_VdC(i));
+    return vec2(float(i) / float(N), RadicalInverse_VdC(i));
 }
 
 
 vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 {
-	float a = roughness*roughness;
+    float a = roughness*roughness;
 
     float phi = 2.0 * PI * Xi.x;
     float cosTheta = sqrt((1.0 - Xi.y) / (1.0 + (a*a - 1.0) * Xi.y));
@@ -116,14 +116,14 @@ vec3 ImportanceSampleGGX(vec2 Xi, vec3 N, float roughness)
 
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
-	float a = roughness * roughness;
-	float a2 = a * a;
-	float NdotH = max(dot(N, H), 0.0f);
-	float NdotH2 = NdotH * NdotH;
+    float a = roughness * roughness;
+    float a2 = a * a;
+    float NdotH = max(dot(N, H), 0.0f);
+    float NdotH2 = NdotH * NdotH;
 
-	float num = a2;
-	float denom = (NdotH2 * (a2 - 1.0f) + 1.0f);
-	denom = PI * denom * denom;
+    float num = a2;
+    float denom = (NdotH2 * (a2 - 1.0f) + 1.0f);
+    denom = PI * denom * denom;
 
-	return num / denom;
+    return num / denom;
 }

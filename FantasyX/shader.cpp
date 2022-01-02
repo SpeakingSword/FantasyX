@@ -13,54 +13,54 @@ namespace fx {
         glUseProgram(0);
     }
 
-    void Shader::SetBool(const GLchar *name, GLboolean value) const
+    void Shader::SetBool(const GLchar* name, GLboolean value) const
     {
         glUniform1i(glGetUniformLocation(ID, name), (GLint)value);
     }
 
-    void Shader::SetInt(const GLchar *name, GLint value) const
+    void Shader::SetInt(const GLchar* name, GLint value) const
     {
         glUniform1i(glGetUniformLocation(ID, name), value);
     }
 
-    void Shader::SetFloat(const GLchar *name, GLfloat value) const
+    void Shader::SetFloat(const GLchar* name, GLfloat value) const
     {
         glUniform1f(glGetUniformLocation(ID, name), value);
     }
 
-    void Shader::SetMat4(const GLchar *name, const Matrix4x4 &value) const
+    void Shader::SetMat4(const GLchar* name, const Matrix4x4& value) const
     {
         glUniformMatrix4fv(glGetUniformLocation(ID, name), 1, GL_FALSE, glm::value_ptr(value));
     }
 
-    void Shader::SetVec3(const GLchar *name, const Vector3 &value) const
+    void Shader::SetVec3(const GLchar* name, const Vector3& value) const
     {
         glUniform3fv(glGetUniformLocation(ID, name), 1, &value[0]);
     }
 
-    void Shader::SetVec4(const GLchar *name, const Vector4 &value) const
+    void Shader::SetVec4(const GLchar* name, const Vector4& value) const
     {
         glUniform4fv(glGetUniformLocation(ID, name), 1, &value[0]);
     }
 
-    void Shader::SetVec3(const GLchar *name, GLfloat x, GLfloat y, GLfloat z) const
+    void Shader::SetVec3(const GLchar* name, GLfloat x, GLfloat y, GLfloat z) const
     {
         glUniform3f(glGetUniformLocation(ID, name), x, y, z);
     }
 
 
-    GLuint Shader::CreateShaderProgram(const GLchar *vertexShaderCode, const GLchar *fragmentShaderCode)
+    GLuint Shader::CreateShaderProgram(const GLchar* vertexShaderCode, const GLchar* fragmentShaderCode)
     {
-        // ±àÒë×ÅÉ«Æ÷
+        // ç¼–è¯‘ç€è‰²å™¨
         GLuint vertex, fragment, shaderProgramID;
         GLint success;
         GLchar infoLog[512];
 
-        // ¶¥µã×ÅÉ«Æ÷
+        // é¡¶ç‚¹ç€è‰²å™¨
         vertex = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertex, 1, &vertexShaderCode, NULL);
         glCompileShader(vertex);
-        // ´òÓ¡¿ÉÄÜµÄ±àÒë´íÎó
+        // æ‰“å°å¯èƒ½çš„ç¼–è¯‘é”™è¯¯
         glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
         if (!success)
         {
@@ -69,11 +69,11 @@ namespace fx {
             system("pause");
         }
 
-        // Æ¬¶Î×ÅÉ«Æ÷
+        // ç‰‡æ®µç€è‰²å™¨
         fragment = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragment, 1, &fragmentShaderCode, NULL);
         glCompileShader(fragment);
-        // ´òÓ¡¿ÉÄÜµÄ±àÒë´íÎó
+        // æ‰“å°å¯èƒ½çš„ç¼–è¯‘é”™è¯¯
         glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
         if (!success)
         {
@@ -82,12 +82,12 @@ namespace fx {
             system("pause");
         }
 
-        // ×ÅÉ«Æ÷³ÌÐò
+        // ç€è‰²å™¨ç¨‹åº
         shaderProgramID = glCreateProgram();
         glAttachShader(shaderProgramID, vertex);
         glAttachShader(shaderProgramID, fragment);
         glLinkProgram(shaderProgramID);
-        // ´òÓ¡¿ÉÄÜµÄÁ´½Ó´íÎó
+        // æ‰“å°å¯èƒ½çš„é“¾æŽ¥é”™è¯¯
         glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &success);
         if (!success)
         {
@@ -96,25 +96,25 @@ namespace fx {
             system("pause");
         }
 
-        // É¾³ý×ÅÉ«Æ÷
+        // åˆ é™¤ç€è‰²å™¨
         glDeleteShader(vertex);
         glDeleteShader(fragment);
 
         return shaderProgramID;
     }
 
-    GLuint Shader::CreateShaderProgram(const GLchar *vertexShaderCode, const GLchar *geomatryShaderCode, const GLchar *fragmentShaderCode)
+    GLuint Shader::CreateShaderProgram(const GLchar* vertexShaderCode, const GLchar* geomatryShaderCode, const GLchar* fragmentShaderCode)
     {
-        // ±àÒë×ÅÉ«Æ÷
+        // ç¼–è¯‘ç€è‰²å™¨
         GLuint vertex, fragment, geomatry, shaderProgramID;
         GLint success;
         GLchar infoLog[512];
 
-        // ¶¥µã×ÅÉ«Æ÷
+        // é¡¶ç‚¹ç€è‰²å™¨
         vertex = glCreateShader(GL_VERTEX_SHADER);
         glShaderSource(vertex, 1, &vertexShaderCode, NULL);
         glCompileShader(vertex);
-        // ´òÓ¡¿ÉÄÜµÄ±àÒë´íÎó
+        // æ‰“å°å¯èƒ½çš„ç¼–è¯‘é”™è¯¯
         glGetShaderiv(vertex, GL_COMPILE_STATUS, &success);
         if (!success)
         {
@@ -123,11 +123,11 @@ namespace fx {
             system("pause");
         }
 
-        // ¼¸ºÎ×ÅÉ«Æ÷
+        // å‡ ä½•ç€è‰²å™¨
         geomatry = glCreateShader(GL_GEOMETRY_SHADER);
         glShaderSource(geomatry, 1, &geomatryShaderCode, NULL);
         glCompileShader(geomatry);
-        // ´òÓ¡¿ÉÄÜµÄ±àÒë´íÎó
+        // æ‰“å°å¯èƒ½çš„ç¼–è¯‘é”™è¯¯
         glGetShaderiv(geomatry, GL_COMPILE_STATUS, &success);
         if (!success)
         {
@@ -136,11 +136,11 @@ namespace fx {
             system("pause");
         }
 
-        // Æ¬¶Î×ÅÉ«Æ÷
+        // ç‰‡æ®µç€è‰²å™¨
         fragment = glCreateShader(GL_FRAGMENT_SHADER);
         glShaderSource(fragment, 1, &fragmentShaderCode, NULL);
         glCompileShader(fragment);
-        // ´òÓ¡¿ÉÄÜµÄ±àÒë´íÎó
+        // æ‰“å°å¯èƒ½çš„ç¼–è¯‘é”™è¯¯
         glGetShaderiv(fragment, GL_COMPILE_STATUS, &success);
         if (!success)
         {
@@ -149,13 +149,13 @@ namespace fx {
             system("pause");
         }
 
-        // ×ÅÉ«Æ÷³ÌÐò
+        // ç€è‰²å™¨ç¨‹åº
         shaderProgramID = glCreateProgram();
         glAttachShader(shaderProgramID, vertex);
         glAttachShader(shaderProgramID, geomatry);
         glAttachShader(shaderProgramID, fragment);
         glLinkProgram(shaderProgramID);
-        // ´òÓ¡¿ÉÄÜµÄÁ´½Ó´íÎó
+        // æ‰“å°å¯èƒ½çš„é“¾æŽ¥é”™è¯¯
         glGetProgramiv(shaderProgramID, GL_LINK_STATUS, &success);
         if (!success)
         {
@@ -164,7 +164,7 @@ namespace fx {
             system("pause");
         }
 
-        // É¾³ý×ÅÉ«Æ÷
+        // åˆ é™¤ç€è‰²å™¨
         glDeleteShader(vertex);
         glDeleteShader(geomatry);
         glDeleteShader(fragment);
@@ -174,43 +174,43 @@ namespace fx {
 #pragma endregion
 
 #pragma region LegacySimpleShader
-    LegacySimpleShader *LegacySimpleShader::_instance = nullptr;
+    LegacySimpleShader* LegacySimpleShader::_instance = nullptr;
 
     void LegacySimpleShader::InitShader()
     {
         name = "LegacySimpleShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Standard.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "LegacySimple.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Standard.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "LegacySimple.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
     }
 #pragma endregion
 
 #pragma region LegacyStandardShader
-    LegacyStandardShader *LegacyStandardShader::_instance = nullptr;
+    LegacyStandardShader* LegacyStandardShader::_instance = nullptr;
 
     void LegacyStandardShader::InitShader()
     {
         name = "LegacyStandardShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Standard.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "LegacyStandard.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Standard.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "LegacyStandard.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
     }
 #pragma endregion
 
 #pragma region PBRSimpleShader
-    PBRSimpleShader *PBRSimpleShader::_instance = nullptr;
+    PBRSimpleShader* PBRSimpleShader::_instance = nullptr;
 
     void PBRSimpleShader::InitShader()
     {
         name = "PBRSimpleShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRSimple.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRSimple.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRSimple.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRSimple.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 
-        // °ó¶¨×ÅÉ«Æ÷¹²ÏíÄÚ´æ±äÁ¿
+        // ç»‘å®šç€è‰²å™¨å…±äº«å†…å­˜å˜é‡
         GLuint SharedMatrcesBlock = glGetUniformBlockIndex(ID, "SharedMatrices");
         GLuint SharedCameraValuesBlock = glGetUniformBlockIndex(ID, "SharedCameraValues");
         glUniformBlockBinding(ID, SharedMatrcesBlock, 0);
@@ -219,17 +219,17 @@ namespace fx {
 #pragma endregion
 
 #pragma region PBRStandardShader
-    PBRStandardShader *PBRStandardShader::_instance = nullptr;
+    PBRStandardShader* PBRStandardShader::_instance = nullptr;
 
     void PBRStandardShader::InitShader()
     {
         name = "PBRStandardShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRStandard.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRStandard.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRStandard.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRStandard.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 
-        // °ó¶¨×ÅÉ«Æ÷¹²ÏíÄÚ´æ±äÁ¿
+        // ç»‘å®šç€è‰²å™¨å…±äº«å†…å­˜å˜é‡
         GLuint SharedMatrcesBlock = glGetUniformBlockIndex(ID, "SharedMatrices");
         GLuint SharedCameraValuesBlock = glGetUniformBlockIndex(ID, "SharedCameraValues");
         glUniformBlockBinding(ID, SharedMatrcesBlock, 0);
@@ -239,17 +239,17 @@ namespace fx {
 #pragma endregion
 
 #pragma region DisplayShader
-    DisplayShader *DisplayShader::_instance = nullptr;
+    DisplayShader* DisplayShader::_instance = nullptr;
 
     void DisplayShader::InitShader()
     {
         name = "DisplayShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Display.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Display.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Display.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Display.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 
-        // ÌØ±ðµÄ³õÊ¼»¯²½Öè£¬Õë¶ÔÌØ±ð´¦Àí×ÅÉ«Æ÷
+        // ç‰¹åˆ«çš„åˆå§‹åŒ–æ­¥éª¤ï¼Œé’ˆå¯¹ç‰¹åˆ«å¤„ç†ç€è‰²å™¨
         this->Bind();
         this->SetInt("display", 0);
         this->Unbind();
@@ -258,28 +258,28 @@ namespace fx {
 #pragma endregion
 
 #pragma region DirLightShadowShader
-    DirLightShadowShader *DirLightShadowShader::_instance = nullptr;
+    DirLightShadowShader* DirLightShadowShader::_instance = nullptr;
 
     void DirLightShadowShader::InitShader()
     {
         name = "DirLightShadowShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "DirLightShadow.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "DirLightShadow.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "DirLightShadow.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "DirLightShadow.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
     }
 
 #pragma endregion
 
 #pragma region PBRLightingShader
-    PBRLightingShader *PBRLightingShader::_instance = nullptr;
+    PBRLightingShader* PBRLightingShader::_instance = nullptr;
 
     void PBRLightingShader::InitShader()
     {
         name = "PBRLightingShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRLighting.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRLighting.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRLighting.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PBRLighting.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 
         this->Bind();
@@ -300,17 +300,17 @@ namespace fx {
 #pragma endregion
 
 #pragma region BrightCatchShader
-    BrightCatchShader *BrightCatchShader::_instance = nullptr;
+    BrightCatchShader* BrightCatchShader::_instance = nullptr;
 
     void BrightCatchShader::InitShader()
     {
         name = "BrightCatchShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "BrightCatch.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "BrightCatch.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "BrightCatch.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "BrightCatch.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 
-        // ÌØ±ðµÄ³õÊ¼»¯²½Öè£¬Õë¶ÔÌØ±ð´¦Àí×ÅÉ«Æ÷
+        // ç‰¹åˆ«çš„åˆå§‹åŒ–æ­¥éª¤ï¼Œé’ˆå¯¹ç‰¹åˆ«å¤„ç†ç€è‰²å™¨
         this->Bind();
         this->SetInt("lightMap", 0);
         this->Unbind();
@@ -319,17 +319,17 @@ namespace fx {
 #pragma endregion
 
 #pragma region GaussianBlurShader
-    GaussianBlurShader *GaussianBlurShader::_instance = nullptr;
+    GaussianBlurShader* GaussianBlurShader::_instance = nullptr;
 
     void GaussianBlurShader::InitShader()
     {
         name = "GaussianBlurShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "GaussianBlur.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "GaussianBlur.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "GaussianBlur.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "GaussianBlur.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 
-        // ÌØ±ðµÄ³õÊ¼»¯²½Öè£¬Õë¶ÔÌØ±ð´¦Àí×ÅÉ«Æ÷
+        // ç‰¹åˆ«çš„åˆå§‹åŒ–æ­¥éª¤ï¼Œé’ˆå¯¹ç‰¹åˆ«å¤„ç†ç€è‰²å™¨
         this->Bind();
         this->SetInt("brightMap", 0);
         this->Unbind();
@@ -339,17 +339,17 @@ namespace fx {
 
 #pragma region BloomShader
 
-    BloomShader *BloomShader::_instance = nullptr;
+    BloomShader* BloomShader::_instance = nullptr;
 
     void BloomShader::InitShader()
     {
         name = "BloomShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Bloom.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Bloom.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Bloom.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Bloom.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 
-        // ÌØ±ðµÄ³õÊ¼»¯²½Öè£¬Õë¶ÔÌØ±ð´¦Àí×ÅÉ«Æ÷
+        // ç‰¹åˆ«çš„åˆå§‹åŒ–æ­¥éª¤ï¼Œé’ˆå¯¹ç‰¹åˆ«å¤„ç†ç€è‰²å™¨
         this->Bind();
         this->SetInt("lightMap", 0);
         this->SetInt("blurMap", 1);
@@ -359,17 +359,17 @@ namespace fx {
 #pragma endregion
 
 #pragma region SkyBoxShader
-    SkyBoxShader *SkyBoxShader::_instance = nullptr;
+    SkyBoxShader* SkyBoxShader::_instance = nullptr;
 
     void SkyBoxShader::InitShader()
     {
         name = "SkyboxShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Skybox.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Skybox.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Skybox.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "Skybox.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 
-        // ÌØ±ðµÄ³õÊ¼»¯²½Öè£¬Õë¶ÔÌØ±ð´¦Àí×ÅÉ«Æ÷
+        // ç‰¹åˆ«çš„åˆå§‹åŒ–æ­¥éª¤ï¼Œé’ˆå¯¹ç‰¹åˆ«å¤„ç†ç€è‰²å™¨
         this->Bind();
         this->SetInt("skybox", 0);
         this->Unbind();
@@ -380,14 +380,14 @@ namespace fx {
 #pragma endregion
 
 #pragma region HdrBoxShader
-    HdrBoxShader *HdrBoxShader::_instance = nullptr;
+    HdrBoxShader* HdrBoxShader::_instance = nullptr;
 
     void HdrBoxShader::InitShader()
     {
         name = "HdrBoxShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "HdrBox.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "HdrBox.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "HdrBox.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "HdrBox.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 
         this->Bind();
@@ -398,14 +398,14 @@ namespace fx {
 #pragma endregion
 
 #pragma region IrradianceBoxShader
-    IrradianceBoxShader *IrradianceBoxShader::_instance = nullptr;
+    IrradianceBoxShader* IrradianceBoxShader::_instance = nullptr;
 
     void IrradianceBoxShader::InitShader()
     {
         name = "IrradianceBoxShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "IrradianceBox.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "IrradianceBox.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "IrradianceBox.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "IrradianceBox.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 
         this->Bind();
@@ -416,14 +416,14 @@ namespace fx {
 #pragma endregion
 
 #pragma region PrefilterBoxShader
-    PrefilterBoxShader *PrefilterBoxShader::_instance = nullptr;
+    PrefilterBoxShader* PrefilterBoxShader::_instance = nullptr;
 
     void PrefilterBoxShader::InitShader()
     {
         name = "PrefilterBoxShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PrefilterBox.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PrefilterBox.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PrefilterBox.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "PrefilterBox.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
 
         this->Bind();
@@ -434,14 +434,14 @@ namespace fx {
 #pragma endregion
 
 #pragma region BRDFShader
-    BRDFShader *BRDFShader::_instance = nullptr;
+    BRDFShader* BRDFShader::_instance = nullptr;
 
     void BRDFShader::InitShader()
     {
         name = "BRDFShader";
-        ResourceManager *res = ResourceManager::GetInstance();
-        const GLchar *vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "BRDF.vert").c_str());
-        const GLchar *fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "BRDF.frag").c_str());
+        ResourceManager* res = ResourceManager::GetInstance();
+        const GLchar* vertexShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "BRDF.vert").c_str());
+        const GLchar* fragmentShaderCode = res->GetFileString((string(res->GetAppDir()) + string(res->GetShaderDir()) + "BRDF.frag").c_str());
         ID = CreateShaderProgram(vertexShaderCode, fragmentShaderCode);
     }
 

@@ -4,7 +4,7 @@
 layout (location = 0) out vec4 FragColor;
 
 in VS_OUT {
-	vec2 texCoord;
+    vec2 texCoord;
 } fs_in;
 
 struct DirLight {
@@ -78,12 +78,12 @@ void main()
     vec3 F0 = vec3(0.04f);
     F0 = mix(F0, albedo, metallic);
 
-    // ±£´æÖ±½Ó¹âÕÕ×îÖÕ½á¹û
+    // ä¿å­˜ç›´æ¥å…‰ç…§æœ€ç»ˆç»“æœ
     vec3 Lo = vec3(0.0f);
-    // ±£´æ¼ä½Ó¹âÕÕ×îÖÕ½á¹û
+    // ä¿å­˜é—´æ¥å…‰ç…§æœ€ç»ˆç»“æœ
     vec3 ambient = vec3(0.0f);
 
-    // ¶¨Ïò¹â¹âÕÕ¼ÆËã
+    // å®šå‘å…‰å…‰ç…§è®¡ç®—
     if (dirLightOn)
     {
         vec3 L = normalize(-dirLight.direction);
@@ -142,24 +142,24 @@ void main()
         }
     }
 
-    // Ö´ĞĞ¼ä½Ó¹âÕÕ¼ÆËã
+    // æ‰§è¡Œé—´æ¥å…‰ç…§è®¡ç®—
     if (IBL)
     {
         vec3 F = FresnelSchlickRoughness(max(dot(N, V), 0.0), F0, roughness);
 
-	    vec3 kS = F;
-	    vec3 kD = 1.0 - kS;
-	    kD *= 1.0 - metallic;
-	    
-	    vec3 irradiance = texture(irradianceMap, N).rgb;
-	    vec3 diffuse    = irradiance * albedo;
-	    
-	    const float MAX_REFLECTION_LOD = 4.0;
-	    vec3 prefilteredColor = textureLod(prefilterMap, R,  roughness * MAX_REFLECTION_LOD).rgb;   
-	    vec2 envBRDF  = texture(brdfLutMap, vec2(max(dot(N, V), 0.0), roughness)).rg;
-	    vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
-	    
-	    ambient = (kD * diffuse + specular) * ao;
+        vec3 kS = F;
+        vec3 kD = 1.0 - kS;
+        kD *= 1.0 - metallic;
+        
+        vec3 irradiance = texture(irradianceMap, N).rgb;
+        vec3 diffuse    = irradiance * albedo;
+        
+        const float MAX_REFLECTION_LOD = 4.0;
+        vec3 prefilteredColor = textureLod(prefilterMap, R,  roughness * MAX_REFLECTION_LOD).rgb;   
+        vec2 envBRDF  = texture(brdfLutMap, vec2(max(dot(N, V), 0.0), roughness)).rg;
+        vec3 specular = prefilteredColor * (F * envBRDF.x + envBRDF.y);
+        
+        ambient = (kD * diffuse + specular) * ao;
 
     }
 
@@ -179,41 +179,41 @@ vec3 FresnelSchlick(float cosTheta, vec3 F0)
 float DistributionGGX(vec3 N, vec3 H, float roughness)
 {
     float a = roughness * roughness;
-	float a2 = a * a;
-	float NdotH = max(dot(N, H), 0.0f);
-	float NdotH2 = NdotH * NdotH;
+    float a2 = a * a;
+    float NdotH = max(dot(N, H), 0.0f);
+    float NdotH2 = NdotH * NdotH;
 
-	float num = a2;
-	float denom = (NdotH2 * (a2 - 1.0f) + 1.0f);
-	denom = PI * denom * denom;
+    float num = a2;
+    float denom = (NdotH2 * (a2 - 1.0f) + 1.0f);
+    denom = PI * denom * denom;
 
-	return num / denom;
+    return num / denom;
 }
 
 float GeomatrySchlickGGX(float NdotV, float roughness)
 {
     float r = (roughness + 1.0f);
-	float k = (r * r) / 8.0f;
+    float k = (r * r) / 8.0f;
 
-	float num = NdotV;
-	float denom = NdotV * (1.0f - k) + k;
+    float num = NdotV;
+    float denom = NdotV * (1.0f - k) + k;
 
-	return num / denom;
+    return num / denom;
 }
 
 float GeomatrySmith(vec3 N, vec3 V, vec3 L, float roughness)
 {
     float NdotV = max(dot(N, V), 0.0f);
-	float NdotL = max(dot(N, L), 0.0f);
-	float ggx1 = GeomatrySchlickGGX(NdotV, roughness);
-	float ggx2 = GeomatrySchlickGGX(NdotL, roughness);
+    float NdotL = max(dot(N, L), 0.0f);
+    float ggx1 = GeomatrySchlickGGX(NdotV, roughness);
+    float ggx2 = GeomatrySchlickGGX(NdotL, roughness);
 
-	return ggx1 * ggx2;
+    return ggx1 * ggx2;
 }
 
 float DirLightShadowCalculation(vec4 fragPosLightSpace, float bias)
 {
-	float shadow;
+    float shadow;
 
     vec3 projCoords = fragPosLightSpace.xyz / fragPosLightSpace.w;
 
@@ -221,17 +221,17 @@ float DirLightShadowCalculation(vec4 fragPosLightSpace, float bias)
 
     float currentDepth = projCoords.z;
 
-	vec2 texelSize = 1.0f / textureSize(dirLightShadowMap, 0);
-	for (int x = -1; x <= 1; ++x)
-		for (int y = -1; y <= 1; ++y)
-		{
-			float pcfDepth = texture(dirLightShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
-			shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
-		}
+    vec2 texelSize = 1.0f / textureSize(dirLightShadowMap, 0);
+    for (int x = -1; x <= 1; ++x)
+        for (int y = -1; y <= 1; ++y)
+        {
+            float pcfDepth = texture(dirLightShadowMap, projCoords.xy + vec2(x, y) * texelSize).r;
+            shadow += currentDepth - bias > pcfDepth  ? 1.0 : 0.0;
+        }
     shadow /= 9.0f;
 
-	if (projCoords.z > 1.0f)
-		shadow = 0.0f;
+    if (projCoords.z > 1.0f)
+        shadow = 0.0f;
 
     return shadow;
 }

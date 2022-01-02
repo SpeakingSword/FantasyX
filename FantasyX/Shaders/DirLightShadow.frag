@@ -7,7 +7,7 @@ float LinearizeDepth(float depth);
 
 void main()
 {             
-    //gl_FragDepth = LinearizeDepth(gl_FragCoord.z); // 将深度值转到线性空间
+    //gl_FragDepth = LinearizeDepth(gl_FragCoord.z);
 }
 
 float LinearizeDepth(float depth)

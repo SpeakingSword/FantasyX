@@ -31,7 +31,7 @@ namespace fx {
         std::cout << "ENGIN CORE::GameObejct created ... " << std::endl;
     }
 
-    GameObject::GameObject(const GLchar *name, GLuint tag)
+    GameObject::GameObject(const GLchar* name, GLuint tag)
     {
         ++GameObject::gameObjectCount;
         this->name = name;
@@ -62,31 +62,31 @@ namespace fx {
         componentSystem->Start();
     }
 
-    void GameObject::Add(GameObject *obj)
+    void GameObject::Add(GameObject* obj)
     {
-        GameObject *child = this->child;
+        GameObject* child = this->child;
         if (child == nullptr)
         {
             this->child = obj;
         }
         else
         {
-            GameObject *p = child;
+            GameObject* p = child;
             while (p->sibling != nullptr)
             {
                 p = p->sibling;
             }
-            // ´ËÊ± p Ö¸Ïò×îÓÒµÄ¶ÔÏó
+            // æ­¤æ—¶ p æŒ‡å‘æœ€å³çš„å¯¹è±¡
             p->sibling = obj;
         }
     }
 
-    void GameObject::Add(GameObject *obj, GLuint index)
+    void GameObject::Add(GameObject* obj, GLuint index)
     {
 
     }
 
-    void GameObject::Release(const GLchar *name)
+    void GameObject::Release(const GLchar* name)
     {
 
     }
@@ -106,7 +106,7 @@ namespace fx {
     {
         if (this->visible)
         {
-            Render *render = (Render *)this->GetComponent("Render");
+            Render* render = (Render*)this->GetComponent("Render");
             if (render != nullptr && render->mesh != nullptr)
             {
                 render->material->MappingProperty();
@@ -132,11 +132,11 @@ namespace fx {
         }
     }
 
-    void GameObject::Draw(Shader *shader)
+    void GameObject::Draw(Shader* shader)
     {
         if (this->visible)
         {
-            Render *render = (Render *)this->GetComponent("Render");
+            Render* render = (Render*)this->GetComponent("Render");
             if (render != nullptr && render->mesh != nullptr)
             {
                 shader->Bind();
@@ -168,18 +168,18 @@ namespace fx {
         std::cout << "GameObject Name: " << name.c_str() << std::endl;
         std::cout << "GameObject Tag: " << tag << std::endl;
         std::cout << "GameObject Display: " << visible << std::endl;
-        std::cout << "GameObject Child: " << (void *)child << std::endl;
-        std::cout << "GameObject Sibling: " << (void *)sibling << std::endl;
+        std::cout << "GameObject Child: " << (void*)child << std::endl;
+        std::cout << "GameObject Sibling: " << (void*)sibling << std::endl;
 
     }
 
-    void GameObject::Print(const GLchar *prefix)
+    void GameObject::Print(const GLchar* prefix)
     {
         std::cout << prefix << "GameObject Name: " << name.c_str() << std::endl;
         std::cout << prefix << "GameObject Tag: " << tag << std::endl;
         std::cout << prefix << "GameObject Display: " << visible << std::endl;
-        std::cout << prefix << "GameObject Child: " << (void *)child << std::endl;
-        std::cout << prefix << "GameObject Sibling: " << (void *)sibling << std::endl;
+        std::cout << prefix << "GameObject Child: " << (void*)child << std::endl;
+        std::cout << prefix << "GameObject Sibling: " << (void*)sibling << std::endl;
     }
 
     void GameObject::PrintName()
@@ -187,9 +187,9 @@ namespace fx {
         std::cout << "GameObject Name: " << name.c_str() << std::endl;
     }
 
-    void GameObject::PrintAll(GameObject *root, std::string &prefix)
+    void GameObject::PrintAll(GameObject* root, std::string& prefix)
     {
-        // ÏÈÐò±éÀú
+        // å…ˆåºéåŽ†
         if (root == nullptr)
             return;
 
@@ -201,9 +201,9 @@ namespace fx {
         PrintAll(root->sibling, prefix);
     }
 
-    void GameObject::PrintAllName(GameObject *root, std::string &prefix)
+    void GameObject::PrintAllName(GameObject* root, std::string& prefix)
     {
-        // ÏÈÐò±éÀú
+        // å…ˆåºéåŽ†
         if (root == nullptr)
             return;
 
@@ -215,22 +215,22 @@ namespace fx {
         PrintAllName(root->sibling, prefix);
     }
 
-    bool GameObject::ContainComponent(const GLchar *name) const
+    bool GameObject::ContainComponent(const GLchar* name) const
     {
         return componentSystem->Contain(name);
     }
 
-    Component *GameObject::GetComponent(const GLchar *name) const
+    Component* GameObject::GetComponent(const GLchar* name) const
     {
         return componentSystem->GetComponent(name);
     }
 
-    void GameObject::AddComponent(Component *com)
+    void GameObject::AddComponent(Component* com)
     {
         componentSystem->AddComponent(com);
     }
 
-    void GameObject::RemoveComponent(const GLchar *name)
+    void GameObject::RemoveComponent(const GLchar* name)
     {
         componentSystem->RemoveComponent(name);
     }
@@ -240,14 +240,14 @@ namespace fx {
         componentSystem->ShowAllComponents();
     }
 
-    GameObject *GameObject::Cube()
+    GameObject* GameObject::Cube()
     {
-        GameObject *cube = new GameObject();
+        GameObject* cube = new GameObject();
         cube->name = "Cube";
         cube->tag = GT_OPAQUE;
 
-        Render *render = new Render();
-        PBRSimpleMaterial *PBRSimple = new PBRSimpleMaterial();
+        Render* render = new Render();
+        PBRSimpleMaterial* PBRSimple = new PBRSimpleMaterial();
         render->material = PBRSimple;
         render->mesh = CubeMesh::GetInstance();
         cube->AddComponent(render);
@@ -255,9 +255,9 @@ namespace fx {
         return cube;
     }
 
-    void GameObject::SetMaterial(Material *mat)
+    void GameObject::SetMaterial(Material* mat)
     {
-        Render *render = (Render *)this->GetComponent("Render");
+        Render* render = (Render*)this->GetComponent("Render");
         if (render != nullptr && render->material != nullptr)
         {
             render->material = mat;
@@ -279,13 +279,13 @@ namespace fx {
 
     }
 
-    void GameObject::TraverseSetMat(GameObject *obj, Material *mat)
+    void GameObject::TraverseSetMat(GameObject* obj, Material* mat)
     {
         if (obj == nullptr)
             return;
 
-        //ÉèÖÃ²ÄÖÊ
-        Render *render = (Render *)obj->GetComponent("Render");
+        //è®¾ç½®æè´¨
+        Render* render = (Render*)obj->GetComponent("Render");
         if (render != nullptr && render->material != nullptr)
         {
             render->material = mat;
@@ -299,12 +299,12 @@ namespace fx {
 
     }
 
-    void GameObject::TraverseSetVisible(GameObject *obj, bool visible)
+    void GameObject::TraverseSetVisible(GameObject* obj, bool visible)
     {
         if (obj == nullptr)
             return;
 
-        //ÉèÖÃ²ÄÖÊ
+        //è®¾ç½®æè´¨
         obj->visible = visible;
 
         if (obj->child != nullptr)
@@ -314,9 +314,9 @@ namespace fx {
             TraverseSetVisible(obj->sibling, visible);
     }
 
-    Material *GameObject::GetMaterial()
+    Material* GameObject::GetMaterial()
     {
-        Render *render = (Render *)this->GetComponent("Render");
+        Render* render = (Render*)this->GetComponent("Render");
         if (render != nullptr && render->material != nullptr)
         {
             return render->material;
@@ -325,72 +325,72 @@ namespace fx {
         return nullptr;
     }
 
-    GameObject *GameObject::DirLight()
+    GameObject* GameObject::DirLight()
     {
-        GameObject *dirLight = new GameObject();
+        GameObject* dirLight = new GameObject();
         dirLight->name = "DirLight";
         dirLight->tag = GT_LIGHT;
 
-        fx::DirLight *lighting = new fx::DirLight();
+        fx::DirLight* lighting = new fx::DirLight();
         dirLight->AddComponent(lighting);
 
-        Render *render = new Render();
-        // Ó¦¸ÃÊ¹ÓÃ2D²ÄÖÊ£¨äÖÈ¾Í¼±ê£©»òÕßÌí¼ÓÇòÌåµÄmesh£¨¿ÉÊÓ»¯£©
-        PBRSimpleMaterial *PBRSimple = new PBRSimpleMaterial();
+        Render* render = new Render();
+        // åº”è¯¥ä½¿ç”¨2Dæè´¨ï¼ˆæ¸²æŸ“å›¾æ ‡ï¼‰æˆ–è€…æ·»åŠ çƒä½“çš„meshï¼ˆå¯è§†åŒ–ï¼‰
+        PBRSimpleMaterial* PBRSimple = new PBRSimpleMaterial();
         render->material = PBRSimple;
         dirLight->AddComponent(render);
 
         return dirLight;
     }
 
-    GameObject *GameObject::PointLight()
+    GameObject* GameObject::PointLight()
     {
-        GameObject *pointLight = new GameObject();
+        GameObject* pointLight = new GameObject();
         pointLight->name = "PointLight";
         pointLight->tag = GT_LIGHT;
 
-        fx::PointLight *lighting = new fx::PointLight();
+        fx::PointLight* lighting = new fx::PointLight();
         pointLight->AddComponent(lighting);
 
-        Render *render = new Render();
-        // Ó¦¸ÃÊ¹ÓÃ2D²ÄÖÊ£¨äÖÈ¾Í¼±ê£©»òÕßÌí¼ÓÇòÌåµÄmesh£¨¿ÉÊÓ»¯£©
-        PBRSimpleMaterial *PBRSimple = new PBRSimpleMaterial();
+        Render* render = new Render();
+        // åº”è¯¥ä½¿ç”¨2Dæè´¨ï¼ˆæ¸²æŸ“å›¾æ ‡ï¼‰æˆ–è€…æ·»åŠ çƒä½“çš„meshï¼ˆå¯è§†åŒ–ï¼‰
+        PBRSimpleMaterial* PBRSimple = new PBRSimpleMaterial();
         render->material = PBRSimple;
         pointLight->AddComponent(render);
 
         return pointLight;
     }
 
-    GameObject *GameObject::SpotLight()
+    GameObject* GameObject::SpotLight()
     {
-        GameObject *spotLight = new GameObject();
+        GameObject* spotLight = new GameObject();
         spotLight->name = "SpotLight";
         spotLight->tag = GT_LIGHT;
 
-        fx::SpotLight *lighting = new fx::SpotLight();
+        fx::SpotLight* lighting = new fx::SpotLight();
         spotLight->AddComponent(lighting);
 
-        Render *render = new Render();
-        // Ó¦¸ÃÊ¹ÓÃ2D²ÄÖÊ£¨äÖÈ¾Í¼±ê£©»òÕßÌí¼ÓÇòÌåµÄmesh£¨¿ÉÊÓ»¯£©
-        PBRSimpleMaterial *PBRSimple = new PBRSimpleMaterial();
+        Render* render = new Render();
+        // åº”è¯¥ä½¿ç”¨2Dæè´¨ï¼ˆæ¸²æŸ“å›¾æ ‡ï¼‰æˆ–è€…æ·»åŠ çƒä½“çš„meshï¼ˆå¯è§†åŒ–ï¼‰
+        PBRSimpleMaterial* PBRSimple = new PBRSimpleMaterial();
         render->material = PBRSimple;
         spotLight->AddComponent(render);
 
         return spotLight;
     }
 
-    GameObject *GameObject::Camera()
+    GameObject* GameObject::Camera()
     {
-        GameObject *camera = new GameObject();
+        GameObject* camera = new GameObject();
         camera->name = "Camera";
         camera->tag = GT_CAMERA;
 
-        fx::Camera *cam_com = new fx::Camera();
+        fx::Camera* cam_com = new fx::Camera();
         camera->AddComponent(cam_com);
 
-        Render *render = new Render();
-        // Ó¦¸ÃÊ¹ÓÃ2D²ÄÖÊ£¨äÖÈ¾Í¼±ê£©»òÕßÌí¼ÓÇòÌåµÄmesh£¨¿ÉÊÓ»¯£©
-        PBRSimpleMaterial *PBRSimple = new PBRSimpleMaterial();
+        Render* render = new Render();
+        // åº”è¯¥ä½¿ç”¨2Dæè´¨ï¼ˆæ¸²æŸ“å›¾æ ‡ï¼‰æˆ–è€…æ·»åŠ çƒä½“çš„meshï¼ˆå¯è§†åŒ–ï¼‰
+        PBRSimpleMaterial* PBRSimple = new PBRSimpleMaterial();
         render->material = PBRSimple;
         camera->AddComponent(render);
 

@@ -117,7 +117,6 @@ namespace fx {
         static GLuint faces;
 
         Renderer();
-        // 使用 SceneData 数据渲染
         void RenderScene(SceneData data);
         void Destroy();
     };

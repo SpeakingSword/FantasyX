@@ -5,79 +5,79 @@
 
 namespace fx {
 
-    ResourceManager *ResourceManager::_instance = nullptr;
+    ResourceManager* ResourceManager::_instance = nullptr;
 
-    GameObject *ResourceManager::LoadModel(const GLchar *path)
+    GameObject* ResourceManager::LoadModel(const GLchar* path)
     {
-        // ±éÀúÄ£ĞÍÊı¾İ£¬¸ù¾İ½Úµã²ãĞò´´½¨ÓÎÏ·¶ÔÏó£¬³õÊ¼»¯ÓÎÏ·¶ÔÏó£¨Ìí¼ÓTransform, MeshFilter, RenderµÈ×é¼ş)£¬ÔÙ·µ»Ø¸¸ÓÎÏ·¶ÔÏóµÄÖ¸Õë
+        // éå†æ¨¡å‹æ•°æ®ï¼Œæ ¹æ®èŠ‚ç‚¹å±‚åºåˆ›å»ºæ¸¸æˆå¯¹è±¡ï¼Œåˆå§‹åŒ–æ¸¸æˆå¯¹è±¡ï¼ˆæ·»åŠ Transform, MeshFilter, Renderç­‰ç»„ä»¶)ï¼Œå†è¿”å›çˆ¶æ¸¸æˆå¯¹è±¡çš„æŒ‡é’ˆ
         Assimp::Importer importer;
-        const aiScene *scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
+        const aiScene* scene = importer.ReadFile(path, aiProcess_Triangulate | aiProcess_FlipUVs | aiProcess_CalcTangentSpace);
         if (!scene || scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE || !scene->mRootNode)
         {
             cout << "ENGIN CORE::ERROR::RESOURCE MANAGER::" << importer.GetErrorString() << endl;
             return nullptr;
         }
 
-        GameObject *rootObj = new GameObject();
-        Material *mat = new PBRSimpleMaterial();
+        GameObject* rootObj = new GameObject();
+        Material* mat = new PBRSimpleMaterial();
         ProcessNode(scene->mRootNode, scene, rootObj, path, mat);
 
         return rootObj;
     }
 
-    void ResourceManager::ProcessNode(aiNode *node, const aiScene *scene, GameObject *obj, const GLchar *path, Material *mat)
+    void ResourceManager::ProcessNode(aiNode* node, const aiScene* scene, GameObject* obj, const GLchar* path, Material* mat)
     {
-        // Ê×ÏÈ£¬¸ù¾İµ±Ç°½ÚµãĞÅÏ¢³õÊ¼»¯Gameobject
-        // µÚ¶ş£¬Èç¹ûµ±Ç°½ÚµãÓĞ×Ó½Úµã£¬ÔòĞÂ½¨GameObject£¬¼ÌĞø±éÀú×Ó½Úµã
+        // é¦–å…ˆï¼Œæ ¹æ®å½“å‰èŠ‚ç‚¹ä¿¡æ¯åˆå§‹åŒ–Gameobject
+        // ç¬¬äºŒï¼Œå¦‚æœå½“å‰èŠ‚ç‚¹æœ‰å­èŠ‚ç‚¹ï¼Œåˆ™æ–°å»ºGameObjectï¼Œç»§ç»­éå†å­èŠ‚ç‚¹
 
-        // ÉèÖÃGameObjectµÄÃû³Æ£¬²¢ÉèÖÃÎª²»Í¸Ã÷
+        // è®¾ç½®GameObjectçš„åç§°ï¼Œå¹¶è®¾ç½®ä¸ºä¸é€æ˜
         obj->name = node->mName.C_Str();
         obj->tag = GT_OPAQUE;
 
-        Render *render = new Render();
+        Render* render = new Render();
         render->material = mat;
 
-        // Èç¹ûµ±Ç°½Úµã´æÓĞ mesh ÔòÌí¼Ó
+        // å¦‚æœå½“å‰èŠ‚ç‚¹å­˜æœ‰ mesh åˆ™æ·»åŠ 
         if (node->mNumMeshes > 0)
         {
-            aiMesh *mesh = scene->mMeshes[node->mMeshes[0]];
+            aiMesh* mesh = scene->mMeshes[node->mMeshes[0]];
             render->mesh = ProcessMesh(mesh, path);
         }
 
-        // ¸øGameObjectÌí¼Ó Render ×é¼ş
+        // ç»™GameObjectæ·»åŠ  Render ç»„ä»¶
         obj->AddComponent(render);
 
         for (GLuint i = 0; i < node->mNumChildren; i++)
         {
-            GameObject *obj_child = new GameObject();
+            GameObject* obj_child = new GameObject();
             ProcessNode(node->mChildren[i], scene, obj_child, path, mat);
             obj->Add(obj_child);
         }
     }
 
-    PolygonMesh *ResourceManager::ProcessMesh(aiMesh *mesh, const GLchar *path)
+    PolygonMesh* ResourceManager::ProcessMesh(aiMesh* mesh, const GLchar* path)
     {
-        // Íø¸ñ¶ÔÏó´ıÌîÂúµÄ¶¥µãÊı¾İ
+        // ç½‘æ ¼å¯¹è±¡å¾…å¡«æ»¡çš„é¡¶ç‚¹æ•°æ®
         vector<Vertex> vertices;
         vector<GLuint> indices;
 
-        // ±éÀúµ±Ç°Íø¸ñµÄËùÓĞ¶¥µãÊı¾İ£¬°üÀ¨¶¥µãÎ»ÖÃ¡¢·¨Ïß¡¢ÎÆÀí×ø±êµÈµÈ
+        // éå†å½“å‰ç½‘æ ¼çš„æ‰€æœ‰é¡¶ç‚¹æ•°æ®ï¼ŒåŒ…æ‹¬é¡¶ç‚¹ä½ç½®ã€æ³•çº¿ã€çº¹ç†åæ ‡ç­‰ç­‰
         for (GLuint i = 0; i < mesh->mNumVertices; i++)
         {
             Vertex vertex;
             Vector3 mVector;
-            // Î»ÖÃ
+            // ä½ç½®
             mVector.x = mesh->mVertices[i].x;
             mVector.y = mesh->mVertices[i].y;
             mVector.z = mesh->mVertices[i].z;
             vertex.position = mVector;
-            // ·¨Ïß
+            // æ³•çº¿
             mVector.x = mesh->mNormals[i].x;
             mVector.y = mesh->mNormals[i].y;
             mVector.z = mesh->mNormals[i].z;
             vertex.normal = mVector;
-            // ÎÆÀí×ø±ê
-            if (mesh->mTextureCoords[0])	// Èç¹û¶¥µã´æÔÚÎÆÀí×ø±ê
+            // çº¹ç†åæ ‡
+            if (mesh->mTextureCoords[0])	// å¦‚æœé¡¶ç‚¹å­˜åœ¨çº¹ç†åæ ‡
             {
                 Vector2 vec;
                 vec.x = mesh->mTextureCoords[0][i].x;
@@ -87,7 +87,7 @@ namespace fx {
             else
                 vertex.texcoord = Vector2(0.0f, 0.0f);
 
-            // ÇĞÏß
+            // åˆ‡çº¿
             if (mesh->mTangents)
             {
                 mVector.x = mesh->mTangents[i].x;
@@ -100,7 +100,7 @@ namespace fx {
 
             if (mesh->mBitangents)
             {
-                // ¸±ÇĞÏß
+                // å‰¯åˆ‡çº¿
                 mVector.x = mesh->mBitangents[i].x;
                 mVector.y = mesh->mBitangents[i].y;
                 mVector.z = mesh->mBitangents[i].z;
@@ -109,11 +109,11 @@ namespace fx {
             else
                 vertex.bitangent = Vector3(0.0f);
 
-            // Ìí¼ÓÒ»¸ö¶¥µãÊı¾İ
+            // æ·»åŠ ä¸€ä¸ªé¡¶ç‚¹æ•°æ®
             vertices.push_back(vertex);
         }
 
-        // ±éÀúËùÓĞ¶¥µãË÷Òı£¨ÃæÊı¾İ£©
+        // éå†æ‰€æœ‰é¡¶ç‚¹ç´¢å¼•ï¼ˆé¢æ•°æ®ï¼‰
         for (GLuint i = 0; i < mesh->mNumFaces; i++)
         {
             aiFace face = mesh->mFaces[i];
@@ -121,12 +121,12 @@ namespace fx {
                 indices.push_back(face.mIndices[j]);
         }
 
-        PolygonMesh *polygon = new PolygonMesh(vertices, indices, path);
+        PolygonMesh* polygon = new PolygonMesh(vertices, indices, path);
         polygon->name = mesh->mName.C_Str();
         return polygon;
     }
 
-    Texture ResourceManager::LoadTexture2D(const GLchar *path, const GLchar *type, bool gamma)
+    Texture ResourceManager::LoadTexture2D(const GLchar* path, const GLchar* type, bool gamma)
     {
         Texture tex;
         auto got = loaded.find(path);
@@ -137,7 +137,7 @@ namespace fx {
             glGenTextures(1, &textureID);
 
             GLint width, height, numChannel;
-            GLboolean *data = stbi_load(path, &width, &height, &numChannel, 0);
+            GLboolean* data = stbi_load(path, &width, &height, &numChannel, 0);
             if (data)
             {
                 GLenum interFormat;
@@ -168,7 +168,7 @@ namespace fx {
                 tex.path = path;
                 tex.type = type;
 
-                // ·ÅÈëÈİÆ÷±£´æ£¬´Ó²åÈë¼ÇÂ¼
+                // æ”¾å…¥å®¹å™¨ä¿å­˜ï¼Œä»æ’å…¥è®°å½•
                 textures.push_back(tex);
                 std::pair<string, GLuint> p(path, textures.size() - 1);
                 loaded.insert(p);
@@ -191,7 +191,7 @@ namespace fx {
         return tex;
     }
 
-    Texture ResourceManager::LoadHdrTexture(const GLchar *path)
+    Texture ResourceManager::LoadHdrTexture(const GLchar* path)
     {
         Texture hdr;
         auto got = loaded.find(path);
@@ -200,7 +200,7 @@ namespace fx {
         {
             stbi_set_flip_vertically_on_load(true);
             GLint width, height, numChanel;
-            GLfloat *data = stbi_loadf(path, &width, &height, &numChanel, 0);
+            GLfloat* data = stbi_loadf(path, &width, &height, &numChanel, 0);
             GLuint hdrTextureID;
             if (data)
             {
@@ -250,7 +250,7 @@ namespace fx {
         GLint width, height, numChannels;
         for (GLuint i = 0; i < faces.size(); i++)
         {
-            GLboolean *data = stbi_load(faces[i].c_str(), &width, &height, &numChannels, 0);
+            GLboolean* data = stbi_load(faces[i].c_str(), &width, &height, &numChannels, 0);
             if (data)
             {
                 glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
@@ -274,7 +274,7 @@ namespace fx {
         return tex;
     }
 
-    const GLchar *ResourceManager::GetAppDir()
+    const GLchar* ResourceManager::GetAppDir()
     {
         //if (appDir.empty())
         //{
@@ -286,19 +286,19 @@ namespace fx {
         return "D:\\Visual Studio 2017 Projects\\FantasyX\\FantasyX";
     }
 
-    const GLchar *ResourceManager::GetShaderDir()
+    const GLchar* ResourceManager::GetShaderDir()
     {
         return "\\Shaders\\";
     }
 
-    const GLchar *ResourceManager::GetImageDir()
+    const GLchar* ResourceManager::GetImageDir()
     {
         return "\\Images\\";
     }
 
-    GLchar *ResourceManager::GetFileString(const GLchar *path)
+    GLchar* ResourceManager::GetFileString(const GLchar* path)
     {
-        GLchar *str = nullptr;
+        GLchar* str = nullptr;
 
         std::string fileString;
         std::ifstream inputFile;

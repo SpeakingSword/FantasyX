@@ -704,7 +704,7 @@ namespace fx {
 #pragma endregion
 
 
-    // 添加更多的 Shader ...
+    // 鏇村 Shader ...
 }
 
 #endif // !SHADER_H

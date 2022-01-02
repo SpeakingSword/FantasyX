@@ -20,7 +20,7 @@ namespace fx {
     const Vector3 WORLD_FRONT(0.0f, 0.0f, 1.0f);
     const Vector3 WORLD_RIGHT(1.0f, 0.0f, 0.0f);
     const Vector3 WORLD_UP(0.0f, 1.0f, 0.0f);
-    
+
     typedef enum {
         COM_NONE = 0,
         COM_TRANSFORM,
@@ -32,8 +32,8 @@ namespace fx {
         COM_CAMERA,
         COM_SCRIPT
     }ComponentType;
-    
-    typedef enum{
+
+    typedef enum {
         WORLD,
         SELF
     }Space;
@@ -47,15 +47,15 @@ namespace fx {
         GT_TAG_NUM
     }GameObjectTagType;
 
-    // Èı¸ö³£Êı»á¿ØÖÆ¹âµÄË¥¼õ¾àÀë
-    // ´óÓÚË¥¼õ¾àÀë¹âÕÕ¾Í»á²»Æğ×÷ÓÃ
+    // ä¸‰ä¸ªå¸¸æ•°ä¼šæ§åˆ¶å…‰çš„è¡°å‡è·ç¦»
+    // å¤§äºè¡°å‡è·ç¦»å…‰ç…§å°±ä¼šä¸èµ·ä½œç”¨
     typedef struct {
         GLfloat constant;
         GLfloat linear;
         GLfloat quadratic;
     }Attenuation;
 
-    // ÄÒÀ¨Ïà»úËùÓĞµÄÒÆ¶¯·½Ê½
+    // å›Šæ‹¬ç›¸æœºæ‰€æœ‰çš„ç§»åŠ¨æ–¹å¼
     typedef enum {
         CAM_FORWARD,
         CAM_BACKWARD,
@@ -124,5 +124,3 @@ namespace fx {
 }
 
 #endif // !TYPES_H
-
-

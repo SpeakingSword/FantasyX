@@ -3,7 +3,7 @@ layout (location = 0) in vec3 Pos;
 layout (location = 1) in vec2 TexCoord;
 
 out VS_OUT {
-	vec2 texCoord;
+    vec2 texCoord;
 } vs_out;
 
 void main()

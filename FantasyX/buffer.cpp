@@ -118,7 +118,7 @@ namespace fx {
             }
             else if (colorAttachmentNum > 1)
             {
-                GLuint *attachments = new GLuint[colorAttachmentNum];
+                GLuint* attachments = new GLuint[colorAttachmentNum];
                 for (GLuint i = 0; i < colorAttachmentNum; ++i)
                 {
                     attachments[i] = GL_COLOR_ATTACHMENT0 + i;
@@ -146,7 +146,7 @@ namespace fx {
         return false;
     }
 
-    void FrameBuffer::AddTexture2D(TextureBuffer *tex, GLuint attachment)
+    void FrameBuffer::AddTexture2D(TextureBuffer* tex, GLuint attachment)
     {
         if (id != 0)
         {
@@ -173,7 +173,7 @@ namespace fx {
         }
     }
 
-    void FrameBuffer::AddTexture3D(TextureBuffer *tex, GLuint attachment)
+    void FrameBuffer::AddTexture3D(TextureBuffer* tex, GLuint attachment)
     {
         if (id != 0)
         {
@@ -200,7 +200,7 @@ namespace fx {
         }
     }
 
-    void FrameBuffer::AddRenderBuffer(TextureBuffer *rbo, GLuint attachment)
+    void FrameBuffer::AddRenderBuffer(TextureBuffer* rbo, GLuint attachment)
     {
         if (id != 0)
         {
@@ -232,10 +232,10 @@ namespace fx {
         if (id != 0 && colorAttachmentNum > 0)
         {
             glBindFramebuffer(GL_FRAMEBUFFER, id);
-            // ½â°óËùÓĞÑÕÉ«¸½¼ş
+            // è§£ç»‘æ‰€æœ‰é¢œè‰²é™„ä»¶
             for (GLuint i = 0; i < colorAttachmentNum; ++i)
             {
-                TextureBuffer *tex = colorAttachments[i];
+                TextureBuffer* tex = colorAttachments[i];
                 GLuint type = tex->type;
                 switch (type)
                 {
@@ -839,7 +839,7 @@ namespace fx {
 
 #pragma region HdrIBLTextures
     Matrix4x4 HdrIBLTextures::renderCubeMapProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
-    Matrix4x4 *HdrIBLTextures::renderCubeMapViews = new Matrix4x4[6]
+    Matrix4x4* HdrIBLTextures::renderCubeMapViews = new Matrix4x4[6]
     {
         glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
         glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
@@ -888,7 +888,7 @@ namespace fx {
     {
         if (!texturesInitiated)
         {
-            Texture3D *ibl_cube_map = new Texture3D();
+            Texture3D* ibl_cube_map = new Texture3D();
             ibl_cube_map->internalFormat = GL_RGB16F;
             ibl_cube_map->width = cube_map_width;
             ibl_cube_map->height = ibl_cube_map->width;
@@ -898,7 +898,7 @@ namespace fx {
             ibl_cube_map->CreateBuffer();
             IBLTextures[IBL_CUBE_MAP] = ibl_cube_map;
 
-            Texture3D *ibl_irradiance_map = new Texture3D();
+            Texture3D* ibl_irradiance_map = new Texture3D();
             ibl_irradiance_map->internalFormat = GL_RGB16F;
             ibl_irradiance_map->width = irradiance_map_width;
             ibl_irradiance_map->height = ibl_irradiance_map->width;
@@ -907,18 +907,18 @@ namespace fx {
             ibl_irradiance_map->CreateBuffer();
             IBLTextures[IBL_IRRADIANCE_MAP] = ibl_irradiance_map;
 
-            Texture3D *ibl_prefilter_map = new Texture3D();
+            Texture3D* ibl_prefilter_map = new Texture3D();
             ibl_prefilter_map->internalFormat = GL_RGB16F;
             ibl_prefilter_map->width = prefilter_map_width;
             ibl_prefilter_map->height = ibl_prefilter_map->width;
             ibl_prefilter_map->minFilter = GL_LINEAR_MIPMAP_LINEAR;
             ibl_prefilter_map->magFilter = GL_LINEAR;
             ibl_prefilter_map->CreateBuffer();
-            // Èç¹ûÊ¹ÓÃÁË GL_LINEAR_MIPMAP_LINEAR µÈÓ¦¸ÃÉú³Émipmap
+            // å¦‚æœä½¿ç”¨äº† GL_LINEAR_MIPMAP_LINEAR ç­‰åº”è¯¥ç”Ÿæˆmipmap
             ibl_prefilter_map->GenerateMipmap();
             IBLTextures[IBL_PREFILTER_MAP] = ibl_prefilter_map;
 
-            Texture2D *ibl_brdf_lut_map = new Texture2D();
+            Texture2D* ibl_brdf_lut_map = new Texture2D();
             ibl_brdf_lut_map->internalFormat = GL_RG16F;
             ibl_brdf_lut_map->width = brdf_lut_map_width;
             ibl_brdf_lut_map->height = ibl_brdf_lut_map->width;
@@ -932,32 +932,32 @@ namespace fx {
         }
     }
 
-    void HdrIBLTextures::DrawTextures(const FrameBuffer *framebuffer, const RenderBuffer *rbo)
+    void HdrIBLTextures::DrawTextures(const FrameBuffer* framebuffer, const RenderBuffer* rbo)
     {
         if (hdrTexture.id != 0 && texturesInitiated)
         {
             glBindFramebuffer(GL_FRAMEBUFFER, framebuffer->id);
             glBindRenderbuffer(GL_RENDERBUFFER, rbo->id);
 
-            // ·Ç³£ÖØÒªµÄÒ»ĞĞ£¬²»¹Ø±ÕÃæÌŞ³ı£¬Á¢·½ÌåÌùÍ¼ÎŞ·¨Õı³£»æÖÆ
-            // Ö»ĞèÒ»´Î
+            // éå¸¸é‡è¦çš„ä¸€è¡Œï¼Œä¸å…³é—­é¢å‰”é™¤ï¼Œç«‹æ–¹ä½“è´´å›¾æ— æ³•æ­£å¸¸ç»˜åˆ¶
+            // åªéœ€ä¸€æ¬¡
             glEnable(GL_DEPTH_TEST);
             glDisable(GL_CULL_FACE);
             //glDepthFunc(GL_LEQUAL);
 
-            // »æÖÆÁ¢·½ÌåÌùÍ¼
+            // ç»˜åˆ¶ç«‹æ–¹ä½“è´´å›¾
             glRenderbufferStorage(GL_RENDERBUFFER, rbo->internalFormat, cube_map_width, cube_map_width);
             glViewport(0, 0, cube_map_width, cube_map_width);
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_2D, hdrTexture.id);
 
-            HdrBoxShader *hdrBoxShader = HdrBoxShader::GetInstance();
+            HdrBoxShader* hdrBoxShader = HdrBoxShader::GetInstance();
             hdrBoxShader->Bind();
             hdrBoxShader->SetMat4("projection", HdrIBLTextures::renderCubeMapProjection);
 
-            CubeMesh *cubeMesh = CubeMesh::GetInstance();
-            // °ó¶¨Á¢·½ÌåÍø¸ñ£¬Ö»ĞèÒ»´Î
+            CubeMesh* cubeMesh = CubeMesh::GetInstance();
+            // ç»‘å®šç«‹æ–¹ä½“ç½‘æ ¼ï¼Œåªéœ€ä¸€æ¬¡
             glBindVertexArray(cubeMesh->VAO);
 
             for (GLuint i = 0; i < 6; ++i)
@@ -971,7 +971,7 @@ namespace fx {
                     glDrawArrays(GL_TRIANGLES, 0, cubeMesh->vertices.size());
             }
 
-            // Á¢·½ÌåÌùÍ¼Éú³É¶à¼¶½¥Ô¶ÎÆÀí
+            // ç«‹æ–¹ä½“è´´å›¾ç”Ÿæˆå¤šçº§æ¸è¿œçº¹ç†
             glBindTexture(GL_TEXTURE_CUBE_MAP, IBLTextures[IBL_CUBE_MAP]->id);
             glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
             glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
@@ -981,14 +981,14 @@ namespace fx {
             hdrBoxShader->Unbind();
 
 
-            // »æÖÆÁ¢·½Ìå·øÕÕ¶ÈÌùÍ¼
+            // ç»˜åˆ¶ç«‹æ–¹ä½“è¾ç…§åº¦è´´å›¾
             glRenderbufferStorage(GL_RENDERBUFFER, rbo->internalFormat, irradiance_map_width, irradiance_map_width);
             glViewport(0, 0, irradiance_map_width, irradiance_map_width);
 
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_CUBE_MAP, this->IBLTextures[IBL_CUBE_MAP]->id);
 
-            IrradianceBoxShader *irradianceBoxShader = IrradianceBoxShader::GetInstance();
+            IrradianceBoxShader* irradianceBoxShader = IrradianceBoxShader::GetInstance();
             irradianceBoxShader->Bind();
             irradianceBoxShader->SetMat4("projection", HdrIBLTextures::renderCubeMapProjection);
 
@@ -1006,11 +1006,11 @@ namespace fx {
             irradianceBoxShader->Unbind();
             glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-            // »æÖÆÔ¤ÂË²¨¾µÃæÁ¢·½ÌùÍ¼
+            // ç»˜åˆ¶é¢„æ»¤æ³¢é•œé¢ç«‹æ–¹è´´å›¾
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_CUBE_MAP, this->IBLTextures[IBL_CUBE_MAP]->id);
 
-            PrefilterBoxShader *prefilterBoxShader = PrefilterBoxShader::GetInstance();
+            PrefilterBoxShader* prefilterBoxShader = PrefilterBoxShader::GetInstance();
             prefilterBoxShader->Bind();
             prefilterBoxShader->SetMat4("projection", HdrIBLTextures::renderCubeMapProjection);
 
@@ -1040,16 +1040,16 @@ namespace fx {
             prefilterBoxShader->Unbind();
             glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
 
-            // »æÖÆBRDFÌùÍ¼
+            // ç»˜åˆ¶BRDFè´´å›¾
             glRenderbufferStorage(GL_RENDERBUFFER, rbo->internalFormat, brdf_lut_map_width, brdf_lut_map_width);
             glViewport(0, 0, brdf_lut_map_width, brdf_lut_map_width);
             glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, IBLTextures[IBL_BRDF_LUT_MAP]->id, NULL);
             glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-            BRDFShader *brdfShader = BRDFShader::GetInstance();
+            BRDFShader* brdfShader = BRDFShader::GetInstance();
             brdfShader->Bind();
 
-            RectangleMesh *rectangleMesh = RectangleMesh::GetInstance();
+            RectangleMesh* rectangleMesh = RectangleMesh::GetInstance();
             glBindVertexArray(rectangleMesh->VAO);
             if (rectangleMesh->indices.size() > 0)
                 glDrawElements(GL_TRIANGLES, rectangleMesh->indices.size(), GL_UNSIGNED_INT, 0);
@@ -1061,7 +1061,7 @@ namespace fx {
             glBindFramebuffer(GL_FRAMEBUFFER, 0);
             brdfShader->Unbind();
 
-            // »Ö¸´ÃæÌŞ³ı
+            // æ¢å¤é¢å‰”é™¤
             glEnable(GL_CULL_FACE);
             //glDepthFunc(GL_LESS);
 

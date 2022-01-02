@@ -3,15 +3,15 @@ layout (location = 0) in vec3 Pos;
 layout (location = 2) in vec3 Normal;
 
 out VS_OUT {
-	vec3 fragPos;
-	vec3 normal;
+    vec3 fragPos;
+    vec3 normal;
 } vs_out;
 
 
 layout (std140) uniform SharedMatrices
 {
-	mat4 projection;
-	mat4 view;
+    mat4 projection;
+    mat4 view;
 };
 
 uniform mat4 modelMatrix;

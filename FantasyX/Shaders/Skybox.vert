@@ -7,8 +7,8 @@ out VS_OUT {
 
 layout (std140) uniform SharedMatrices
 {
-	mat4 projection;
-	mat4 view;
+    mat4 projection;
+    mat4 view;
 };
 
 void main()

@@ -26,16 +26,16 @@ namespace fx {
 
     class ResourceManager {
     private:
-        vector<GameObject *> models;    // 记录加载过的模型
-        vector<Texture> textures;       // 记录加载过的纹理
+        vector<GameObject*> models;    // 璁板綍鍔犺浇杩囩殑妯″瀷
+        vector<Texture> textures;       // 璁板綍鍔犺浇杩囩殑绾圭悊
         string appDir;
         string shaderDir;
         string imageDir;
 
-        // 资源加载记录
+        // 璧勬簮鍔犺浇璁板綍
         unordered_map<string, GLuint> loaded;
 
-        static ResourceManager *_instance;
+        static ResourceManager* _instance;
         ResourceManager()
         {
             cout << "ENGIN CORE::ResourceManager created ... " << endl;
@@ -56,9 +56,9 @@ namespace fx {
             }
         };
         static GC gc;
-   
+
     public:
-        static ResourceManager *GetInstance()
+        static ResourceManager* GetInstance()
         {
             if (_instance == nullptr)
             {
@@ -66,17 +66,17 @@ namespace fx {
             }
             return _instance;
         }
-    
-        GameObject *LoadModel(const GLchar *path);
-        Texture LoadTexture2D(const GLchar *path, const GLchar *type, bool gamma = false);
+
+        GameObject* LoadModel(const GLchar* path);
+        Texture LoadTexture2D(const GLchar* path, const GLchar* type, bool gamma = false);
         Texture LoadCubeMap(vector<string> faces);
-        Texture LoadHdrTexture(const GLchar *path);
-        const GLchar *GetAppDir();
-        const GLchar *GetShaderDir();
-        const GLchar *GetImageDir();
-        GLchar *GetFileString(const GLchar *path);
-        void ProcessNode(aiNode *node, const aiScene *scene, GameObject *obj, const GLchar *path, Material *mat);
-        PolygonMesh *ProcessMesh(aiMesh *mesh, const GLchar *path);
+        Texture LoadHdrTexture(const GLchar* path);
+        const GLchar* GetAppDir();
+        const GLchar* GetShaderDir();
+        const GLchar* GetImageDir();
+        GLchar* GetFileString(const GLchar* path);
+        void ProcessNode(aiNode* node, const aiScene* scene, GameObject* obj, const GLchar* path, Material* mat);
+        PolygonMesh* ProcessMesh(aiMesh* mesh, const GLchar* path);
     };
 }
 

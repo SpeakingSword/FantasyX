@@ -1,17 +1,17 @@
 //#define DEMO
 #ifdef DEMO
-// ±ê×¼¿â
+// æ ‡å‡†åº“
 #include <iostream>
 #include <vector>
 #include <random>
 #include <direct.h>
 
-// ÒıÇæÍ·ÎÄ¼ş
+// å¼•æ“å¤´æ–‡ä»¶
 #include "camera.h"
 #include "model.h"
 #include "shader_old.h"
 
-// µÚÈı·½¿â
+// ç¬¬ä¸‰æ–¹åº“
 #include <glad\glad.h>
 #include <GLFW\glfw3.h>
 #include <glm\glm.hpp>
@@ -23,36 +23,36 @@
 #include "imgui_impl_glfw.h"
 #include "imgui_impl_opengl3.h"
 
-// ÏµÍ³ÌØ¶¨¿â
+// ç³»ç»Ÿç‰¹å®šåº“
 #include <Windows.h>
 
 
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// äÖÈ¾ÒıÇæÄÚÖÃAPIµÄ¶¨Òå£¨º¯Êı/·½·¨£©
+// æ¸²æŸ“å¼•æ“å†…ç½®APIçš„å®šä¹‰ï¼ˆå‡½æ•°/æ–¹æ³•ï¼‰
 ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 void framebuffer_size_callback(GLFWwindow* window, int width, int height);
-void mouse_move_callback(GLFWwindow *window, double xpos, double ypos);
-void mouse_scroll_callback(GLFWwindow *window, double xoffset, double yoffset);
+void mouse_move_callback(GLFWwindow* window, double xpos, double ypos);
+void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset);
 void processInput(GLFWwindow* window);
-void initVAOWithTexCoods(unsigned int *VAO, unsigned *VBO, unsigned *EBO, float *vtx, int v_s, unsigned int *indx, int i_s);
-Texture initTexture2D(const char *filePath, const char *type, bool gamma);
-void initCubemap(unsigned int &cubemap, vector<std::string> faces);
-unsigned int *initMultiTexture2D(const char *pathArray[], int count, bool gammas[]);
-void initSampler2DLoaction(Shader_Old shader, const char *textureNames[], int texCount);
-unsigned int loadHDRtexture(const char *filePath);
+void initVAOWithTexCoods(unsigned int* VAO, unsigned* VBO, unsigned* EBO, float* vtx, int v_s, unsigned int* indx, int i_s);
+Texture initTexture2D(const char* filePath, const char* type, bool gamma);
+void initCubemap(unsigned int& cubemap, vector<std::string> faces);
+unsigned int* initMultiTexture2D(const char* pathArray[], int count, bool gammas[]);
+void initSampler2DLoaction(Shader_Old shader, const char* textureNames[], int texCount);
+unsigned int loadHDRtexture(const char* filePath);
 
 void drawSceneNormal();
 
 std::string getFilePath(std::string directory, std::string filename);
 float ssaoScaleLerp(float a, float b, float f);
 
-void CreateSphere(unsigned int X_SEGMENT, unsigned int Y_SEGMENT, std::vector<float> &data, std::vector<unsigned int> &indices);
+void CreateSphere(unsigned int X_SEGMENT, unsigned int Y_SEGMENT, std::vector<float>& data, std::vector<unsigned int>& indices);
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
 
 
 
 ///////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////////
-// äÖÈ¾ÒıÇæÄÚÖÃ³£Á¿¡¢ÀàĞÍµÄ¶¨Òå
+// æ¸²æŸ“å¼•æ“å†…ç½®å¸¸é‡ã€ç±»å‹çš„å®šä¹‰
 unsigned int SCR_WIDTH = 1920;
 unsigned int SCR_HEIGHT = 1080;
 unsigned int SHADOW_WIDTH = 1024;
@@ -67,7 +67,7 @@ std::string ProjectDirectory = currentDirectory;
 std::string ShaderPath = currentDirectory + ShaderDirectory;
 std::string ImagePath = currentDirectory + ImageDirectory;
 
-Shader_Old *pShader;
+Shader_Old* pShader;
 Camera camera(glm::vec3(0.0f, 2.0f, 3.0f));
 
 float exposure = 1.0f;
@@ -85,2114 +85,2060 @@ bool firstMouse = true;
 
 int main()
 {
-	// GLFW: ³õÊ¼»¯ÓëÅäÖÃ
-	// ------------------------------------------
-	glfwInit();
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
-	glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
-	glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
-	//glfwWindowHint(GLFW_SAMPLES, 4);
+    // GLFW: åˆå§‹åŒ–ä¸é…ç½®
+    // ------------------------------------------
+    glfwInit();
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
+    glfwWindowHint(GLFW_CONTEXT_VERSION_MINOR, 3);
+    glfwWindowHint(GLFW_OPENGL_PROFILE, GLFW_OPENGL_CORE_PROFILE);
+    //glfwWindowHint(GLFW_SAMPLES, 4);
 
 #ifdef __APPLE__
-	glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
+    glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif // __APPLE__
 
-	// GLFW: ´´½¨´°¿Ú
-	// -------------------------------------------------------------------------------------
-	GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
-	HDC hDC = GetDC(HWND(NULL));
-	int screenWidth = GetDeviceCaps(hDC, HORZRES);
-	int screenHeight = GetDeviceCaps(hDC, VERTRES);
-	glfwSetWindowPos(window, (screenWidth - SCR_WIDTH) / 2, (screenHeight - SCR_HEIGHT) / 2);
-	if (window == NULL)
-	{
-		std::cout << "Failed to Create GLFW window" << std::endl;
-		glfwTerminate();
-		return -1;
-	}
-
-	glfwMakeContextCurrent(window);
-	glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
-	glfwSetCursorPosCallback(window, mouse_move_callback);
-	glfwSetScrollCallback(window, mouse_scroll_callback);
-
-	// GLAD: ¼ÓÔØËùÓĞµÄOpenGLº¯Êı
-	// -----------------------------------------------------
-	if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
-	{
-		std::cout << "Failed to initialize GLAD" << std::endl;
-		return -1;
-	}
-
-	// ÉèÖÃImGuiÉÏÏÂÎÄ
-	IMGUI_CHECKVERSION();
-	ImGui::CreateContext();
-	ImGuiIO &io = ImGui::GetIO();
-	(void)io;
-
-	// ÉèÖÃImGui·ç¸ñ
-	ImGui::StyleColorsDark();
-
-	// ÎªImGui°ó¶¨äÖÈ¾Æ½Ì¨
-	const char *glsl_version = "#version 330 core";
-	ImGui_ImplGlfw_InitForOpenGL(window, true);
-	ImGui_ImplOpenGL3_Init(glsl_version);
-
-	bool show_demo_window = true;
-	bool show_another_window = false;
-	ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
-
-	// ´´½¨Êı¾İ
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// Ïä×Ó¶¥µã
-	unsigned int indices[] = {
-		0, 1, 3, // first triangle
-		1, 2, 3  // second triangle
-	};
-	float cubeVertices[] = {
-		// ¶¥µãÎ»ÖÃ£¨ÄæÊ±Õë£©	  // ÎÆÀí×ø±ê  // ¶¥µã·¨ÏòÁ¿
-		// Back face
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, -1.0f,// Bottom-left
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f, 0.0f, -1.0f,// top-right
-		 0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f, 0.0f, -1.0f,// bottom-right         
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f, 0.0f, -1.0f,// top-right
-		-0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, -1.0f,// bottom-left
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f, 0.0f, -1.0f,// top-left
-		// Front face
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f,  1.0f,// bottom-left
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 0.0f,  1.0f,// bottom-right
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 0.0f,  1.0f,// top-right
-		 0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 0.0f,  1.0f,// top-right
-		-0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f,  1.0f,// top-left
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f,  1.0f,// bottom-left
-		// Left face
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,-1.0f, 0.0f,  0.0f,// top-right
-		-0.5f,  0.5f, -0.5f,  1.0f, 1.0f,-1.0f, 0.0f,  0.0f, // top-left
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,-1.0f, 0.0f,  0.0f, // bottom-left
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f,-1.0f, 0.0f,  0.0f, // bottom-left
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f,-1.0f, 0.0f,  0.0f, // bottom-right
-		-0.5f,  0.5f,  0.5f,  1.0f, 0.0f,-1.0f, 0.0f,  0.0f, // top-right
-		// Right face
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f, 0.0f,  0.0f, // top-left
-		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f, 0.0f,  0.0f,// bottom-right
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f,  0.0f,// top-right         
-		 0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f, 0.0f,  0.0f,// bottom-right
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f, 0.0f,  0.0f,// top-left
-		 0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f, 0.0f,  0.0f,// bottom-left     
-		// Bottom face
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f, -1.0f, 0.0f,// top-right
-		 0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f, -1.0f, 0.0f,// top-left
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, -1.0f, 0.0f,// bottom-left
-		 0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, -1.0f, 0.0f,// bottom-left
-		-0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, -1.0f, 0.0f,// bottom-right
-		-0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f, -1.0f, 0.0f,// top-right
-		// Top face
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,// top-left
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,// bottom-right
-		 0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  1.0f, 0.0f,// top-right     
-		 0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,// bottom-right
-		-0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,// top-left
-		-0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,  1.0f, 0.0f // bottom-left        
-	};
-
-	// Ïä×ÓÌùÍ¼
-	const char *path1 = "\\Images\\container2.png";
-	const char *path2 = "\\Images\\container2_specular.png";
-	const char *pathArray[] = {
-		path1,
-		path2
-	};
-	const char *textureNames[] = {
-		"material.texture_diffuse1",
-		"material.texture_specular1"
-	};
-	bool gammas[2] = {
-		true,
-		false
-	};
-
-	// Ìì¿ÕºĞ¶¥µã
-	float skyboxVertices[] = {
-		// positions          
-		-1.0f,  1.0f, -1.0f,
-		-1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-
-		-1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f, -1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-
-		-1.0f, -1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f,
-		-1.0f, -1.0f,  1.0f,
-
-		-1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f, -1.0f,
-		 1.0f,  1.0f,  1.0f,
-		 1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f,  1.0f,
-		-1.0f,  1.0f, -1.0f,
-
-		-1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f, -1.0f,
-		 1.0f, -1.0f, -1.0f,
-		-1.0f, -1.0f,  1.0f,
-		 1.0f, -1.0f,  1.0f
-	};
-
-	// ÆÁÄ»¾ØĞÎ¶¥µãÊı¾İ
-	float quadVertices[] = {
-		// positions   // texCoords
-		-1.0f,  1.0f,  0.0f, 1.0f,
-		-1.0f, -1.0f,  0.0f, 0.0f,
-		 1.0f, -1.0f,  1.0f, 0.0f,
-
-		-1.0f,  1.0f,  0.0f, 1.0f,
-		 1.0f, -1.0f,  1.0f, 0.0f,
-		 1.0f,  1.0f,  1.0f, 1.0f
-	};
-
-	// ËÄ¸öµÆ¹âµÄÎ»ÖÃ
-	glm::vec3 pointLightPositions[] = {
-		glm::vec3( 4.0f,  4.0f,  4.0f),
-		glm::vec3( 4.0f, -4.0f,  4.0f),
-		glm::vec3(-4.0f, -4.0f,  4.0f),
-		glm::vec3(-4.0f,  4.0f,  4.0f)
-	};
-
-	// ËÄ¸öµÆ¹âµÄÑÕÉ«
-	glm::vec3 pointLightColors[] = {
-		glm::vec3(0.1f, 0.1f, 0.1f),	// °×É«£¨ÉÏ·½£©
-		glm::vec3(0.0f, 0.9f, 1.0f),	// À¶É«
-		glm::vec3(1.0f, 0.0f, 0.4f),	// µ­×ÏÉ«
-		glm::vec3(1.0f, 1.0f, 1.0f),	// °×É«£¨Ç°·½£©
-	};
-
-	// ¼ÓÔØ±àÒë×ÅÉ«Æ÷³ÌĞò£¬²¢³õÊ¼»¯Ò»Ğ©×ÅÉ«Æ÷uniform±äÁ¿
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	/*
-	// Ä¬ÈÏ×ÅÉ«Æ÷
-	Shader_Old shader(getFilePath(ShaderPath, "default.vert").c_str(), getFilePath(ShaderPath, "default.frag").c_str());
-	pShader = &shader;
-	// ¼ÓÔØÎÆÀí
-	int texCount = sizeof(pathArray) / sizeof(unsigned int);
-	unsigned int *texIDs = initMultiTexture2D(pathArray, texCount, gammas);
-	initSampler2DLoaction(shader, textureNames, texCount);
-
-	shader.use();
-	shader.setFloat("material.shininess", 64.0f);
-	shader.setFloat("bias", bias);
-	shader.setBool("blinnLightOn", true);
-	shader.setBool("diffuseOn", true);
-	shader.setBool("specularOn", true);
-	shader.setBool("discardEdgeOn", true);
-	shader.setInt("skybox", 1);
-	shader.setInt("material.texture_displacement1", 7);
-	shader.setInt("pointLightShadowMap", 2);
-	shader.setInt("dirLightShadowMap", 6);
-	*/
-	
-
-	// ¹âÕÕ´¦Àí½×¶Î×ÅÉ«Æ÷
-	Shader_Old lightingShader(getFilePath(ShaderPath, "lightingPass.vert").c_str(), getFilePath(ShaderPath, "lightingPass.frag").c_str());
-	lightingShader.use();
-	lightingShader.setInt("gPosition", 0);
-	lightingShader.setInt("gNormal", 1);
-	lightingShader.setInt("gAlbedoSpec", 2);
-	lightingShader.setInt("ssao", 3);
-
-	// SSAO×ÅÉ«Æ÷
-	Shader_Old ssaoShader(getFilePath(ShaderPath, "ssaoPass.vert").c_str(), getFilePath(ShaderPath, "ssaoPass.frag").c_str());
-	ssaoShader.use();
-	ssaoShader.setInt("gPositionDepth", 0);
-	ssaoShader.setInt("gNormal", 1);
-	ssaoShader.setInt("texNoise", 2);
-
-	// SSAO Ä£ºı×ÅÉ«Æ÷
-	Shader_Old ssaoBlurShader(getFilePath(ShaderPath, "ssaoBlur.vert").c_str(), getFilePath(ShaderPath, "ssaoBlur.frag").c_str());
-	ssaoBlurShader.setInt("ssaoInput", 0);
-
-	// ¼¸ºÎ´¦Àí½×¶Î×ÅÉ«Æ÷
-	Shader_Old geomatryShader(getFilePath(ShaderPath, "geomatryPass.vert").c_str(), getFilePath(ShaderPath, "geomatryPass.frag").c_str());
-
-	// ¸ßË¹Ä£ºı×ÅÉ«Æ÷
-	Shader_Old gaussianBlur(getFilePath(ShaderPath, "gaussian_blur.vert").c_str(), getFilePath(ShaderPath, "gaussian_blur.frag").c_str());
-	gaussianBlur.setInt("image", 0);
-
-	// µÆ¹âÊµÌåµÄ×ÅÉ«Æ÷
-	Shader_Old lightCubeShader(getFilePath(ShaderPath, "light.vert").c_str(), getFilePath(ShaderPath, "light.frag").c_str());
-
-	// ÆÁÄ»¾ØĞÎ×ÅÉ«Æ÷
-	Shader_Old screenShader(getFilePath(ShaderPath, "screen.vert").c_str(), getFilePath(ShaderPath, "screen.frag").c_str());
-	screenShader.use();
-	screenShader.setInt("screenTexture", 0);
-
-	// PBR×ÅÉ«Æ÷
-	int lightNum = 1;
-	Shader_Old pbrShader(getFilePath(ShaderPath, "pbr_lighting.vert").c_str(), getFilePath(ShaderPath, "pbr_lighting.frag").c_str());
-	pbrShader.use();
-	pbrShader.setVec3("albedo", glm::vec3(0.5f, 0.0f, 0.0f));
-	pbrShader.setFloat("ao", 1.0f);
-	pbrShader.setInt("lightNum", lightNum);
-	pbrShader.setInt("irradianceMap", 0);
-	pbrShader.setInt("prefilterMap", 1);
-	pbrShader.setInt("brdfLUT", 2);
-	for (unsigned int i = 0; i < lightNum; ++i)
-	{
-		pbrShader.setVec3(("lights[" + std::to_string(i) + "].position").c_str(), pointLightPositions[i]);
-		pbrShader.setVec3(("lights[" + std::to_string(i) + "].color").c_str(), glm::vec3(5.0f, 5.0f, 5.0f));
-	}
-
-	// HDR×ÅÉ«Æ÷
-	Shader_Old hdrShader(getFilePath(ShaderPath, "hdrBox.vert").c_str(), getFilePath(ShaderPath, "hdrBox.frag").c_str());
-	hdrShader.use();
-	hdrShader.setInt("equirectangularMap", 0);
-
-	// ·øÕÕ¶È×ÅÉ«Æ÷
-	Shader_Old irradianceShader(getFilePath(ShaderPath, "irradianceBox.vert").c_str(), getFilePath(ShaderPath, "irradianceBox.frag").c_str());
-	irradianceShader.use();
-	irradianceShader.setInt("environmentMap", 0);
-
-	// Ô¤¹ıÂË×ÅÉ«Æ÷
-	Shader_Old prefilterShader(getFilePath(ShaderPath, "prefilterMap.vert").c_str(), getFilePath(ShaderPath, "prefilterMap.frag").c_str());
-	prefilterShader.use();
-	prefilterShader.setInt("environmentMap", 0);
-
-	// BRDF×ÅÉ«Æ÷
-	Shader_Old brdfShader(getFilePath(ShaderPath, "BRDF.vert").c_str(), getFilePath(ShaderPath, "BRDF.frag").c_str());
-
-	// Ìì¿ÕºĞ×Ó×ÅÉ«Æ÷
-	Shader_Old skyboxShader(getFilePath(ShaderPath, "skybox.vert").c_str(), getFilePath(ShaderPath, "skybox.frag").c_str());
-	skyboxShader.use();
-	skyboxShader.setInt("skybox", 0);
-
-	/*
-	// ¶¨Ïò¹âÒõÓ°ÌùÍ¼»æÖÆ×ÅÉ«Æ÷
-	Shader_Old dirLightShadowShader(getFilePath(ShaderPath, "dirLightshadow.vert").c_str(), getFilePath(ShaderPath, "dirLightshadow.frag").c_str());
-
-	// µã¹âÒõÓ°»æÖÆ×ÅÉ«Æ÷
-	Shader_Old pointLightShadowShader(getFilePath(ShaderPath, "pointLightShadow.vert").c_str(), 
-									getFilePath(ShaderPath, "pointLightShadow.frag").c_str(),
-									getFilePath(ShaderPath, "pointLightShadow.geom").c_str());
-	*/
-
-	// ÉèÖÃÃ¿¸ö×ÅÉ«Æ÷uniform¿éµÄ°ó¶¨µã
-	//unsigned int defaultUniformBlock = glGetUniformBlockIndex(shader.ID, "Matrices");
-	unsigned int lightUniformBlock = glGetUniformBlockIndex(lightCubeShader.ID, "Matrices");
-	unsigned int geomatryPassBlock = glGetUniformBlockIndex(geomatryShader.ID, "Matrices");
-	unsigned int pbrShaderBlock = glGetUniformBlockIndex(pbrShader.ID, "Matrices");
-	unsigned int skyboxShaderBlock = glGetUniformBlockIndex(skyboxShader.ID, "Matrices");
-
-
-
-	// È«¶¼°ó¶¨µ½0µã
-	//glUniformBlockBinding(shader.ID, defaultUniformBlock, 0);
-	glUniformBlockBinding(lightCubeShader.ID, lightUniformBlock, 0);
-	glUniformBlockBinding(geomatryShader.ID, geomatryPassBlock, 0);
-	glUniformBlockBinding(pbrShader.ID, pbrShaderBlock, 0);
-	glUniformBlockBinding(skyboxShader.ID, skyboxShaderBlock, 0);
-
-	// ´´½¨»º³å¶ÔÏó
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// ´´½¨Ïä×ÓVAO¡¢VBO¡¢EBO
-	
-	unsigned int VBO = 0, VAO = 0, EBO = 0;
-	glGenVertexArrays(1, &VAO);
-	glGenBuffers(1, &VBO);
-	glGenBuffers(1, &EBO);
-	// ³õÊ¼»¯VAO
-	initVAOWithTexCoods(&VAO, &VBO, &EBO, cubeVertices, sizeof(cubeVertices), indices, sizeof(indices));
-	// ÉùÃ÷Ïä×ÓµÄÄ£ĞÍ¾ØÕóºÍ·¨Ïß¾ØÕóVBO
-	/*
-	glBindVertexArray(VAO);
-	unsigned int boxInstanceVBO;
-	glGenBuffers(1, &boxInstanceVBO);
-	glBindBuffer(GL_ARRAY_BUFFER, boxInstanceVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * boxAmount * 2, NULL, GL_DYNAMIC_DRAW);
-	for (unsigned int i = 5; i < 9; i++)
-	{
-		glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)((i - 5) * sizeof(glm::vec4)));
-		glEnableVertexAttribArray(i);
-		glVertexAttribDivisor(i, 1);
-	}
-
-	for (unsigned int i = 9; i < 13; i++)
-	{
-		glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)((i - 9) * sizeof(glm::vec4) + boxAmount * sizeof(glm::mat4)));
-		glEnableVertexAttribArray(i);
-		glVertexAttribDivisor(i, 1);
-	}
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	// ¸÷¸öÄ¾ÏäµÄÎ»ÖÃ(Ğ¡ĞĞĞÇ´ø)
-	glm::mat4 *boxIntanceMats;
-	boxIntanceMats = new glm::mat4[2 * boxAmount];
-	srand(glfwGetTime());
-	float radius = 10.0f;
-	float boxOffset = 5.0f;
-	for (unsigned int i = 0; i < boxAmount; i++)
-	{
-		glm::mat4 model;
-		// Î»ÒÆ
-		float angle = (float)i / (float)boxAmount * 360.0f;
-		float displacement = (rand() % (int)(2 * boxOffset * 100)) / 100.0f - boxOffset;
-		float x = sin(angle) * radius + displacement;
-		displacement = (rand() % (int)(2 * boxOffset * 100)) / 100.0f - boxOffset;
-		float y = displacement * 0.4f;
-		displacement = (rand() % (int)(2 * boxOffset * 100)) / 100.0f - boxOffset;
-		float z = cos(angle) * radius + displacement;
-		model = glm::translate(model, glm::vec3(x, y, z));
-		// Ëõ·Å
-		float scale = (rand() % 20) / 100.0f + 0.05;
-		model = glm::scale(model, glm::vec3(scale));
-		// Ğı×ª
-		float rotateAngle = (rand() % 360);
-		model = glm::rotate(model, rotateAngle, glm::vec3(0.4f, 0.6f, 0.8f));
-		// Ìí¼Óµ½Ä£ĞÍ¾ØÕóÊı×éÖĞ
-		boxIntanceMats[i] = model;
-
-		//  ·¨Ïß¾ØÕó
-		glm::mat4 normalMat;
-		normalMat = glm::transpose(glm::inverse(model));
-		boxIntanceMats[i + boxAmount] = normalMat;
-	}
-	// ¸üĞÂÏä×ÓÊµÀıÊı×é»º³åµÄÊı¾İ
-	glBindBuffer(GL_ARRAY_BUFFER, boxInstanceVBO);
-	glBufferSubData(GL_ARRAY_BUFFER, 0, 2 * boxAmount * sizeof(glm::mat4), &boxIntanceMats[0]);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	*/
-
-	// ÆÁÄ»¾ØĞÎVAO
-	unsigned int screenVAO, screenVBO;
-	glGenVertexArrays(1, &screenVAO);
-	glGenBuffers(1, &screenVBO);
-	glBindVertexArray(screenVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)0);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)(2 * sizeof(float)));
-	glEnableVertexAttribArray(1);
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	// CUBE VAO
-	unsigned int cubeVAO, cubeVBO;
-	glGenVertexArrays(1, &cubeVAO);
-	glGenBuffers(1, &cubeVBO);
-	glBindVertexArray(cubeVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
-	glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-
-	// ´´½¨ShaderUniform»º³å¶ÔÏó²¢°ó¶¨µ½¶ÔÓ¦µÄ°ó¶¨µã
-	unsigned int uboMatrices;
-	glGenBuffers(1, &uboMatrices);
-	glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-	glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_DYNAMIC_DRAW);	// ½ö½ö¿ª±ÙÄÚ´æÃ»ÓĞÌî³ä
-	glBindBuffer(GL_UNIFORM_BUFFER, 0);
-	glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboMatrices);	// °ó¶¨µ½0µã
-
-	// Éú³ÉÇòÌåÊı¾İ
-	/*
-	unsigned int x_segment = 64;
-	unsigned int y_segment = 64;
-	std::vector<float> sphereData;
-	std::vector<unsigned int> sphereIndices;
-	CreateSphere(x_segment, y_segment, sphereData, sphereIndices);
-
-	if (sphereData.size() > 0)
-	{
-		std::cout << "Sphere created success!" << std::endl;
-	}
-	// ÇòÌåVAO
-	unsigned int sphereVAO, sphereVBO, sphereEBO;
-	glGenVertexArrays(1, &sphereVAO);
-	glGenBuffers(1, &sphereVBO);
-	glGenBuffers(1, &sphereEBO);
-
-	glBindVertexArray(sphereVAO);
-	glBindBuffer(GL_ARRAY_BUFFER, sphereVBO);
-	glBufferData(GL_ARRAY_BUFFER, sphereData.size() * sizeof(float), &sphereData[0], GL_STATIC_DRAW);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereEBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, sphereIndices.size() * sizeof(unsigned int), &sphereIndices[0], GL_STATIC_DRAW);
-	float stride = (3 + 2 + 3) * sizeof(float);
-	glEnableVertexAttribArray(0);
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
-	glEnableVertexAttribArray(1);
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(2);
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
-
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
-	*/
-
-
-	// ´´½¨Ò»¸ö¶àÖØ²ÉÑùÖ¡»º³å
-	// -----------------------------------------------------------------------
-	// -----------------------------------------------------------------------
-	/*
-	unsigned int multisampFrameBuffer;
-	glGenFramebuffers(1, &multisampFrameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, multisampFrameBuffer);
-	// Ìí¼ÓÁ½¸öÑÕÉ«¸½¼ş
-	unsigned int multisamBuffers[2];
-	glGenTextures(2, multisamBuffers);
-	for (unsigned int i = 0; i < 2; i++)
-	{
-		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisamBuffers[i]);
-		glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
-		glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D_MULTISAMPLE, multisamBuffers[i], 0);
-	}
-	// Ìí¼ÓäÖÈ¾»º³å¶ÔÏó¸½¼ş£¨°üº¬Éî¶È»º³åºÍÄ£°å»º³å£©
-	unsigned int multiRenderBuffer;
-	glGenRenderbuffers(1, &multiRenderBuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, multiRenderBuffer);
-	glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, multiRenderBuffer);
-	//ÏÔÊ¾¸æËßÖ¡»º³åÓĞ¼¸¸ö¸½¼ş
-	unsigned int multiSampAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
-	glDrawBuffers(2, multiSampAttachments);
-	// ¼ì²éÖ¡»º³åµÄÍêÕûĞÔ
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	*/
-	
-	// ´´½¨Ò»¸öºóÆÚ´¦ÀíÖ¡»º³å
-	// -----------------------------------------------------------------------
-	// -----------------------------------------------------------------------
-	/*
-	unsigned int postprocessFrameBuffer;
-	glGenFramebuffers(1, &postprocessFrameBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, postprocessFrameBuffer);
-	// ´´½¨ÓÃ×÷ºóÆÚ´¦ÀíµÄÎÆÀíÖ¡»º³å¸½¼ş
-	unsigned int screenTexture;
-	glGenTextures(1, &screenTexture);
-	
-	glBindTexture(GL_TEXTURE_2D, screenTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenTexture, 0);
-	// ¼ì²éÖ¡»º³åµÄÍêÕûĞÔ
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	*/
-
-	// ´´½¨Ò»¸ö¶¨Ïò¹âÒõÓ°ÌùÍ¼»æÖÆÖ¡»º³å
-	// -----------------------------------------------------------------------
-	// -----------------------------------------------------------------------
-	/*
-	unsigned int dirLightFramebuffer;
-	glGenFramebuffers(1, &dirLightFramebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, dirLightFramebuffer);
-	// ´´½¨¶¨Ïò¹âÒõÓ°ÌùÍ¼
-	unsigned int dirLightShadowMap;
-	glGenTextures(1, &dirLightShadowMap);
-	glBindTexture(GL_TEXTURE_2D, dirLightShadowMap);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
-	float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
-	glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dirLightShadowMap, 0);
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-	// ¼ì²éÖ¡»º³åµÄÍêÕûĞÔ
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// ÒõÓ°Á¢·½ÌåÌùÍ¼
-	unsigned int shadowCubeMap;
-	glGenTextures(1, &shadowCubeMap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, shadowCubeMap);
-	for (unsigned int i = 0; i < 6; i++)
-	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
-	}
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	*/
-
-	// µã¹âÔ´ÒõÓ°»æÖÆ»º³å
-	// -----------------------------------------------------------------------
-	// -----------------------------------------------------------------------
-	/*
-	unsigned int pointLightFramebuffer;
-	glGenFramebuffers(1, &pointLightFramebuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, pointLightFramebuffer);
-	glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowCubeMap, 0);
-	glDrawBuffer(GL_NONE);
-	glReadBuffer(GL_NONE);
-	// ¼ì²éÖ¡»º³åµÄÍêÕûĞÔ
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// Æ¹ÅÒÖ¡»º³å
-	// ------------------------------------------------------------------------
-	// ------------------------------------------------------------------------
-	unsigned int pingpongFBO[2];
-	unsigned int pingpongBuffer[2];
-	glGenFramebuffers(2, pingpongFBO);
-	glGenTextures(2, pingpongBuffer);
-	for (unsigned int i = 0; i < 2; i++)
-	{
-		glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
-		glBindTexture(GL_TEXTURE_2D, pingpongBuffer[i]);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongBuffer[i], 0);
-		if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-			std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	}
-	*/
-
-	// G-»º³å
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	enum GBufferTex
-	{
-		gPosition,
-		gNormal,
-		gAlbedoSpec,
-		gBufferTextureNum
-	};
-	unsigned int gBuffer;
-	unsigned int gBufferTextures[gBufferTextureNum];
-	glGenFramebuffers(1, &gBuffer);
-	glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-	// Î»ÖÃÑÕÉ«»º³å¸½¼ş
-	glGenTextures(1, &gBufferTextures[gPosition]);
-	glBindTexture(GL_TEXTURE_2D, gBufferTextures[gPosition]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gBufferTextures[gPosition], 0);
-	// ·¨ÏßÑÕÉ«»º³å¸½¼ş
-	glGenTextures(1, &gBufferTextures[gNormal]);
-	glBindTexture(GL_TEXTURE_2D, gBufferTextures[gNormal]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gBufferTextures[gNormal], 0);
-	// Âş·´ÉäÑÕÉ«ºÍ¾µÃæÑÕÉ«»º³å¸½¼ş
-	glGenTextures(1, &gBufferTextures[gAlbedoSpec]);
-	glBindTexture(GL_TEXTURE_2D, gBufferTextures[gAlbedoSpec]);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gBufferTextures[gAlbedoSpec], 0);
-	// ÉùÃ÷Ö¡»º³åÊ¹ÓÃµÄÑÕÉ«¸½¼ş
-	unsigned int gBufferAttachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2};
-	glDrawBuffers(3, gBufferAttachments);
-	// Ìí¼ÓäÖÈ¾»º³å¶ÔÏó¸½¼ş£¨°üº¬Éî¶È»º³åºÍÄ£°å»º³å)
-	unsigned int gRenderBuffer;
-	glGenRenderbuffers(1, &gRenderBuffer);
-	glBindRenderbuffer(GL_RENDERBUFFER, gRenderBuffer);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, gRenderBuffer);
-	// ¼ì²éÖ¡»º³åµÄÍêÕûĞÔ
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// SSAO Ö¡»º³å¶ÔÏó
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	unsigned int ssaoFBO;
-	glGenFramebuffers(1, &ssaoFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
-	// SSAOÖ¡»º³åÑÕÉ«¸½¼ş
-	unsigned int ssaoColorBuffer;
-	glGenTextures(1, &ssaoColorBuffer);
-	glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
-	// ¼ì²éÖ¡»º³åµÄÍêÕûĞÔ
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	
-	// SSAO-Ä£ºı Ö¡»º³å¶ÔÏó
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	unsigned int ssaoBlurFBO, ssaoBlurColorBuffer;
-	glGenFramebuffers(1, &ssaoBlurFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
-	glGenTextures(1, &ssaoBlurColorBuffer);
-	glBindTexture(GL_TEXTURE_2D, ssaoBlurColorBuffer);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoBlurColorBuffer, 0);
-	// ¼ì²éÖ¡»º³åµÄÍêÕûĞÔ
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// ¹âÕÕ´¦ÀíÖ¡»º³å
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	unsigned int lightingFBO, lightingTexture;
-	glGenFramebuffers(1, &lightingFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, lightingFBO);
-	glGenTextures(1, &lightingTexture);
-	glBindTexture(GL_TEXTURE_2D, lightingTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, lightingTexture, 0);
-	// ¼ì²éÖ¡»º³åµÄÍêÕûĞÔ
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// ÕıÏòäÖÈ¾Ö¡»º³å
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	unsigned int forwardFBO;
-	glGenFramebuffers(1, &forwardFBO);
-	glBindFramebuffer(GL_FRAMEBUFFER, forwardFBO);
-	// Ö¡»º³åÑÕÉ«ÎÆÀí
-	unsigned int forwardFboColor;
-	glGenTextures(1, &forwardFboColor);
-	glBindTexture(GL_TEXTURE_2D, forwardFboColor);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, forwardFboColor, 0);
-	// Ö¡»º³åäÖÈ¾»º³å¶ÔÏó
-	unsigned int forwardRBO;
-	glGenRenderbuffers(1, &forwardRBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, forwardRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, forwardRBO);
-	// ¼ì²éÖ¡»º³åµÄÍêÕûĞÔ
-	if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
-		std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// HDRÁ¢·½ÌåÌùÍ¼Éú³ÉÖ¡»º³å
-	unsigned int hdrWidth = 1024;
-	unsigned int captureFBO, captureRBO;
-	glGenFramebuffers(1, &captureFBO);
-	glGenRenderbuffers(1, &captureRBO);
-	// Ìí¼ÓäÖÈ¾»º³å¶ÔÏó
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, hdrWidth, hdrWidth);
-	glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-	// ³õÊ¼»¯µÆ¹â
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	/*
-	shader.use();
-	glm::vec3 dirLightPos(10.0f, 10.0f, -10.0f);
-	// ¶¨Ïò¹â
-	shader.setFloat("dirLight.strength", 0.5f);
-	shader.setVec3("dirLight.direction", (glm::vec3(0.0f) - dirLightPos));
-	shader.setVec3("dirLight.ambient", glm::vec3(0.4f));
-	shader.setVec3("dirLight.diffuse", glm::vec3(0.8f));
-	shader.setVec3("dirLight.specular", glm::vec3(0.5f));
-	// µã¹â
-	for (unsigned int i = 0; i < sizeof(pointLightPositions) / sizeof(glm::vec3); i++)
-	{
-		std::string num;
-		std::stringstream ss;
-		ss << i;
-		num = ss.str();
-		shader.setFloat("pointLights[" + num + "].strength", 4.0f);
-		shader.setVec3("pointLights[" + num + "].position", pointLightPositions[i]);
-		shader.setVec3("pointLights[" + num + "].ambient", pointLightColors[i]);
-		shader.setVec3("pointLights[" + num + "].diffuse", pointLightColors[i]);
-		shader.setVec3("pointLights[" + num + "].specular", pointLightColors[i]);
-		shader.setFloat("pointLights[" + num + "].constant", 1.0f);
-		shader.setFloat("pointLights[" + num + "].linear", 0.22f);
-		shader.setFloat("pointLights[" + num + "].quadratic", 0.20f);
-	}
-	// ¾Û¹â
-	shader.setFloat("spotLight.strength", 1.0f);
-	shader.setVec3("spotLight.position", camera.Position);
-	shader.setVec3("spotLight.direction", camera.Front);
-	shader.setVec3("spotLight.ambient", glm::vec3(0.0f));
-	shader.setVec3("spotLight.diffuse", glm::vec3(1.6f));
-	shader.setVec3("spotLight.specular", glm::vec3(1.6f));
-	shader.setFloat("spotLight.constant", 1.0f);
-	shader.setFloat("spotLight.linear", 0.09f);
-	shader.setFloat("spotLight.quadratic", 0.032f);
-	shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
-	shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(30.0f)));
-	*/
-	
-	// ³õÊ¼»¯ÎÆÀíÌùÍ¼
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// Ìì¿ÕºĞÁ¢·½ÌåÁùÃæÌùÍ¼
-	/*
-	vector<std::string> skyboxFaces
-	{
-		"D:\\Visual Studio 2017 Projects\\OpenGLdemo\\OpenGLdemo\\Images\\Skybox\\mountain_and_lake\\right.jpg",
-		"D:\\Visual Studio 2017 Projects\\OpenGLdemo\\OpenGLdemo\\Images\\Skybox\\mountain_and_lake\\left.jpg",
-		"D:\\Visual Studio 2017 Projects\\OpenGLdemo\\OpenGLdemo\\Images\\Skybox\\mountain_and_lake\\top.jpg",
-		"D:\\Visual Studio 2017 Projects\\OpenGLdemo\\OpenGLdemo\\Images\\Skybox\\mountain_and_lake\\bottom.jpg",
-		"D:\\Visual Studio 2017 Projects\\OpenGLdemo\\OpenGLdemo\\Images\\Skybox\\mountain_and_lake\\front.jpg",
-		"D:\\Visual Studio 2017 Projects\\OpenGLdemo\\OpenGLdemo\\Images\\Skybox\\mountain_and_lake\\back.jpg"
-	};
-	//¼ÓÔØÌì¿ÕºĞÎÆÀí
-	unsigned int skyboxTexture;
-	initCubemap(skyboxTexture, skyboxFaces);
-	*/
-
-	// ¼ÓÔØµØ°åµÄÖÃ»»ÌùÍ¼
-	//unsigned int planeDepthMap;
-	//initTexture2D(planeDepthMap, "D:\\OpenGL3DModels\\ground\\wood_disp.png", false);
-	
-	// ¼ÓÔØ²ÄÖÊÇòÌùÍ¼
-	Texture albedoMap, normalMap, metallicMap, roughnessMap, aoMap;
-	albedoMap = initTexture2D("D:/OpenGL3DModels/Cerberus/Textures/Cerberus_A.tga", "texture_diffuse", true);
-	normalMap = initTexture2D("D:/OpenGL3DModels/Cerberus/Textures/Cerberus_N.tga", "texture_normal", false);
-	metallicMap = initTexture2D("D:/OpenGL3DModels/Cerberus/Textures/Cerberus_M.tga", "texture_metallic", false);
-	roughnessMap = initTexture2D("D:/OpenGL3DModels/Cerberus/Textures/Cerberus_R.tga", "texture_roughness", false);
-	aoMap = initTexture2D("D:/OpenGL3DModels/Cerberus/Textures/Cerberus_AO.tga", "texture_ao", true);
-
-	// ¼ÓÔØHDR¸ñÊ½ÌùÍ¼
-	unsigned int hdrTexture = loadHDRtexture("D:/Visual Studio 2017 Projects/FantasyX/FantasyX/Images/HDR/Factory_Catwalk/Factory_Catwalk_2k.hdr");
-
-	// HDR Á¢·½ÌåÌùÍ¼
-	unsigned int envCubeMap;
-	glGenTextures(1, &envCubeMap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, hdrWidth, hdrWidth, 0, GL_RGB, GL_FLOAT, NULL);
-	}
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-	// ¾í»ıºóÉú³ÉµÄ·øÕÕ¶ÈÌùÍ¼
-	unsigned int irradianceMap;
-	unsigned int irradianceMapWidth = 128;
-	glGenTextures(1, &irradianceMap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, irradianceMapWidth, irradianceMapWidth, 0, GL_RGB, GL_FLOAT, NULL);
-	}
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-	// Ô¤ÂË²¨¾µÃæ»·¾³ÌùÍ¼
-	unsigned int prefilterMap;
-	unsigned int prefilterMapWidth = 128;
-	glGenTextures(1, &prefilterMap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, prefilterMapWidth, prefilterMapWidth, 0, GL_RGB, GL_FLOAT, NULL);
-	}
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	// Éú³É¶à¼¶½¥Ô¶ÎÆÀí
-	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-	// BRDFÌùÍ¼
-	unsigned int brdfLUTTexture;
-	glGenTextures(1, &brdfLUTTexture);
-	glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	// ¼ÓÔØÄ£ĞÍ
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	//Model man("D:/OpenGL3DModels/nanosuit/nanosuit.obj");
-	//Model matilda("D:/OpenGL3DModels/matilda/matilda.obj");
-	//Model plane("D:/OpenGL3DModels/ground/plane.obj");
-	//plane.AddTexture(planeDepthMap, "texture_displacement", "D:\\OpenGL3DModels\\ground\\wood_disp.png");
-	Model mModel("D:/OpenGL3DModels/Cerberus/fire_gun.obj");
-	mModel.AddTexture(albedoMap);
-	mModel.AddTexture(normalMap);
-	mModel.AddTexture(metallicMap);
-	mModel.AddTexture(roughnessMap);
-	mModel.AddTexture(aoMap);
-
-	// ¸¨ÖúÊı¾İºÍ²Ù×÷
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// ÉùÃ÷¼ÆÊ±Æ÷
-	float timer = 1.0f;
-	camera.MovementSpeed = 5.0f;
-	camera.ZoomSpeed = 1.0f;
-	camera.Near_Plane = 0.1f;
-	camera.Far_Plane = 1000.0f;
-	
-	// Éú³É¹âµÄÎ»ÖÃ
-	float constant = 1.0f;
-	float linear = 0.09f;
-	float quadratic = 0.032f;
-	float lightMax = 1.0f;
-	float radius = (-linear + std::sqrtf(linear * linear - 4 * quadratic * (constant - (256.0 / 5.0) * lightMax))) / (2 * quadratic);
-	vector<glm::vec3> lightPositions;
-	lightingShader.use();
-	int mCount = 0;
-	for (int i = -6; i <= 6; i += 4)
-	{
-		if (i != 0)
-		{
-			lightPositions.push_back(glm::vec3(i, 10.0f, i));
-			lightingShader.setVec3("lights[" + std::to_string(mCount) + "].position", glm::vec3(i, 10.0f, i));
-			lightingShader.setFloat("lights[" + std::to_string(mCount) + "].radius", radius);
-			lightingShader.setVec3("lights[" + std::to_string(mCount) + "].color", glm::vec3(1.0f, 1.0f, 1.0f));
-			lightingShader.setFloat("lights[" + std::to_string(mCount) + "].constant", constant);
-			lightingShader.setFloat("lights[" + std::to_string(mCount) + "].linear", linear);
-			lightingShader.setFloat("lights[" + std::to_string(mCount) + "].quadratic", quadratic);
-			mCount += 1;
-			lightPositions.push_back(glm::vec3(i, 10.0f, -i));
-			lightingShader.setVec3("lights[" + std::to_string(mCount) + "].position", glm::vec3(i, 10.0f, -i));
-			lightingShader.setFloat("lights[" + std::to_string(mCount) + "].radius", radius);
-			lightingShader.setVec3("lights[" + std::to_string(mCount) + "].color", glm::vec3(1.0f, 1.0f, 1.0f));
-			lightingShader.setFloat("lights[" + std::to_string(mCount) + "].constant", constant);
-			lightingShader.setFloat("lights[" + std::to_string(mCount) + "].linear", linear);
-			lightingShader.setFloat("lights[" + std::to_string(mCount) + "].quadratic", quadratic);
-			mCount += 1;
-		}	
-	}
-	std::cout << "light radius: " << radius << std::endl;
-
-	// Éú³ÉSSAO°ëÇòĞÎÑù±¾
-	int kernelSize = 24;
-	float kernelRadius = 0.5f;
-	int occlusionPower = 2.0f;
-	ssaoShader.use();
-	ssaoShader.setInt("kernelSize", kernelSize);
-	ssaoShader.setFloat("radius", kernelRadius);
-	ssaoShader.setInt("power", occlusionPower);
-	std::uniform_real_distribution<float> randomFloats(0.0f, 1.0f);		// (0.0, 1.0)Ö®¼äµÄËæ»ú¸¡µãÊı
-	std::default_random_engine generator;
-	std::vector<glm::vec3> ssacoKernel;
-	for (unsigned int i = 0; i < kernelSize; ++i)
-	{
-		glm::vec3 sample(randomFloats(generator) * 2.0f - 1.0f, randomFloats(generator) * 2.0f - 1.0f, randomFloats(generator));
-		sample = glm::normalize(sample);
-		sample *= randomFloats(generator);
-		float scale = (float)i / kernelSize;
-		scale = ssaoScaleLerp(0.1f, 1.0f, scale * scale);		// ¶ÔÑù±¾Î»ÖÃ×÷¶ş´ÎÇúÏßËõ·Å
-		ssacoKernel.push_back(sample);
-		// ´«ËÍÊı¾İµ½×ÅÉ«Æ÷
-		ssaoShader.setVec3(("samples[" + std::to_string(i) + "]").c_str(), sample);
-	}
-	// Éú³ÉSSAOÔëÉùÍ¼Ïñ£¨±£´æÆ¬¶ÎµÄĞı×ªÏòÁ¿£©
-	std::vector<glm::vec3> ssaoNoise;
-	for (unsigned int i = 0; i < 16; ++i)
-	{
-		glm::vec3 noise(randomFloats(generator) * 2.0f - 1.0f, randomFloats(generator) * 2.0f - 1.0f, 0.0f);
-		ssaoNoise.push_back(noise);
-	}
-	// ½«ÏòÁ¿±£´æµ½ÎÆÀíÖĞ
-	unsigned int noiseTexture;
-	glGenTextures(1, &noiseTexture);
-	glBindTexture(GL_TEXTURE_2D, noiseTexture);
-	glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 4, 4, 0, GL_RGB, GL_FLOAT, &ssaoNoise[0]);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-	glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-	glBindTexture(GL_TEXTURE_2D, 0);
-
-	// ´´½¨¶¨Ïò¹â¹âÔ´¿Õ¼ä±ä»»¾ØÕó
-	/*
-	float dirLightNear = 0.1f;
-	float dirLightFar = 100.0f;
-	glm::mat4 dirLightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, dirLightNear, dirLightFar);
-	glm::mat4 dirLightView = glm::lookAt(dirLightPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-	glm::mat4 dirLightSpaceMatrix = dirLightProjection * dirLightView;
-	dirLightShadowShader.use();
-	dirLightShadowShader.setMat4("lightSpaceMatrix", dirLightSpaceMatrix);
-	shader.use();
-	shader.setMat4("dirlightSpaceMatrix", dirLightSpaceMatrix);
-	*/
-
-	// µã¹âÔ´¿Õ¼ä±ä»»¾ØÕó
-	/*
-	glm::vec3 pointLighPos = pointLightPositions[1];
-	float pointLightAspect = (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT;
-	float pointLightNear = 0.1f;
-	float pointLightFar = 100.0f;
-	glm::mat4 pointLightShadowProj = glm::perspective(glm::radians(90.0f), pointLightAspect, pointLightNear, pointLightFar);
-	std::vector<glm::mat4> shadowTransforms;
-	shadowTransforms.push_back(pointLightShadowProj *
-		glm::lookAt(pointLighPos, pointLighPos + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
-	shadowTransforms.push_back(pointLightShadowProj *
-		glm::lookAt(pointLighPos, pointLighPos + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
-	shadowTransforms.push_back(pointLightShadowProj *
-		glm::lookAt(pointLighPos, pointLighPos + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
-	shadowTransforms.push_back(pointLightShadowProj *
-		glm::lookAt(pointLighPos, pointLighPos + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
-	shadowTransforms.push_back(pointLightShadowProj *
-		glm::lookAt(pointLighPos, pointLighPos + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0)));
-	shadowTransforms.push_back(pointLightShadowProj *
-		glm::lookAt(pointLighPos, pointLighPos + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0)));
-	pointLightShadowShader.use();
-	for (unsigned int i = 0; i < 6; i++)
-	{
-		pointLightShadowShader.setMat4(("shadowMatrices[" + std::to_string(i) + "]").c_str(), shadowTransforms[i]);
-	}
-	*/
-
-	// HDR Á¢·½Í¼ äÖÈ¾¿Õ¼ä±ä»»¾ØÕó
-	glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
-	glm::mat4 captureViews[] =
-	{
-	   glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-	   glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-	   glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
-	   glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
-	   glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
-	   glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3( 0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
-	};
-
-	// äÖÈ¾HDR»·¾³Á¢·½ÌåÌùÍ¼(ÕæÕıµÄHDR)
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-
-	hdrShader.use();
-	hdrShader.setMat4("projection", captureProjection);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_2D, hdrTexture);
-
-	glViewport(0, 0, hdrWidth, hdrWidth);
-	glEnable(GL_DEPTH_TEST);
-
-	
-	glBindVertexArray(cubeVAO);
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		hdrShader.setMat4("view", captureViews[i]);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubeMap, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-	}
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_2D, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
-	// Éú³É¶à¼¶½¥Ô¶ÎÆÀí
-	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-	glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-
-	// ÀûÓÃHDRÌùÍ¼¾í»ıÉú³É·øÕÕ¶ÈÌùÍ¼
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, irradianceMapWidth, irradianceMapWidth);
-
-	irradianceShader.use();
-	irradianceShader.setMat4("projection", captureProjection);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-
-	glViewport(0, 0, irradianceMapWidth, irradianceMapWidth);
-	glEnable(GL_DEPTH_TEST);
-
-	glBindVertexArray(cubeVAO);
-	for (unsigned int i = 0; i < 6; ++i)
-	{
-		irradianceShader.setMat4("view", captureViews[i]);
-		glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap, 0);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-	}
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
-	// Éú³ÉÔ¤¹ıÂËHDR»·¾³ÌùÍ¼
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    // GLFW: åˆ›å»ºçª—å£
+    // -------------------------------------------------------------------------------------
+    GLFWwindow* window = glfwCreateWindow(SCR_WIDTH, SCR_HEIGHT, "LearnOpenGL", NULL, NULL);
+    HDC hDC = GetDC(HWND(NULL));
+    int screenWidth = GetDeviceCaps(hDC, HORZRES);
+    int screenHeight = GetDeviceCaps(hDC, VERTRES);
+    glfwSetWindowPos(window, (screenWidth - SCR_WIDTH) / 2, (screenHeight - SCR_HEIGHT) / 2);
+    if (window == NULL)
+    {
+        std::cout << "Failed to Create GLFW window" << std::endl;
+        glfwTerminate();
+        return -1;
+    }
+
+    glfwMakeContextCurrent(window);
+    glfwSetFramebufferSizeCallback(window, framebuffer_size_callback);
+    glfwSetCursorPosCallback(window, mouse_move_callback);
+    glfwSetScrollCallback(window, mouse_scroll_callback);
+
+    // GLAD: åŠ è½½æ‰€æœ‰çš„OpenGLå‡½æ•°
+    // -----------------------------------------------------
+    if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
+    {
+        std::cout << "Failed to initialize GLAD" << std::endl;
+        return -1;
+    }
+
+    // è®¾ç½®ImGuiä¸Šä¸‹æ–‡
+    IMGUI_CHECKVERSION();
+    ImGui::CreateContext();
+    ImGuiIO& io = ImGui::GetIO();
+    (void)io;
+
+    // è®¾ç½®ImGuié£æ ¼
+    ImGui::StyleColorsDark();
+
+    // ä¸ºImGuiç»‘å®šæ¸²æŸ“å¹³å°
+    const char* glsl_version = "#version 330 core";
+    ImGui_ImplGlfw_InitForOpenGL(window, true);
+    ImGui_ImplOpenGL3_Init(glsl_version);
+
+    bool show_demo_window = true;
+    bool show_another_window = false;
+    ImVec4 clear_color = ImVec4(0.45f, 0.55f, 0.60f, 1.00f);
+
+    // åˆ›å»ºæ•°æ®
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // ç®±å­é¡¶ç‚¹
+    unsigned int indices[] = {
+        0, 1, 3, // first triangle
+        1, 2, 3  // second triangle
+    };
+    float cubeVertices[] = {
+        // é¡¶ç‚¹ä½ç½®ï¼ˆé€†æ—¶é’ˆï¼‰	  // çº¹ç†åæ ‡  // é¡¶ç‚¹æ³•å‘é‡
+        // Back face
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, -1.0f,// Bottom-left
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f, 0.0f, -1.0f,// top-right
+         0.5f, -0.5f, -0.5f,  1.0f, 0.0f, 0.0f, 0.0f, -1.0f,// bottom-right         
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f, 0.0f, -1.0f,// top-right
+        -0.5f, -0.5f, -0.5f,  0.0f, 0.0f, 0.0f, 0.0f, -1.0f,// bottom-left
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f, 0.0f, -1.0f,// top-left
+        // Front face
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f,  1.0f,// bottom-left
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, 0.0f,  1.0f,// bottom-right
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 0.0f,  1.0f,// top-right
+         0.5f,  0.5f,  0.5f,  1.0f, 1.0f, 0.0f, 0.0f,  1.0f,// top-right
+        -0.5f,  0.5f,  0.5f,  0.0f, 1.0f, 0.0f, 0.0f,  1.0f,// top-left
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, 0.0f,  1.0f,// bottom-left
+        // Left face
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,-1.0f, 0.0f,  0.0f,// top-right
+        -0.5f,  0.5f, -0.5f,  1.0f, 1.0f,-1.0f, 0.0f,  0.0f, // top-left
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,-1.0f, 0.0f,  0.0f, // bottom-left
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f,-1.0f, 0.0f,  0.0f, // bottom-left
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f,-1.0f, 0.0f,  0.0f, // bottom-right
+        -0.5f,  0.5f,  0.5f,  1.0f, 0.0f,-1.0f, 0.0f,  0.0f, // top-right
+        // Right face
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f, 0.0f,  0.0f, // top-left
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f, 0.0f,  0.0f,// bottom-right
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 1.0f, 0.0f,  0.0f,// top-right         
+         0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 1.0f, 0.0f,  0.0f,// bottom-right
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 1.0f, 0.0f,  0.0f,// top-left
+         0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 1.0f, 0.0f,  0.0f,// bottom-left     
+        // Bottom face
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f, -1.0f, 0.0f,// top-right
+         0.5f, -0.5f, -0.5f,  1.0f, 1.0f, 0.0f, -1.0f, 0.0f,// top-left
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, -1.0f, 0.0f,// bottom-left
+         0.5f, -0.5f,  0.5f,  1.0f, 0.0f, 0.0f, -1.0f, 0.0f,// bottom-left
+        -0.5f, -0.5f,  0.5f,  0.0f, 0.0f, 0.0f, -1.0f, 0.0f,// bottom-right
+        -0.5f, -0.5f, -0.5f,  0.0f, 1.0f, 0.0f, -1.0f, 0.0f,// top-right
+        // Top face
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,// top-left
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,// bottom-right
+         0.5f,  0.5f, -0.5f,  1.0f, 1.0f, 0.0f,  1.0f, 0.0f,// top-right     
+         0.5f,  0.5f,  0.5f,  1.0f, 0.0f, 0.0f,  1.0f, 0.0f,// bottom-right
+        -0.5f,  0.5f, -0.5f,  0.0f, 1.0f, 0.0f,  1.0f, 0.0f,// top-left
+        -0.5f,  0.5f,  0.5f,  0.0f, 0.0f, 0.0f,  1.0f, 0.0f // bottom-left        
+    };
+
+    // ç®±å­è´´å›¾
+    const char* path1 = "\\Images\\container2.png";
+    const char* path2 = "\\Images\\container2_specular.png";
+    const char* pathArray[] = {
+        path1,
+        path2
+    };
+    const char* textureNames[] = {
+        "material.texture_diffuse1",
+        "material.texture_specular1"
+    };
+    bool gammas[2] = {
+        true,
+        false
+    };
+
+    // å¤©ç©ºç›’é¡¶ç‚¹
+    float skyboxVertices[] = {
+        // positions          
+        -1.0f,  1.0f, -1.0f,
+        -1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f, -1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+
+        -1.0f, -1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f,
+        -1.0f, -1.0f,  1.0f,
+
+        -1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f, -1.0f,
+         1.0f,  1.0f,  1.0f,
+         1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f,  1.0f,
+        -1.0f,  1.0f, -1.0f,
+
+        -1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f, -1.0f,
+         1.0f, -1.0f, -1.0f,
+        -1.0f, -1.0f,  1.0f,
+         1.0f, -1.0f,  1.0f
+    };
+
+    // å±å¹•çŸ©å½¢é¡¶ç‚¹æ•°æ®
+    float quadVertices[] = {
+        // positions   // texCoords
+        -1.0f,  1.0f,  0.0f, 1.0f,
+        -1.0f, -1.0f,  0.0f, 0.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+
+        -1.0f,  1.0f,  0.0f, 1.0f,
+         1.0f, -1.0f,  1.0f, 0.0f,
+         1.0f,  1.0f,  1.0f, 1.0f
+    };
+
+    // å››ä¸ªç¯å…‰çš„ä½ç½®
+    glm::vec3 pointLightPositions[] = {
+        glm::vec3(4.0f,  4.0f,  4.0f),
+        glm::vec3(4.0f, -4.0f,  4.0f),
+        glm::vec3(-4.0f, -4.0f,  4.0f),
+        glm::vec3(-4.0f,  4.0f,  4.0f)
+    };
+
+    // å››ä¸ªç¯å…‰çš„é¢œè‰²
+    glm::vec3 pointLightColors[] = {
+        glm::vec3(0.1f, 0.1f, 0.1f),	// ç™½è‰²ï¼ˆä¸Šæ–¹ï¼‰
+        glm::vec3(0.0f, 0.9f, 1.0f),	// è“è‰²
+        glm::vec3(1.0f, 0.0f, 0.4f),	// æ·¡ç´«è‰²
+        glm::vec3(1.0f, 1.0f, 1.0f),	// ç™½è‰²ï¼ˆå‰æ–¹ï¼‰
+    };
+
+    // åŠ è½½ç¼–è¯‘ç€è‰²å™¨ç¨‹åºï¼Œå¹¶åˆå§‹åŒ–ä¸€äº›ç€è‰²å™¨uniformå˜é‡
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    /*
+    // é»˜è®¤ç€è‰²å™¨
+    Shader_Old shader(getFilePath(ShaderPath, "default.vert").c_str(), getFilePath(ShaderPath, "default.frag").c_str());
+    pShader = &shader;
+    // åŠ è½½çº¹ç†
+    int texCount = sizeof(pathArray) / sizeof(unsigned int);
+    unsigned int *texIDs = initMultiTexture2D(pathArray, texCount, gammas);
+    initSampler2DLoaction(shader, textureNames, texCount);
+    shader.use();
+    shader.setFloat("material.shininess", 64.0f);
+    shader.setFloat("bias", bias);
+    shader.setBool("blinnLightOn", true);
+    shader.setBool("diffuseOn", true);
+    shader.setBool("specularOn", true);
+    shader.setBool("discardEdgeOn", true);
+    shader.setInt("skybox", 1);
+    shader.setInt("material.texture_displacement1", 7);
+    shader.setInt("pointLightShadowMap", 2);
+    shader.setInt("dirLightShadowMap", 6);
+    */
+
+
+    // å…‰ç…§å¤„ç†é˜¶æ®µç€è‰²å™¨
+    Shader_Old lightingShader(getFilePath(ShaderPath, "lightingPass.vert").c_str(), getFilePath(ShaderPath, "lightingPass.frag").c_str());
+    lightingShader.use();
+    lightingShader.setInt("gPosition", 0);
+    lightingShader.setInt("gNormal", 1);
+    lightingShader.setInt("gAlbedoSpec", 2);
+    lightingShader.setInt("ssao", 3);
+
+    // SSAOç€è‰²å™¨
+    Shader_Old ssaoShader(getFilePath(ShaderPath, "ssaoPass.vert").c_str(), getFilePath(ShaderPath, "ssaoPass.frag").c_str());
+    ssaoShader.use();
+    ssaoShader.setInt("gPositionDepth", 0);
+    ssaoShader.setInt("gNormal", 1);
+    ssaoShader.setInt("texNoise", 2);
+
+    // SSAO æ¨¡ç³Šç€è‰²å™¨
+    Shader_Old ssaoBlurShader(getFilePath(ShaderPath, "ssaoBlur.vert").c_str(), getFilePath(ShaderPath, "ssaoBlur.frag").c_str());
+    ssaoBlurShader.setInt("ssaoInput", 0);
+
+    // å‡ ä½•å¤„ç†é˜¶æ®µç€è‰²å™¨
+    Shader_Old geomatryShader(getFilePath(ShaderPath, "geomatryPass.vert").c_str(), getFilePath(ShaderPath, "geomatryPass.frag").c_str());
+
+    // é«˜æ–¯æ¨¡ç³Šç€è‰²å™¨
+    Shader_Old gaussianBlur(getFilePath(ShaderPath, "gaussian_blur.vert").c_str(), getFilePath(ShaderPath, "gaussian_blur.frag").c_str());
+    gaussianBlur.setInt("image", 0);
+
+    // ç¯å…‰å®ä½“çš„ç€è‰²å™¨
+    Shader_Old lightCubeShader(getFilePath(ShaderPath, "light.vert").c_str(), getFilePath(ShaderPath, "light.frag").c_str());
+
+    // å±å¹•çŸ©å½¢ç€è‰²å™¨
+    Shader_Old screenShader(getFilePath(ShaderPath, "screen.vert").c_str(), getFilePath(ShaderPath, "screen.frag").c_str());
+    screenShader.use();
+    screenShader.setInt("screenTexture", 0);
+
+    // PBRç€è‰²å™¨
+    int lightNum = 1;
+    Shader_Old pbrShader(getFilePath(ShaderPath, "pbr_lighting.vert").c_str(), getFilePath(ShaderPath, "pbr_lighting.frag").c_str());
+    pbrShader.use();
+    pbrShader.setVec3("albedo", glm::vec3(0.5f, 0.0f, 0.0f));
+    pbrShader.setFloat("ao", 1.0f);
+    pbrShader.setInt("lightNum", lightNum);
+    pbrShader.setInt("irradianceMap", 0);
+    pbrShader.setInt("prefilterMap", 1);
+    pbrShader.setInt("brdfLUT", 2);
+    for (unsigned int i = 0; i < lightNum; ++i)
+    {
+        pbrShader.setVec3(("lights[" + std::to_string(i) + "].position").c_str(), pointLightPositions[i]);
+        pbrShader.setVec3(("lights[" + std::to_string(i) + "].color").c_str(), glm::vec3(5.0f, 5.0f, 5.0f));
+    }
+
+    // HDRç€è‰²å™¨
+    Shader_Old hdrShader(getFilePath(ShaderPath, "hdrBox.vert").c_str(), getFilePath(ShaderPath, "hdrBox.frag").c_str());
+    hdrShader.use();
+    hdrShader.setInt("equirectangularMap", 0);
+
+    // è¾ç…§åº¦ç€è‰²å™¨
+    Shader_Old irradianceShader(getFilePath(ShaderPath, "irradianceBox.vert").c_str(), getFilePath(ShaderPath, "irradianceBox.frag").c_str());
+    irradianceShader.use();
+    irradianceShader.setInt("environmentMap", 0);
+
+    // é¢„è¿‡æ»¤ç€è‰²å™¨
+    Shader_Old prefilterShader(getFilePath(ShaderPath, "prefilterMap.vert").c_str(), getFilePath(ShaderPath, "prefilterMap.frag").c_str());
+    prefilterShader.use();
+    prefilterShader.setInt("environmentMap", 0);
+
+    // BRDFç€è‰²å™¨
+    Shader_Old brdfShader(getFilePath(ShaderPath, "BRDF.vert").c_str(), getFilePath(ShaderPath, "BRDF.frag").c_str());
+
+    // å¤©ç©ºç›’å­ç€è‰²å™¨
+    Shader_Old skyboxShader(getFilePath(ShaderPath, "skybox.vert").c_str(), getFilePath(ShaderPath, "skybox.frag").c_str());
+    skyboxShader.use();
+    skyboxShader.setInt("skybox", 0);
+
+    /*
+    // å®šå‘å…‰é˜´å½±è´´å›¾ç»˜åˆ¶ç€è‰²å™¨
+    Shader_Old dirLightShadowShader(getFilePath(ShaderPath, "dirLightshadow.vert").c_str(), getFilePath(ShaderPath, "dirLightshadow.frag").c_str());
+    // ç‚¹å…‰é˜´å½±ç»˜åˆ¶ç€è‰²å™¨
+    Shader_Old pointLightShadowShader(getFilePath(ShaderPath, "pointLightShadow.vert").c_str(),
+                                    getFilePath(ShaderPath, "pointLightShadow.frag").c_str(),
+                                    getFilePath(ShaderPath, "pointLightShadow.geom").c_str());
+    */
+
+    // è®¾ç½®æ¯ä¸ªç€è‰²å™¨uniformå—çš„ç»‘å®šç‚¹
+    //unsigned int defaultUniformBlock = glGetUniformBlockIndex(shader.ID, "Matrices");
+    unsigned int lightUniformBlock = glGetUniformBlockIndex(lightCubeShader.ID, "Matrices");
+    unsigned int geomatryPassBlock = glGetUniformBlockIndex(geomatryShader.ID, "Matrices");
+    unsigned int pbrShaderBlock = glGetUniformBlockIndex(pbrShader.ID, "Matrices");
+    unsigned int skyboxShaderBlock = glGetUniformBlockIndex(skyboxShader.ID, "Matrices");
+
+
+
+    // å…¨éƒ½ç»‘å®šåˆ°0ç‚¹
+    //glUniformBlockBinding(shader.ID, defaultUniformBlock, 0);
+    glUniformBlockBinding(lightCubeShader.ID, lightUniformBlock, 0);
+    glUniformBlockBinding(geomatryShader.ID, geomatryPassBlock, 0);
+    glUniformBlockBinding(pbrShader.ID, pbrShaderBlock, 0);
+    glUniformBlockBinding(skyboxShader.ID, skyboxShaderBlock, 0);
+
+    // åˆ›å»ºç¼“å†²å¯¹è±¡
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // åˆ›å»ºç®±å­VAOã€VBOã€EBO
+
+    unsigned int VBO = 0, VAO = 0, EBO = 0;
+    glGenVertexArrays(1, &VAO);
+    glGenBuffers(1, &VBO);
+    glGenBuffers(1, &EBO);
+    // åˆå§‹åŒ–VAO
+    initVAOWithTexCoods(&VAO, &VBO, &EBO, cubeVertices, sizeof(cubeVertices), indices, sizeof(indices));
+    // å£°æ˜ç®±å­çš„æ¨¡å‹çŸ©é˜µå’Œæ³•çº¿çŸ©é˜µVBO
+    /*
+    glBindVertexArray(VAO);
+    unsigned int boxInstanceVBO;
+    glGenBuffers(1, &boxInstanceVBO);
+    glBindBuffer(GL_ARRAY_BUFFER, boxInstanceVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(glm::mat4) * boxAmount * 2, NULL, GL_DYNAMIC_DRAW);
+    for (unsigned int i = 5; i < 9; i++)
+    {
+        glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)((i - 5) * sizeof(glm::vec4)));
+        glEnableVertexAttribArray(i);
+        glVertexAttribDivisor(i, 1);
+    }
+    for (unsigned int i = 9; i < 13; i++)
+    {
+        glVertexAttribPointer(i, 4, GL_FLOAT, GL_FALSE, 4 * sizeof(glm::vec4), (void*)((i - 9) * sizeof(glm::vec4) + boxAmount * sizeof(glm::mat4)));
+        glEnableVertexAttribArray(i);
+        glVertexAttribDivisor(i, 1);
+    }
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    // å„ä¸ªæœ¨ç®±çš„ä½ç½®(å°è¡Œæ˜Ÿå¸¦)
+    glm::mat4 *boxIntanceMats;
+    boxIntanceMats = new glm::mat4[2 * boxAmount];
+    srand(glfwGetTime());
+    float radius = 10.0f;
+    float boxOffset = 5.0f;
+    for (unsigned int i = 0; i < boxAmount; i++)
+    {
+        glm::mat4 model;
+        // ä½ç§»
+        float angle = (float)i / (float)boxAmount * 360.0f;
+        float displacement = (rand() % (int)(2 * boxOffset * 100)) / 100.0f - boxOffset;
+        float x = sin(angle) * radius + displacement;
+        displacement = (rand() % (int)(2 * boxOffset * 100)) / 100.0f - boxOffset;
+        float y = displacement * 0.4f;
+        displacement = (rand() % (int)(2 * boxOffset * 100)) / 100.0f - boxOffset;
+        float z = cos(angle) * radius + displacement;
+        model = glm::translate(model, glm::vec3(x, y, z));
+        // ç¼©æ”¾
+        float scale = (rand() % 20) / 100.0f + 0.05;
+        model = glm::scale(model, glm::vec3(scale));
+        // æ—‹è½¬
+        float rotateAngle = (rand() % 360);
+        model = glm::rotate(model, rotateAngle, glm::vec3(0.4f, 0.6f, 0.8f));
+        // æ·»åŠ åˆ°æ¨¡å‹çŸ©é˜µæ•°ç»„ä¸­
+        boxIntanceMats[i] = model;
+        //  æ³•çº¿çŸ©é˜µ
+        glm::mat4 normalMat;
+        normalMat = glm::transpose(glm::inverse(model));
+        boxIntanceMats[i + boxAmount] = normalMat;
+    }
+    // æ›´æ–°ç®±å­å®ä¾‹æ•°ç»„ç¼“å†²çš„æ•°æ®
+    glBindBuffer(GL_ARRAY_BUFFER, boxInstanceVBO);
+    glBufferSubData(GL_ARRAY_BUFFER, 0, 2 * boxAmount * sizeof(glm::mat4), &boxIntanceMats[0]);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    */
+
+    // å±å¹•çŸ©å½¢VAO
+    unsigned int screenVAO, screenVBO;
+    glGenVertexArrays(1, &screenVAO);
+    glGenBuffers(1, &screenVBO);
+    glBindVertexArray(screenVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, screenVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(quadVertices), &quadVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)0);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, sizeof(float) * 4, (void*)(2 * sizeof(float)));
+    glEnableVertexAttribArray(1);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // CUBE VAO
+    unsigned int cubeVAO, cubeVBO;
+    glGenVertexArrays(1, &cubeVAO);
+    glGenBuffers(1, &cubeVBO);
+    glBindVertexArray(cubeVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, cubeVBO);
+    glBufferData(GL_ARRAY_BUFFER, sizeof(skyboxVertices), skyboxVertices, GL_STATIC_DRAW);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+
+    // åˆ›å»ºShaderUniformç¼“å†²å¯¹è±¡å¹¶ç»‘å®šåˆ°å¯¹åº”çš„ç»‘å®šç‚¹
+    unsigned int uboMatrices;
+    glGenBuffers(1, &uboMatrices);
+    glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+    glBufferData(GL_UNIFORM_BUFFER, 2 * sizeof(glm::mat4), NULL, GL_DYNAMIC_DRAW);	// ä»…ä»…å¼€è¾Ÿå†…å­˜æ²¡æœ‰å¡«å……
+    glBindBuffer(GL_UNIFORM_BUFFER, 0);
+    glBindBufferBase(GL_UNIFORM_BUFFER, 0, uboMatrices);	// ç»‘å®šåˆ°0ç‚¹
+
+    // ç”Ÿæˆçƒä½“æ•°æ®
+    /*
+    unsigned int x_segment = 64;
+    unsigned int y_segment = 64;
+    std::vector<float> sphereData;
+    std::vector<unsigned int> sphereIndices;
+    CreateSphere(x_segment, y_segment, sphereData, sphereIndices);
+    if (sphereData.size() > 0)
+    {
+        std::cout << "Sphere created success!" << std::endl;
+    }
+    // çƒä½“VAO
+    unsigned int sphereVAO, sphereVBO, sphereEBO;
+    glGenVertexArrays(1, &sphereVAO);
+    glGenBuffers(1, &sphereVBO);
+    glGenBuffers(1, &sphereEBO);
+    glBindVertexArray(sphereVAO);
+    glBindBuffer(GL_ARRAY_BUFFER, sphereVBO);
+    glBufferData(GL_ARRAY_BUFFER, sphereData.size() * sizeof(float), &sphereData[0], GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, sphereEBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, sphereIndices.size() * sizeof(unsigned int), &sphereIndices[0], GL_STATIC_DRAW);
+    float stride = (3 + 2 + 3) * sizeof(float);
+    glEnableVertexAttribArray(0);
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, stride, (void*)0);
+    glEnableVertexAttribArray(1);
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, stride, (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(2);
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, stride, (void*)(5 * sizeof(float)));
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, 0);
+    */
+
+
+    // åˆ›å»ºä¸€ä¸ªå¤šé‡é‡‡æ ·å¸§ç¼“å†²
+    // -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    /*
+    unsigned int multisampFrameBuffer;
+    glGenFramebuffers(1, &multisampFrameBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, multisampFrameBuffer);
+    // æ·»åŠ ä¸¤ä¸ªé¢œè‰²é™„ä»¶
+    unsigned int multisamBuffers[2];
+    glGenTextures(2, multisamBuffers);
+    for (unsigned int i = 0; i < 2; i++)
+    {
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, multisamBuffers[i]);
+        glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, 4, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, GL_TRUE);
+        glBindTexture(GL_TEXTURE_2D_MULTISAMPLE, 0);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0 + i, GL_TEXTURE_2D_MULTISAMPLE, multisamBuffers[i], 0);
+    }
+    // æ·»åŠ æ¸²æŸ“ç¼“å†²å¯¹è±¡é™„ä»¶ï¼ˆåŒ…å«æ·±åº¦ç¼“å†²å’Œæ¨¡æ¿ç¼“å†²ï¼‰
+    unsigned int multiRenderBuffer;
+    glGenRenderbuffers(1, &multiRenderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, multiRenderBuffer);
+    glRenderbufferStorageMultisample(GL_RENDERBUFFER, 4, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, multiRenderBuffer);
+    //æ˜¾ç¤ºå‘Šè¯‰å¸§ç¼“å†²æœ‰å‡ ä¸ªé™„ä»¶
+    unsigned int multiSampAttachments[2] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1};
+    glDrawBuffers(2, multiSampAttachments);
+    // æ£€æŸ¥å¸§ç¼“å†²çš„å®Œæ•´æ€§
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    */
+
+    // åˆ›å»ºä¸€ä¸ªåæœŸå¤„ç†å¸§ç¼“å†²
+    // -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    /*
+    unsigned int postprocessFrameBuffer;
+    glGenFramebuffers(1, &postprocessFrameBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, postprocessFrameBuffer);
+    // åˆ›å»ºç”¨ä½œåæœŸå¤„ç†çš„çº¹ç†å¸§ç¼“å†²é™„ä»¶
+    unsigned int screenTexture;
+    glGenTextures(1, &screenTexture);
+
+    glBindTexture(GL_TEXTURE_2D, screenTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, screenTexture, 0);
+    // æ£€æŸ¥å¸§ç¼“å†²çš„å®Œæ•´æ€§
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    */
+
+    // åˆ›å»ºä¸€ä¸ªå®šå‘å…‰é˜´å½±è´´å›¾ç»˜åˆ¶å¸§ç¼“å†²
+    // -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    /*
+    unsigned int dirLightFramebuffer;
+    glGenFramebuffers(1, &dirLightFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, dirLightFramebuffer);
+    // åˆ›å»ºå®šå‘å…‰é˜´å½±è´´å›¾
+    unsigned int dirLightShadowMap;
+    glGenTextures(1, &dirLightShadowMap);
+    glBindTexture(GL_TEXTURE_2D, dirLightShadowMap);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+    float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+    glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_TEXTURE_2D, dirLightShadowMap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    // æ£€æŸ¥å¸§ç¼“å†²çš„å®Œæ•´æ€§
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // é˜´å½±ç«‹æ–¹ä½“è´´å›¾
+    unsigned int shadowCubeMap;
+    glGenTextures(1, &shadowCubeMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, shadowCubeMap);
+    for (unsigned int i = 0; i < 6; i++)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_DEPTH_COMPONENT, SHADOW_WIDTH, SHADOW_HEIGHT, 0, GL_DEPTH_COMPONENT, GL_FLOAT, NULL);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    */
+
+    // ç‚¹å…‰æºé˜´å½±ç»˜åˆ¶ç¼“å†²
+    // -----------------------------------------------------------------------
+    // -----------------------------------------------------------------------
+    /*
+    unsigned int pointLightFramebuffer;
+    glGenFramebuffers(1, &pointLightFramebuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, pointLightFramebuffer);
+    glFramebufferTexture(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, shadowCubeMap, 0);
+    glDrawBuffer(GL_NONE);
+    glReadBuffer(GL_NONE);
+    // æ£€æŸ¥å¸§ç¼“å†²çš„å®Œæ•´æ€§
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    // ä¹’ä¹“å¸§ç¼“å†²
+    // ------------------------------------------------------------------------
+    // ------------------------------------------------------------------------
+    unsigned int pingpongFBO[2];
+    unsigned int pingpongBuffer[2];
+    glGenFramebuffers(2, pingpongFBO);
+    glGenTextures(2, pingpongBuffer);
+    for (unsigned int i = 0; i < 2; i++)
+    {
+        glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[i]);
+        glBindTexture(GL_TEXTURE_2D, pingpongBuffer[i]);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, pingpongBuffer[i], 0);
+        if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+            std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    }
+    */
+
+    // G-ç¼“å†²
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    enum GBufferTex
+    {
+        gPosition,
+        gNormal,
+        gAlbedoSpec,
+        gBufferTextureNum
+    };
+    unsigned int gBuffer;
+    unsigned int gBufferTextures[gBufferTextureNum];
+    glGenFramebuffers(1, &gBuffer);
+    glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+    // ä½ç½®é¢œè‰²ç¼“å†²é™„ä»¶
+    glGenTextures(1, &gBufferTextures[gPosition]);
+    glBindTexture(GL_TEXTURE_2D, gBufferTextures[gPosition]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, gBufferTextures[gPosition], 0);
+    // æ³•çº¿é¢œè‰²ç¼“å†²é™„ä»¶
+    glGenTextures(1, &gBufferTextures[gNormal]);
+    glBindTexture(GL_TEXTURE_2D, gBufferTextures[gNormal]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT1, GL_TEXTURE_2D, gBufferTextures[gNormal], 0);
+    // æ¼«åå°„é¢œè‰²å’Œé•œé¢é¢œè‰²ç¼“å†²é™„ä»¶
+    glGenTextures(1, &gBufferTextures[gAlbedoSpec]);
+    glBindTexture(GL_TEXTURE_2D, gBufferTextures[gAlbedoSpec]);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGBA, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGBA, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT2, GL_TEXTURE_2D, gBufferTextures[gAlbedoSpec], 0);
+    // å£°æ˜å¸§ç¼“å†²ä½¿ç”¨çš„é¢œè‰²é™„ä»¶
+    unsigned int gBufferAttachments[3] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1, GL_COLOR_ATTACHMENT2 };
+    glDrawBuffers(3, gBufferAttachments);
+    // æ·»åŠ æ¸²æŸ“ç¼“å†²å¯¹è±¡é™„ä»¶ï¼ˆåŒ…å«æ·±åº¦ç¼“å†²å’Œæ¨¡æ¿ç¼“å†²)
+    unsigned int gRenderBuffer;
+    glGenRenderbuffers(1, &gRenderBuffer);
+    glBindRenderbuffer(GL_RENDERBUFFER, gRenderBuffer);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, gRenderBuffer);
+    // æ£€æŸ¥å¸§ç¼“å†²çš„å®Œæ•´æ€§
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // SSAO å¸§ç¼“å†²å¯¹è±¡
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    unsigned int ssaoFBO;
+    glGenFramebuffers(1, &ssaoFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+    // SSAOå¸§ç¼“å†²é¢œè‰²é™„ä»¶
+    unsigned int ssaoColorBuffer;
+    glGenTextures(1, &ssaoColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoColorBuffer, 0);
+    // æ£€æŸ¥å¸§ç¼“å†²çš„å®Œæ•´æ€§
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // SSAO-æ¨¡ç³Š å¸§ç¼“å†²å¯¹è±¡
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    unsigned int ssaoBlurFBO, ssaoBlurColorBuffer;
+    glGenFramebuffers(1, &ssaoBlurFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+    glGenTextures(1, &ssaoBlurColorBuffer);
+    glBindTexture(GL_TEXTURE_2D, ssaoBlurColorBuffer);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RED, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, ssaoBlurColorBuffer, 0);
+    // æ£€æŸ¥å¸§ç¼“å†²çš„å®Œæ•´æ€§
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // å…‰ç…§å¤„ç†å¸§ç¼“å†²
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    unsigned int lightingFBO, lightingTexture;
+    glGenFramebuffers(1, &lightingFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, lightingFBO);
+    glGenTextures(1, &lightingTexture);
+    glBindTexture(GL_TEXTURE_2D, lightingTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, lightingTexture, 0);
+    // æ£€æŸ¥å¸§ç¼“å†²çš„å®Œæ•´æ€§
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // æ­£å‘æ¸²æŸ“å¸§ç¼“å†²
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    unsigned int forwardFBO;
+    glGenFramebuffers(1, &forwardFBO);
+    glBindFramebuffer(GL_FRAMEBUFFER, forwardFBO);
+    // å¸§ç¼“å†²é¢œè‰²çº¹ç†
+    unsigned int forwardFboColor;
+    glGenTextures(1, &forwardFboColor);
+    glBindTexture(GL_TEXTURE_2D, forwardFboColor);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, SCR_WIDTH, SCR_HEIGHT, 0, GL_RGB, GL_FLOAT, NULL);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, forwardFboColor, 0);
+    // å¸§ç¼“å†²æ¸²æŸ“ç¼“å†²å¯¹è±¡
+    unsigned int forwardRBO;
+    glGenRenderbuffers(1, &forwardRBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, forwardRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH24_STENCIL8, SCR_WIDTH, SCR_HEIGHT);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_STENCIL_ATTACHMENT, GL_RENDERBUFFER, forwardRBO);
+    // æ£€æŸ¥å¸§ç¼“å†²çš„å®Œæ•´æ€§
+    if (glCheckFramebufferStatus(GL_FRAMEBUFFER) != GL_FRAMEBUFFER_COMPLETE)
+        std::cout << "ERROR::FRAMEBUFFER:: Framebuffer is not complete!" << std::endl;
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // HDRç«‹æ–¹ä½“è´´å›¾ç”Ÿæˆå¸§ç¼“å†²
+    unsigned int hdrWidth = 1024;
+    unsigned int captureFBO, captureRBO;
+    glGenFramebuffers(1, &captureFBO);
+    glGenRenderbuffers(1, &captureRBO);
+    // æ·»åŠ æ¸²æŸ“ç¼“å†²å¯¹è±¡
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, hdrWidth, hdrWidth);
+    glFramebufferRenderbuffer(GL_FRAMEBUFFER, GL_DEPTH_ATTACHMENT, GL_RENDERBUFFER, captureRBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+    // åˆå§‹åŒ–ç¯å…‰
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    /*
+    shader.use();
+    glm::vec3 dirLightPos(10.0f, 10.0f, -10.0f);
+    // å®šå‘å…‰
+    shader.setFloat("dirLight.strength", 0.5f);
+    shader.setVec3("dirLight.direction", (glm::vec3(0.0f) - dirLightPos));
+    shader.setVec3("dirLight.ambient", glm::vec3(0.4f));
+    shader.setVec3("dirLight.diffuse", glm::vec3(0.8f));
+    shader.setVec3("dirLight.specular", glm::vec3(0.5f));
+    // ç‚¹å…‰
+    for (unsigned int i = 0; i < sizeof(pointLightPositions) / sizeof(glm::vec3); i++)
+    {
+        std::string num;
+        std::stringstream ss;
+        ss << i;
+        num = ss.str();
+        shader.setFloat("pointLights[" + num + "].strength", 4.0f);
+        shader.setVec3("pointLights[" + num + "].position", pointLightPositions[i]);
+        shader.setVec3("pointLights[" + num + "].ambient", pointLightColors[i]);
+        shader.setVec3("pointLights[" + num + "].diffuse", pointLightColors[i]);
+        shader.setVec3("pointLights[" + num + "].specular", pointLightColors[i]);
+        shader.setFloat("pointLights[" + num + "].constant", 1.0f);
+        shader.setFloat("pointLights[" + num + "].linear", 0.22f);
+        shader.setFloat("pointLights[" + num + "].quadratic", 0.20f);
+    }
+    // èšå…‰
+    shader.setFloat("spotLight.strength", 1.0f);
+    shader.setVec3("spotLight.position", camera.Position);
+    shader.setVec3("spotLight.direction", camera.Front);
+    shader.setVec3("spotLight.ambient", glm::vec3(0.0f));
+    shader.setVec3("spotLight.diffuse", glm::vec3(1.6f));
+    shader.setVec3("spotLight.specular", glm::vec3(1.6f));
+    shader.setFloat("spotLight.constant", 1.0f);
+    shader.setFloat("spotLight.linear", 0.09f);
+    shader.setFloat("spotLight.quadratic", 0.032f);
+    shader.setFloat("spotLight.cutOff", glm::cos(glm::radians(12.5f)));
+    shader.setFloat("spotLight.outerCutOff", glm::cos(glm::radians(30.0f)));
+    */
+
+    // åˆå§‹åŒ–çº¹ç†è´´å›¾
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // å¤©ç©ºç›’ç«‹æ–¹ä½“å…­é¢è´´å›¾
+    /*
+    vector<std::string> skyboxFaces
+    {
+        "D:\\Visual Studio 2017 Projects\\OpenGLdemo\\OpenGLdemo\\Images\\Skybox\\mountain_and_lake\\right.jpg",
+        "D:\\Visual Studio 2017 Projects\\OpenGLdemo\\OpenGLdemo\\Images\\Skybox\\mountain_and_lake\\left.jpg",
+        "D:\\Visual Studio 2017 Projects\\OpenGLdemo\\OpenGLdemo\\Images\\Skybox\\mountain_and_lake\\top.jpg",
+        "D:\\Visual Studio 2017 Projects\\OpenGLdemo\\OpenGLdemo\\Images\\Skybox\\mountain_and_lake\\bottom.jpg",
+        "D:\\Visual Studio 2017 Projects\\OpenGLdemo\\OpenGLdemo\\Images\\Skybox\\mountain_and_lake\\front.jpg",
+        "D:\\Visual Studio 2017 Projects\\OpenGLdemo\\OpenGLdemo\\Images\\Skybox\\mountain_and_lake\\back.jpg"
+    };
+    //åŠ è½½å¤©ç©ºç›’çº¹ç†
+    unsigned int skyboxTexture;
+    initCubemap(skyboxTexture, skyboxFaces);
+    */
+
+    // åŠ è½½åœ°æ¿çš„ç½®æ¢è´´å›¾
+    //unsigned int planeDepthMap;
+    //initTexture2D(planeDepthMap, "D:\\OpenGL3DModels\\ground\\wood_disp.png", false);
+
+    // åŠ è½½æè´¨çƒè´´å›¾
+    Texture albedoMap, normalMap, metallicMap, roughnessMap, aoMap;
+    albedoMap = initTexture2D("D:/OpenGL3DModels/Cerberus/Textures/Cerberus_A.tga", "texture_diffuse", true);
+    normalMap = initTexture2D("D:/OpenGL3DModels/Cerberus/Textures/Cerberus_N.tga", "texture_normal", false);
+    metallicMap = initTexture2D("D:/OpenGL3DModels/Cerberus/Textures/Cerberus_M.tga", "texture_metallic", false);
+    roughnessMap = initTexture2D("D:/OpenGL3DModels/Cerberus/Textures/Cerberus_R.tga", "texture_roughness", false);
+    aoMap = initTexture2D("D:/OpenGL3DModels/Cerberus/Textures/Cerberus_AO.tga", "texture_ao", true);
+
+    // åŠ è½½HDRæ ¼å¼è´´å›¾
+    unsigned int hdrTexture = loadHDRtexture("D:/Visual Studio 2017 Projects/FantasyX/FantasyX/Images/HDR/Factory_Catwalk/Factory_Catwalk_2k.hdr");
+
+    // HDR ç«‹æ–¹ä½“è´´å›¾
+    unsigned int envCubeMap;
+    glGenTextures(1, &envCubeMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+    for (unsigned int i = 0; i < 6; ++i)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, hdrWidth, hdrWidth, 0, GL_RGB, GL_FLOAT, NULL);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+    // å·ç§¯åç”Ÿæˆçš„è¾ç…§åº¦è´´å›¾
+    unsigned int irradianceMap;
+    unsigned int irradianceMapWidth = 128;
+    glGenTextures(1, &irradianceMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+    for (unsigned int i = 0; i < 6; ++i)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, irradianceMapWidth, irradianceMapWidth, 0, GL_RGB, GL_FLOAT, NULL);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+    // é¢„æ»¤æ³¢é•œé¢ç¯å¢ƒè´´å›¾
+    unsigned int prefilterMap;
+    unsigned int prefilterMapWidth = 128;
+    glGenTextures(1, &prefilterMap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+    for (unsigned int i = 0; i < 6; ++i)
+    {
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB16F, prefilterMapWidth, prefilterMapWidth, 0, GL_RGB, GL_FLOAT, NULL);
+    }
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // ç”Ÿæˆå¤šçº§æ¸è¿œçº¹ç†
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+    // BRDFè´´å›¾
+    unsigned int brdfLUTTexture;
+    glGenTextures(1, &brdfLUTTexture);
+    glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RG16F, 512, 512, 0, GL_RG, GL_FLOAT, 0);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // åŠ è½½æ¨¡å‹
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    //Model man("D:/OpenGL3DModels/nanosuit/nanosuit.obj");
+    //Model matilda("D:/OpenGL3DModels/matilda/matilda.obj");
+    //Model plane("D:/OpenGL3DModels/ground/plane.obj");
+    //plane.AddTexture(planeDepthMap, "texture_displacement", "D:\\OpenGL3DModels\\ground\\wood_disp.png");
+    Model mModel("D:/OpenGL3DModels/Cerberus/fire_gun.obj");
+    mModel.AddTexture(albedoMap);
+    mModel.AddTexture(normalMap);
+    mModel.AddTexture(metallicMap);
+    mModel.AddTexture(roughnessMap);
+    mModel.AddTexture(aoMap);
+
+    // è¾…åŠ©æ•°æ®å’Œæ“ä½œ
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // å£°æ˜è®¡æ—¶å™¨
+    float timer = 1.0f;
+    camera.MovementSpeed = 5.0f;
+    camera.ZoomSpeed = 1.0f;
+    camera.Near_Plane = 0.1f;
+    camera.Far_Plane = 1000.0f;
+
+    // ç”Ÿæˆå…‰çš„ä½ç½®
+    float constant = 1.0f;
+    float linear = 0.09f;
+    float quadratic = 0.032f;
+    float lightMax = 1.0f;
+    float radius = (-linear + std::sqrtf(linear * linear - 4 * quadratic * (constant - (256.0 / 5.0) * lightMax))) / (2 * quadratic);
+    vector<glm::vec3> lightPositions;
+    lightingShader.use();
+    int mCount = 0;
+    for (int i = -6; i <= 6; i += 4)
+    {
+        if (i != 0)
+        {
+            lightPositions.push_back(glm::vec3(i, 10.0f, i));
+            lightingShader.setVec3("lights[" + std::to_string(mCount) + "].position", glm::vec3(i, 10.0f, i));
+            lightingShader.setFloat("lights[" + std::to_string(mCount) + "].radius", radius);
+            lightingShader.setVec3("lights[" + std::to_string(mCount) + "].color", glm::vec3(1.0f, 1.0f, 1.0f));
+            lightingShader.setFloat("lights[" + std::to_string(mCount) + "].constant", constant);
+            lightingShader.setFloat("lights[" + std::to_string(mCount) + "].linear", linear);
+            lightingShader.setFloat("lights[" + std::to_string(mCount) + "].quadratic", quadratic);
+            mCount += 1;
+            lightPositions.push_back(glm::vec3(i, 10.0f, -i));
+            lightingShader.setVec3("lights[" + std::to_string(mCount) + "].position", glm::vec3(i, 10.0f, -i));
+            lightingShader.setFloat("lights[" + std::to_string(mCount) + "].radius", radius);
+            lightingShader.setVec3("lights[" + std::to_string(mCount) + "].color", glm::vec3(1.0f, 1.0f, 1.0f));
+            lightingShader.setFloat("lights[" + std::to_string(mCount) + "].constant", constant);
+            lightingShader.setFloat("lights[" + std::to_string(mCount) + "].linear", linear);
+            lightingShader.setFloat("lights[" + std::to_string(mCount) + "].quadratic", quadratic);
+            mCount += 1;
+        }
+    }
+    std::cout << "light radius: " << radius << std::endl;
+
+    // ç”ŸæˆSSAOåŠçƒå½¢æ ·æœ¬
+    int kernelSize = 24;
+    float kernelRadius = 0.5f;
+    int occlusionPower = 2.0f;
+    ssaoShader.use();
+    ssaoShader.setInt("kernelSize", kernelSize);
+    ssaoShader.setFloat("radius", kernelRadius);
+    ssaoShader.setInt("power", occlusionPower);
+    std::uniform_real_distribution<float> randomFloats(0.0f, 1.0f);		// (0.0, 1.0)ä¹‹é—´çš„éšæœºæµ®ç‚¹æ•°
+    std::default_random_engine generator;
+    std::vector<glm::vec3> ssacoKernel;
+    for (unsigned int i = 0; i < kernelSize; ++i)
+    {
+        glm::vec3 sample(randomFloats(generator) * 2.0f - 1.0f, randomFloats(generator) * 2.0f - 1.0f, randomFloats(generator));
+        sample = glm::normalize(sample);
+        sample *= randomFloats(generator);
+        float scale = (float)i / kernelSize;
+        scale = ssaoScaleLerp(0.1f, 1.0f, scale * scale);		// å¯¹æ ·æœ¬ä½ç½®ä½œäºŒæ¬¡æ›²çº¿ç¼©æ”¾
+        ssacoKernel.push_back(sample);
+        // ä¼ é€æ•°æ®åˆ°ç€è‰²å™¨
+        ssaoShader.setVec3(("samples[" + std::to_string(i) + "]").c_str(), sample);
+    }
+    // ç”ŸæˆSSAOå™ªå£°å›¾åƒï¼ˆä¿å­˜ç‰‡æ®µçš„æ—‹è½¬å‘é‡ï¼‰
+    std::vector<glm::vec3> ssaoNoise;
+    for (unsigned int i = 0; i < 16; ++i)
+    {
+        glm::vec3 noise(randomFloats(generator) * 2.0f - 1.0f, randomFloats(generator) * 2.0f - 1.0f, 0.0f);
+        ssaoNoise.push_back(noise);
+    }
+    // å°†å‘é‡ä¿å­˜åˆ°çº¹ç†ä¸­
+    unsigned int noiseTexture;
+    glGenTextures(1, &noiseTexture);
+    glBindTexture(GL_TEXTURE_2D, noiseTexture);
+    glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, 4, 4, 0, GL_RGB, GL_FLOAT, &ssaoNoise[0]);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_NEAREST);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+    glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+    glBindTexture(GL_TEXTURE_2D, 0);
+
+    // åˆ›å»ºå®šå‘å…‰å…‰æºç©ºé—´å˜æ¢çŸ©é˜µ
+    /*
+    float dirLightNear = 0.1f;
+    float dirLightFar = 100.0f;
+    glm::mat4 dirLightProjection = glm::ortho(-10.0f, 10.0f, -10.0f, 10.0f, dirLightNear, dirLightFar);
+    glm::mat4 dirLightView = glm::lookAt(dirLightPos, glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+    glm::mat4 dirLightSpaceMatrix = dirLightProjection * dirLightView;
+    dirLightShadowShader.use();
+    dirLightShadowShader.setMat4("lightSpaceMatrix", dirLightSpaceMatrix);
+    shader.use();
+    shader.setMat4("dirlightSpaceMatrix", dirLightSpaceMatrix);
+    */
+
+    // ç‚¹å…‰æºç©ºé—´å˜æ¢çŸ©é˜µ
+    /*
+    glm::vec3 pointLighPos = pointLightPositions[1];
+    float pointLightAspect = (float)SHADOW_WIDTH / (float)SHADOW_HEIGHT;
+    float pointLightNear = 0.1f;
+    float pointLightFar = 100.0f;
+    glm::mat4 pointLightShadowProj = glm::perspective(glm::radians(90.0f), pointLightAspect, pointLightNear, pointLightFar);
+    std::vector<glm::mat4> shadowTransforms;
+    shadowTransforms.push_back(pointLightShadowProj *
+        glm::lookAt(pointLighPos, pointLighPos + glm::vec3(1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
+    shadowTransforms.push_back(pointLightShadowProj *
+        glm::lookAt(pointLighPos, pointLighPos + glm::vec3(-1.0, 0.0, 0.0), glm::vec3(0.0, -1.0, 0.0)));
+    shadowTransforms.push_back(pointLightShadowProj *
+        glm::lookAt(pointLighPos, pointLighPos + glm::vec3(0.0, 1.0, 0.0), glm::vec3(0.0, 0.0, 1.0)));
+    shadowTransforms.push_back(pointLightShadowProj *
+        glm::lookAt(pointLighPos, pointLighPos + glm::vec3(0.0, -1.0, 0.0), glm::vec3(0.0, 0.0, -1.0)));
+    shadowTransforms.push_back(pointLightShadowProj *
+        glm::lookAt(pointLighPos, pointLighPos + glm::vec3(0.0, 0.0, 1.0), glm::vec3(0.0, -1.0, 0.0)));
+    shadowTransforms.push_back(pointLightShadowProj *
+        glm::lookAt(pointLighPos, pointLighPos + glm::vec3(0.0, 0.0, -1.0), glm::vec3(0.0, -1.0, 0.0)));
+    pointLightShadowShader.use();
+    for (unsigned int i = 0; i < 6; i++)
+    {
+        pointLightShadowShader.setMat4(("shadowMatrices[" + std::to_string(i) + "]").c_str(), shadowTransforms[i]);
+    }
+    */
+
+    // HDR ç«‹æ–¹å›¾ æ¸²æŸ“ç©ºé—´å˜æ¢çŸ©é˜µ
+    glm::mat4 captureProjection = glm::perspective(glm::radians(90.0f), 1.0f, 0.1f, 10.0f);
+    glm::mat4 captureViews[] =
+    {
+       glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+       glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(-1.0f,  0.0f,  0.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+       glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  1.0f,  0.0f), glm::vec3(0.0f,  0.0f,  1.0f)),
+       glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, -1.0f,  0.0f), glm::vec3(0.0f,  0.0f, -1.0f)),
+       glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f,  1.0f), glm::vec3(0.0f, -1.0f,  0.0f)),
+       glm::lookAt(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f,  0.0f, -1.0f), glm::vec3(0.0f, -1.0f,  0.0f))
+    };
+
+    // æ¸²æŸ“HDRç¯å¢ƒç«‹æ–¹ä½“è´´å›¾(çœŸæ­£çš„HDR)
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+
+    hdrShader.use();
+    hdrShader.setMat4("projection", captureProjection);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_2D, hdrTexture);
+
+    glViewport(0, 0, hdrWidth, hdrWidth);
+    glEnable(GL_DEPTH_TEST);
+
+
+    glBindVertexArray(cubeVAO);
+    for (unsigned int i = 0; i < 6; ++i)
+    {
+        hdrShader.setMat4("view", captureViews[i]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, envCubeMap, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_2D, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+    // ç”Ÿæˆå¤šçº§æ¸è¿œçº¹ç†
+    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+    glGenerateMipmap(GL_TEXTURE_CUBE_MAP);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+
+    // åˆ©ç”¨HDRè´´å›¾å·ç§¯ç”Ÿæˆè¾ç…§åº¦è´´å›¾
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, irradianceMapWidth, irradianceMapWidth);
+
+    irradianceShader.use();
+    irradianceShader.setMat4("projection", captureProjection);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+
+    glViewport(0, 0, irradianceMapWidth, irradianceMapWidth);
+    glEnable(GL_DEPTH_TEST);
+
+    glBindVertexArray(cubeVAO);
+    for (unsigned int i = 0; i < 6; ++i)
+    {
+        irradianceShader.setMat4("view", captureViews[i]);
+        glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, irradianceMap, 0);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+    }
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+    // ç”Ÿæˆé¢„è¿‡æ»¤HDRç¯å¢ƒè´´å›¾
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
     glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
 
-	prefilterShader.use();
-	prefilterShader.setMat4("projection", captureProjection);
-	glActiveTexture(GL_TEXTURE0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-
-	glEnable(GL_DEPTH_TEST);
-	glBindVertexArray(cubeVAO);
-
-	unsigned int maxMipLevels = 5;
-	for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
-	{
-		// ¸ù¾İmipmapµÈ¼¶ÖØÉèÖ¡»º³åµÄ´óĞ¡
-		unsigned int mipWidth = prefilterMapWidth * std::pow(0.5f, mip);
-		unsigned int mipHeight = prefilterMapWidth * std::pow(0.5f, mip);
-		
-		glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
-		glViewport(0, 0, mipWidth, mipHeight);
-
-		float roughness = (float)mip / (float)(maxMipLevels - 1);
-		prefilterShader.setFloat("roughness", roughness);
-		for (unsigned int i = 0; i < 6; ++i)
-		{
-			prefilterShader.setMat4("view", captureViews[i]);
-			glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
-			glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-	}
-	glBindVertexArray(0);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
-	// Éú³ÉBRDFÌùÍ¼
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
-	glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
-	glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
-	glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
-
-	glViewport(0, 0, 512, 512);
-	glEnable(GL_DEPTH_TEST);
-
-	brdfShader.use();
-	glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-	glBindVertexArray(screenVAO);
-	glDrawArrays(GL_TRIANGLES, 0, 6);
-
-	glBindVertexArray(0);
-	glBindRenderbuffer(GL_RENDERBUFFER, 0);
-	glBindFramebuffer(GL_FRAMEBUFFER, 0);
-	glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
-	// OpenGLÄ£Ê½
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	//glEnable(GL_STENCIL_TEST);
-	glEnable(GL_CULL_FACE);
-	glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
-
-	// Ö»Éú³ÉÒ»´ÎÒõÓ°ÌùÍ¼±ê¼Ç
-	bool oneceDirShadow = false;
-	bool onecePointShadow = false;
-	bool ssaoOn = false;
-
-	// äÖÈ¾Ñ­»·
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	// --------------------------------------------------------------------------------------------------------------------------------------
-	while (!glfwWindowShouldClose(window))
-	{
-		// ¼ÆËãÃ¿Ò»Ö¡µÄäÖÈ¾Ê±¼ä(deltaTime)
-		float currenFrame = glfwGetTime();
-		deltaTime = currenFrame - lastFrame;
-		lastFrame = currenFrame;
-
-		if (timer >= 1.0f)
-		{
-			std::cout << "FPS: " << 1 / deltaTime << std::endl;
-			timer = 0.0f;
-		}
-		else
-			timer += deltaTime;
-
-		// ¼ì²âÊäÈë
-		processInput(window);
-
-		// ¸üĞÂ×ÅÉ«Æ÷±äÁ¿µÄÖµ(µ¥¶ÀÉèÖÃ)
-		/*
-		shader.use();
-		shader.setFloat("bias", bias);
-		shader.setBool("containTexture", true);
-		shader.setVec3("spotLight.position", camera.Position);
-		shader.setVec3("spotLight.direction", camera.Front);
-		shader.setVec3("viewPos", camera.Position);	// ¸üĞÂÏà»úÎ»ÖÃ
-		shader.setVec3("lightPos", pointLighPos);
-		shader.setFloat("pointLight_far_plane", pointLightFar);
-		*/
-
-		// ¼ÆËãÄ£ĞÍ¡¢¹Û²ì¡¢Í¶Ó°¾ØÕó
-		glm::mat4 view, model, projection, normalMat;
-		view = camera.lookAt(camera.Position, camera.Front + camera.Position, camera.Up);
-		projection = glm::perspective(glm::radians(camera.Fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, camera.Near_Plane, camera.Far_Plane);
-
-		// Ê¹ÓÃUniform¿é¸üĞÂ×ÅÉ«Æ÷±äÁ¿µÄÖµ
-		glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
-		glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
-		glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
-		glBindBuffer(GL_UNIFORM_BUFFER, 0);
-
-		/*
-		// äÖÈ¾µ½G»º³å£¨Ò²³Æ¼¸ºÎäÖÈ¾½×¶Î£©
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
-		geomatryShader.use();
-		geomatryShader.setVec3("material.color", glm::vec3(0.6f, 0.6f, 0.6f));
-		geomatryShader.setFloat("NEAR", camera.Near_Plane);
-		geomatryShader.setFloat("FAR", camera.Far_Plane);
-
-		glEnable(GL_DEPTH_TEST);
-
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// »æÖÆMatilda
-		geomatryShader.setBool("diffuseMapOn", true);
-		//geomatryShader.setBool("normalMapOn", true);
-		//geomatryShader.setBool("specularMapOn", true);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
-		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.025f));
-		normalMat = glm::transpose(glm::inverse(view * model));
-		geomatryShader.setMat4("model", model);
-		geomatryShader.setMat4("normalMat", normalMat);
-		matilda.Draw(geomatryShader);
-		model = glm::mat4(1.0f);
-		geomatryShader.setBool("diffuseMapOn", false);
-		//geomatryShader.setBool("normalMapOn", false);
-		//geomatryShader.setBool("specularMapOn", false);
-
-		// »æÖÆµØ°å
-		geomatryShader.setBool("diffuseMapOn", true);
-		geomatryShader.setBool("normalMapOn", true);
-		geomatryShader.setBool("specularMapOn", true);
-		model = glm::translate(model, glm::vec3(0.0f, -0.02f, 0.0f));
-		model = glm::scale(model, glm::vec3(15.0f));
-		normalMat = glm::transpose(glm::inverse(view * model));
-		geomatryShader.setMat4("model", model);
-		geomatryShader.setMat4("normalMat", normalMat);
-		plane.Draw(geomatryShader);
-		model = glm::mat4(1.0f);
-		geomatryShader.setBool("diffuseMapOn", false);
-		geomatryShader.setBool("normalMapOn", false);
-		geomatryShader.setBool("specularMapOn", false);
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		
-		// SSAO½×¶Î
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		if (ssaoOn)
-		{
-			glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
-
-			glClear(GL_COLOR_BUFFER_BIT);
-
-			ssaoShader.use();
-			ssaoShader.setMat4("projection", projection);
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, gBufferTextures[gPosition]);
-			glActiveTexture(GL_TEXTURE1);
-			glBindTexture(GL_TEXTURE_2D, gBufferTextures[gNormal]);
-			glActiveTexture(GL_TEXTURE2);
-			glBindTexture(GL_TEXTURE_2D, noiseTexture);
-			glBindVertexArray(screenVAO);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		}
-
-		// SSAO-Ä£ºı½×¶Î
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		if (ssaoOn)
-		{
-			glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
-
-			glClear(GL_COLOR_BUFFER_BIT);
-
-			ssaoBlurShader.use();
-			glActiveTexture(GL_TEXTURE0);
-			glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
-			glBindVertexArray(screenVAO);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-
-			glBindTexture(GL_TEXTURE_2D, 0);
-			glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		}
-		*/
-		/*
-		// Ê¹ÓÃµã¹âÔ´Éî¶ÈÌùÍ¼»æÖÆÖ¡»º³å
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// Ö»äÖÈ¾µã¹âÒõÓ°ÌùÍ¼Ò»´Î
-		if (!oneceDirShadow)
-		{
-			std::cout << "Point lightmap rendering ..." << std::endl;
-			glBindFramebuffer(GL_FRAMEBUFFER, pointLightFramebuffer);
-
-			glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-			glEnable(GL_DEPTH_TEST);
-
-			glClear(GL_DEPTH_BUFFER_BIT);
-			pointLightShadowShader.use();
-			pointLightShadowShader.setVec3("lightPos", pointLighPos);
-			pointLightShadowShader.setFloat("far_plane", pointLightFar);
-
-			// »æÖÆÈË
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
-			model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-			model = glm::scale(model, glm::vec3(0.4f));
-			pointLightShadowShader.setMat4("model", model);
-			man.Draw(pointLightShadowShader);
-			model = glm::mat4(1.0f);
-
-
-			// »æÖÆÂêµÙ¶û´ï
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
-			model = glm::scale(model, glm::vec3(0.025f));
-			pointLightShadowShader.setMat4("model", model);
-			matilda.Draw(pointLightShadowShader);
-			model = glm::mat4(1.0f);
-
-			// »æÖÆµØ°å
-			model = glm::translate(model, glm::vec3(0.0f, -0.02f, 0.0f));
-			//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-			model = glm::scale(model, glm::vec3(8.0f));
-			pointLightShadowShader.setMat4("model", model);
-			plane.Draw(pointLightShadowShader);
-			model = glm::mat4(1.0f);
-
-			oneceDirShadow = true;
-			std::cout << "Point lightmap render finished ..." << std::endl;
-		}
-
-		// Ê¹ÓÃ¶¨Ïò¹âÉî¶ÈÌùÍ¼»æÖÆÖ¡»º³å
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		
-		// Ö»äÖÈ¾¶¨Ïò¹âÒõÓ°ÌùÍ¼Ò»´Î
-		if (!onecePointShadow)
-		{
-			std::cout << "Directional lightmap rendering ..." << std::endl;
-			glBindFramebuffer(GL_FRAMEBUFFER, dirLightFramebuffer);
-
-			glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
-			glEnable(GL_DEPTH_TEST);
-
-			glClear(GL_DEPTH_BUFFER_BIT);
-			dirLightShadowShader.use();
-
-			// »æÖÆÈË
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
-			model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-			model = glm::scale(model, glm::vec3(0.4f));
-			dirLightShadowShader.setMat4("model", model);
-			man.Draw(dirLightShadowShader);
-			model = glm::mat4(1.0f);
-
-			// »æÖÆÂêµÙ¶û´ï
-			model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
-			model = glm::scale(model, glm::vec3(0.025f));
-			dirLightShadowShader.setMat4("model", model);
-			matilda.Draw(dirLightShadowShader);
-			model = glm::mat4(1.0f);
-
-			// »æÖÆµØ°å
-			model = glm::translate(model, glm::vec3(0.0f, -0.02f, 0.0f));
-			//model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
-			model = glm::scale(model, glm::vec3(8.0f));
-			dirLightShadowShader.setMat4("model", model);
-			plane.Draw(dirLightShadowShader);
-			model = glm::mat4(1.0f);
-
-			onecePointShadow = true;
-			std::cout << "Directional lightmap render finished ..." << std::endl;
-		}
-
-		// Ê¹ÓÃ¶àÖÖ²ÉÑùÖ¡»º³å
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		glBindFramebuffer(GL_FRAMEBUFFER, multisampFrameBuffer);
-
-		// ÉèÖÃµ±Ç°»º³å±ØĞëOpenGL×´Ì¬
-		glEnable(GL_DEPTH_TEST);
-		glEnable(GL_MULTISAMPLE);
-		glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
-
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, shadowCubeMap);
-		glActiveTexture(GL_TEXTURE6);
-		glBindTexture(GL_TEXTURE_2D, dirLightShadowMap);
-
-		// äÖÈ¾
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-		shader.use();
-		shader.setBool("dirLightShadowOn", true);
-		shader.setBool("pointLightShadowOn", true);
-
-		// »æÖÆÏä×Ó
-		// Ê¹ÓÃÏä×ÓÎÆÀí
-		for (int i = 0; i < texCount; i++)
-		{
-			glActiveTexture(GL_TEXTURE0 + i);
-			glBindTexture(GL_TEXTURE_2D, texIDs[i]);
-		}
-		glBindVertexArray(VAO);
-		shader.setBool("instancingDraw", true);
-		glDrawArraysInstanced(GL_TRIANGLES, 0, 36, boxAmount);
-		shader.setBool("instancingDraw", false);
-
-		// »æÖÆÈË
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
-		model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(0.4f));
-		shader.setMat4("model", model);
-		normalMat = glm::transpose(glm::inverse(model));
-		shader.setMat4("normalMat", normalMat);
-		shader.setBool("Reflection", true);
-		shader.setBool("normalMapOn", true);
-		man.Draw(shader);
-		shader.setBool("Reflection", false);
-		shader.setBool("normalMapOn", false);
-		model = glm::mat4(1.0f);
-
-		// »æÖÆÂêµÙ¶û´ï
-		glDisable(GL_CULL_FACE);
-		model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
-		model = glm::scale(model, glm::vec3(0.025f));
-		shader.setMat4("model", model);
-		normalMat = glm::transpose(glm::inverse(model));
-		shader.setMat4("normalMat", normalMat);
-		shader.setBool("specularOn", false);
-		matilda.Draw(shader);
-		shader.setBool("specularOn", true);
-		model = glm::mat4(1.0f);
-		glEnable(GL_CULL_FACE);
-
-		// »æÖÆµÆ¹â
-		glBindVertexArray(lightVAO);
-		lightShader.use();
-		for (unsigned int i = 0; i < 4; i++)
-		{
-			glm::mat4 lightModel;
-			lightModel = glm::translate(lightModel, pointLightPositions[i]);
-			lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-
-			lightShader.setMat4("model", lightModel);
-			lightShader.setVec3("lightColor", pointLightColors[i]);
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-		shader.use();
-
-		// »æÖÆµØ°å
-		model = glm::translate(model, glm::vec3(0.0f, -0.02f, 0.0f));
-		model = glm::scale(model, glm::vec3(8.0f));
-		shader.setMat4("model", model);
-		normalMat = glm::transpose(glm::inverse(model));
-		shader.setBool("normalMapOn", true);
-		shader.setBool("displacementMapOn", true);
-		shader.setBool("discardEdgeOn", false);
-		shader.setFloat("height_scale", height_scale);
-		plane.Draw(shader);
-		shader.setBool("discardEdgeOn", true);
-		shader.setBool("displacementMapOn", false);
-		shader.setBool("normalMapOn", false);
-		model = glm::mat4(1.0f);
-		*/
-
-		
-
-		/*
-		// ½«¶àÖØ²ÉÑùÖ¡»º³åµÄ»æÖÆ½á¹û»¹Ô­µ½ºóÆÚ´¦Àí»º³åÀï
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampFrameBuffer);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postprocessFrameBuffer);
-		glReadBuffer(GL_COLOR_ATTACHMENT0);
-		glDrawBuffer(GL_COLOR_ATTACHMENT0);
-		glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-		glReadBuffer(GL_COLOR_ATTACHMENT1);
-		glDrawBuffer(GL_COLOR_ATTACHMENT1);
-		glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-
-		// Ê¹ÓÃÆ¹ÅÒ»º³å¶Ô¸ßÁÁÍ¼Ïñ×ö¸ßË¹Ä£ºı´¦Àí
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		bool horizontal = true, first_blur = true;
-		int blur_time = 10;
-		gaussianBlur.use();
-		for (unsigned int i = 0; i < blur_time; i++)
-		{
-			glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
-			gaussianBlur.setBool("horizontal", horizontal);
-			glActiveTexture(GL_TEXTURE0);
-			// µÚÒ»´ÎÊ¹ÓÃÉú³ÉµÄ¸ßÁÁÍ¼
-			glBindTexture(GL_TEXTURE_2D, first_blur ? screenTextures[1] : pingpongBuffer[!horizontal]);
-			// ¿ªÊ¼´¦Àí
-			glBindVertexArray(screenVAO);
-			glDrawArrays(GL_TRIANGLES, 0, 6);
-			glBindVertexArray(0);
-			horizontal = !horizontal;
-			if (first_blur)
-				first_blur = false;
-		}
-		*/
-		/*
-		// ¹âÕÕ´¦Àí½×¶Î
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		glBindFramebuffer(GL_FRAMEBUFFER, lightingFBO);
-
-		glClearColor(0.3f, 0.3f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		lightingShader.use();
-		lightingShader.setBool("ssaoOn", ssaoOn);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, gBufferTextures[gPosition]);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_2D, gBufferTextures[gNormal]);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, gBufferTextures[gAlbedoSpec]);
-		glActiveTexture(GL_TEXTURE3);
-		glBindTexture(GL_TEXTURE_2D, ssaoBlurColorBuffer);
-		glBindVertexArray(screenVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-		*/
-		// ÕıÏòäÖÈ¾²¿·Ö
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		glBindFramebuffer(GL_FRAMEBUFFER, forwardFBO);
-
-		glEnable(GL_DEPTH_TEST);
-		glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-
-		// Ö¡»º³åÖ®¼äµÄÊı¾İ´«ËÍ
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		/*
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, lightingFBO);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, forwardFBO);
-		glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
-		
-		glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
-		glBindFramebuffer(GL_DRAW_FRAMEBUFFER, forwardFBO);
-		glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
-
-		*/
-		
-		/*
-		lightCubeShader.use();
-		glBindVertexArray(cubeVAO);
-		for (unsigned int i = 0; i < lightPositions.size(); i++)
-		{
-			glm::mat4 lightModel;
-			lightModel = glm::translate(lightModel, lightPositions[i]);
-			lightModel = glm::scale(lightModel, glm::vec3(0.2f));
-
-			lightCubeShader.setMat4("model", lightModel);
-			lightCubeShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
-
-			glDrawArrays(GL_TRIANGLES, 0, 36);
-		}
-		*/
-		
-		
-		// Ê¹ÓÃPBRäÖÈ¾Æ÷äÖÈ¾
-		pbrShader.use();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
-		glActiveTexture(GL_TEXTURE1);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
-		glActiveTexture(GL_TEXTURE2);
-		glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
-		pbrShader.setVec3("viewPos", camera.Position);
-		
-		model = glm::translate(model, glm::vec3(0.0f));
-		model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
-		model = glm::scale(model, glm::vec3(4.0f));
-		normalMat = glm::transpose(glm::inverse(model));
-		pbrShader.setMat4("model", model);
-		pbrShader.setMat4("normalMat", normalMat);
-		mModel.Draw(pbrShader);
-		model = glm::mat4(1.0f);
-		
-		glDepthFunc(GL_LEQUAL);
-		skyboxShader.use();
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
-		glBindVertexArray(cubeVAO);
-		glDrawArrays(GL_TRIANGLES, 0, 36);
-		glDepthFunc(GL_LESS);
-		
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-
-		// ºóÆÚ´¦Àí½×¶Î
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		glDisable(GL_DEPTH_TEST);
-		glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
-		glClear(GL_COLOR_BUFFER_BIT);
-
-		// ½«¶à»º³åµÄ»æÖÆ½á¹û³ÊÏÖ³öÀ´
-		screenShader.use();
-		screenShader.setFloat("exposure", exposure);		// ¸üĞÂÆØ¹âÖµ
-		screenShader.setFloat("gamma", gamma);				// ¸üĞÂGAMMAÖµ
-		glBindVertexArray(screenVAO);
-		glActiveTexture(GL_TEXTURE0);
-		glBindTexture(GL_TEXTURE_2D, forwardFboColor);
-		glDrawArrays(GL_TRIANGLES, 0, 6);
-
-		glBindTexture(GL_TEXTURE_2D, 0);
-		glBindFramebuffer(GL_FRAMEBUFFER, 0);
-
-		// GLFW£º¼ì²âIOÊÂ¼ş (¼üÅÌµÄ°´ÏÂÓëÊÍ·Å¡¢Êó±êÒÆ¶¯µÈµÈ)
-		glfwPollEvents();
-		
-		// ¿ªÊ¼»æÖÆImGuiÄÚÈİ
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		// ----------------------------------------------------------------------------------------------------------------------------------
-		ImGui_ImplOpenGL3_NewFrame();
-		ImGui_ImplGlfw_NewFrame();
-		ImGui::NewFrame();
-
-		// ÏÔÊ¾DEMO´°¿Ú
-		if (show_demo_window)
-			ImGui::ShowDemoWindow(&show_demo_window);
-
-		{
-			static float f = 0.0f;
-			static int imgui_counter = 0;
-
-			ImGui::Begin("Hello World!");
-
-			ImGui::Text("This is some useful text.");
-			ImGui::Checkbox("Demo Window", &show_demo_window);
-			ImGui::Checkbox("Another Window", &show_another_window);
-
-			ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
-			ImGui::ColorEdit3("clear color", (float*)&clear_color);
-
-			if (ImGui::Button("Button"))
-				imgui_counter++;
-			ImGui::SameLine();
-			ImGui::Text("counter = %d", imgui_counter);
-
-			ImGui::Text("Aplication average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-			ImGui::End();
-		}
-
-		// ÏÔÊ¾ÁíÒ»¸ö´°¿Ú
-		if (show_another_window)
-		{
-			ImGui::Begin("Another Window", &show_another_window);
-			ImGui::Text("Hello from another window!");
-			if (ImGui::Button("Close Me"))
-				show_another_window = false;
-			ImGui::End();
-		}
-
-		// äÖÈ¾ImGui
-		ImGui::Render();
-		ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
-
-		// GLFW: ½»»»Ç°Ö¡»º³åÓëºóÖ¡»º³å¡¢
-		glfwSwapBuffers(window);
-	}
-
-	// ¿ÉÑ¡: ÊÍ·Åµô²»ÔÙĞèÒªµÄOpenGL¶ÔÏó
-	//glDeleteVertexArrays(1, &VAO);
-	//glDeleteBuffers(1, &VBO);
-	//glDeleteBuffers(1, &EBO);
-
-	// GLFW: ÊÍ·ÅµôËùÓĞÖ®Ç°GLFW·ÖÅäµÄ×ÊÔ´
-	glfwTerminate();
-
-	return 0;
+    prefilterShader.use();
+    prefilterShader.setMat4("projection", captureProjection);
+    glActiveTexture(GL_TEXTURE0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+
+    glEnable(GL_DEPTH_TEST);
+    glBindVertexArray(cubeVAO);
+
+    unsigned int maxMipLevels = 5;
+    for (unsigned int mip = 0; mip < maxMipLevels; ++mip)
+    {
+        // æ ¹æ®mipmapç­‰çº§é‡è®¾å¸§ç¼“å†²çš„å¤§å°
+        unsigned int mipWidth = prefilterMapWidth * std::pow(0.5f, mip);
+        unsigned int mipHeight = prefilterMapWidth * std::pow(0.5f, mip);
+
+        glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, mipWidth, mipHeight);
+        glViewport(0, 0, mipWidth, mipHeight);
+
+        float roughness = (float)mip / (float)(maxMipLevels - 1);
+        prefilterShader.setFloat("roughness", roughness);
+        for (unsigned int i = 0; i < 6; ++i)
+        {
+            prefilterShader.setMat4("view", captureViews[i]);
+            glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, prefilterMap, mip);
+            glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+    }
+    glBindVertexArray(0);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, 0);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+    // ç”ŸæˆBRDFè´´å›¾
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    glBindFramebuffer(GL_FRAMEBUFFER, captureFBO);
+    glBindRenderbuffer(GL_RENDERBUFFER, captureRBO);
+    glRenderbufferStorage(GL_RENDERBUFFER, GL_DEPTH_COMPONENT24, 512, 512);
+    glFramebufferTexture2D(GL_FRAMEBUFFER, GL_COLOR_ATTACHMENT0, GL_TEXTURE_2D, brdfLUTTexture, 0);
+
+    glViewport(0, 0, 512, 512);
+    glEnable(GL_DEPTH_TEST);
+
+    brdfShader.use();
+    glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+    glBindVertexArray(screenVAO);
+    glDrawArrays(GL_TRIANGLES, 0, 6);
+
+    glBindVertexArray(0);
+    glBindRenderbuffer(GL_RENDERBUFFER, 0);
+    glBindFramebuffer(GL_FRAMEBUFFER, 0);
+    glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+
+    // OpenGLæ¨¡å¼
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    //glEnable(GL_STENCIL_TEST);
+    glEnable(GL_CULL_FACE);
+    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+
+    // åªç”Ÿæˆä¸€æ¬¡é˜´å½±è´´å›¾æ ‡è®°
+    bool oneceDirShadow = false;
+    bool onecePointShadow = false;
+    bool ssaoOn = false;
+
+    // æ¸²æŸ“å¾ªç¯
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    // --------------------------------------------------------------------------------------------------------------------------------------
+    while (!glfwWindowShouldClose(window))
+    {
+        // è®¡ç®—æ¯ä¸€å¸§çš„æ¸²æŸ“æ—¶é—´(deltaTime)
+        float currenFrame = glfwGetTime();
+        deltaTime = currenFrame - lastFrame;
+        lastFrame = currenFrame;
+
+        if (timer >= 1.0f)
+        {
+            std::cout << "FPS: " << 1 / deltaTime << std::endl;
+            timer = 0.0f;
+        }
+        else
+            timer += deltaTime;
+
+        // æ£€æµ‹è¾“å…¥
+        processInput(window);
+
+        // æ›´æ–°ç€è‰²å™¨å˜é‡çš„å€¼(å•ç‹¬è®¾ç½®)
+        /*
+        shader.use();
+        shader.setFloat("bias", bias);
+        shader.setBool("containTexture", true);
+        shader.setVec3("spotLight.position", camera.Position);
+        shader.setVec3("spotLight.direction", camera.Front);
+        shader.setVec3("viewPos", camera.Position);	// æ›´æ–°ç›¸æœºä½ç½®
+        shader.setVec3("lightPos", pointLighPos);
+        shader.setFloat("pointLight_far_plane", pointLightFar);
+        */
+
+        // è®¡ç®—æ¨¡å‹ã€è§‚å¯Ÿã€æŠ•å½±çŸ©é˜µ
+        glm::mat4 view, model, projection, normalMat;
+        view = camera.lookAt(camera.Position, camera.Front + camera.Position, camera.Up);
+        projection = glm::perspective(glm::radians(camera.Fov), (float)SCR_WIDTH / (float)SCR_HEIGHT, camera.Near_Plane, camera.Far_Plane);
+
+        // ä½¿ç”¨Uniformå—æ›´æ–°ç€è‰²å™¨å˜é‡çš„å€¼
+        glBindBuffer(GL_UNIFORM_BUFFER, uboMatrices);
+        glBufferSubData(GL_UNIFORM_BUFFER, 0, sizeof(glm::mat4), glm::value_ptr(projection));
+        glBufferSubData(GL_UNIFORM_BUFFER, sizeof(glm::mat4), sizeof(glm::mat4), glm::value_ptr(view));
+        glBindBuffer(GL_UNIFORM_BUFFER, 0);
+
+        /*
+        // æ¸²æŸ“åˆ°Gç¼“å†²ï¼ˆä¹Ÿç§°å‡ ä½•æ¸²æŸ“é˜¶æ®µï¼‰
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        glBindFramebuffer(GL_FRAMEBUFFER, gBuffer);
+        geomatryShader.use();
+        geomatryShader.setVec3("material.color", glm::vec3(0.6f, 0.6f, 0.6f));
+        geomatryShader.setFloat("NEAR", camera.Near_Plane);
+        geomatryShader.setFloat("FAR", camera.Far_Plane);
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        // ç»˜åˆ¶Matilda
+        geomatryShader.setBool("diffuseMapOn", true);
+        //geomatryShader.setBool("normalMapOn", true);
+        //geomatryShader.setBool("specularMapOn", true);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.025f));
+        normalMat = glm::transpose(glm::inverse(view * model));
+        geomatryShader.setMat4("model", model);
+        geomatryShader.setMat4("normalMat", normalMat);
+        matilda.Draw(geomatryShader);
+        model = glm::mat4(1.0f);
+        geomatryShader.setBool("diffuseMapOn", false);
+        //geomatryShader.setBool("normalMapOn", false);
+        //geomatryShader.setBool("specularMapOn", false);
+        // ç»˜åˆ¶åœ°æ¿
+        geomatryShader.setBool("diffuseMapOn", true);
+        geomatryShader.setBool("normalMapOn", true);
+        geomatryShader.setBool("specularMapOn", true);
+        model = glm::translate(model, glm::vec3(0.0f, -0.02f, 0.0f));
+        model = glm::scale(model, glm::vec3(15.0f));
+        normalMat = glm::transpose(glm::inverse(view * model));
+        geomatryShader.setMat4("model", model);
+        geomatryShader.setMat4("normalMat", normalMat);
+        plane.Draw(geomatryShader);
+        model = glm::mat4(1.0f);
+        geomatryShader.setBool("diffuseMapOn", false);
+        geomatryShader.setBool("normalMapOn", false);
+        geomatryShader.setBool("specularMapOn", false);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        // SSAOé˜¶æ®µ
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        if (ssaoOn)
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, ssaoFBO);
+            glClear(GL_COLOR_BUFFER_BIT);
+            ssaoShader.use();
+            ssaoShader.setMat4("projection", projection);
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, gBufferTextures[gPosition]);
+            glActiveTexture(GL_TEXTURE1);
+            glBindTexture(GL_TEXTURE_2D, gBufferTextures[gNormal]);
+            glActiveTexture(GL_TEXTURE2);
+            glBindTexture(GL_TEXTURE_2D, noiseTexture);
+            glBindVertexArray(screenVAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
+        // SSAO-æ¨¡ç³Šé˜¶æ®µ
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        if (ssaoOn)
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, ssaoBlurFBO);
+            glClear(GL_COLOR_BUFFER_BIT);
+            ssaoBlurShader.use();
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, ssaoColorBuffer);
+            glBindVertexArray(screenVAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glBindTexture(GL_TEXTURE_2D, 0);
+            glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        }
+        */
+        /*
+        // ä½¿ç”¨ç‚¹å…‰æºæ·±åº¦è´´å›¾ç»˜åˆ¶å¸§ç¼“å†²
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // åªæ¸²æŸ“ç‚¹å…‰é˜´å½±è´´å›¾ä¸€æ¬¡
+        if (!oneceDirShadow)
+        {
+            std::cout << "Point lightmap rendering ..." << std::endl;
+            glBindFramebuffer(GL_FRAMEBUFFER, pointLightFramebuffer);
+            glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+            glEnable(GL_DEPTH_TEST);
+            glClear(GL_DEPTH_BUFFER_BIT);
+            pointLightShadowShader.use();
+            pointLightShadowShader.setVec3("lightPos", pointLighPos);
+            pointLightShadowShader.setFloat("far_plane", pointLightFar);
+            // ç»˜åˆ¶äºº
+            model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
+            model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            model = glm::scale(model, glm::vec3(0.4f));
+            pointLightShadowShader.setMat4("model", model);
+            man.Draw(pointLightShadowShader);
+            model = glm::mat4(1.0f);
+            // ç»˜åˆ¶ç›è’‚å°”è¾¾
+            model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
+            model = glm::scale(model, glm::vec3(0.025f));
+            pointLightShadowShader.setMat4("model", model);
+            matilda.Draw(pointLightShadowShader);
+            model = glm::mat4(1.0f);
+            // ç»˜åˆ¶åœ°æ¿
+            model = glm::translate(model, glm::vec3(0.0f, -0.02f, 0.0f));
+            //model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, glm::vec3(8.0f));
+            pointLightShadowShader.setMat4("model", model);
+            plane.Draw(pointLightShadowShader);
+            model = glm::mat4(1.0f);
+            oneceDirShadow = true;
+            std::cout << "Point lightmap render finished ..." << std::endl;
+        }
+        // ä½¿ç”¨å®šå‘å…‰æ·±åº¦è´´å›¾ç»˜åˆ¶å¸§ç¼“å†²
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+
+        // åªæ¸²æŸ“å®šå‘å…‰é˜´å½±è´´å›¾ä¸€æ¬¡
+        if (!onecePointShadow)
+        {
+            std::cout << "Directional lightmap rendering ..." << std::endl;
+            glBindFramebuffer(GL_FRAMEBUFFER, dirLightFramebuffer);
+            glViewport(0, 0, SHADOW_WIDTH, SHADOW_HEIGHT);
+            glEnable(GL_DEPTH_TEST);
+            glClear(GL_DEPTH_BUFFER_BIT);
+            dirLightShadowShader.use();
+            // ç»˜åˆ¶äºº
+            model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
+            model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+            model = glm::scale(model, glm::vec3(0.4f));
+            dirLightShadowShader.setMat4("model", model);
+            man.Draw(dirLightShadowShader);
+            model = glm::mat4(1.0f);
+            // ç»˜åˆ¶ç›è’‚å°”è¾¾
+            model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
+            model = glm::scale(model, glm::vec3(0.025f));
+            dirLightShadowShader.setMat4("model", model);
+            matilda.Draw(dirLightShadowShader);
+            model = glm::mat4(1.0f);
+            // ç»˜åˆ¶åœ°æ¿
+            model = glm::translate(model, glm::vec3(0.0f, -0.02f, 0.0f));
+            //model = glm::rotate(model, glm::radians(90.0f), glm::vec3(1.0f, 0.0f, 0.0f));
+            model = glm::scale(model, glm::vec3(8.0f));
+            dirLightShadowShader.setMat4("model", model);
+            plane.Draw(dirLightShadowShader);
+            model = glm::mat4(1.0f);
+            onecePointShadow = true;
+            std::cout << "Directional lightmap render finished ..." << std::endl;
+        }
+        // ä½¿ç”¨å¤šç§é‡‡æ ·å¸§ç¼“å†²
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        glBindFramebuffer(GL_FRAMEBUFFER, multisampFrameBuffer);
+        // è®¾ç½®å½“å‰ç¼“å†²å¿…é¡»OpenGLçŠ¶æ€
+        glEnable(GL_DEPTH_TEST);
+        glEnable(GL_MULTISAMPLE);
+        glViewport(0, 0, SCR_WIDTH, SCR_HEIGHT);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, skyboxTexture);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, shadowCubeMap);
+        glActiveTexture(GL_TEXTURE6);
+        glBindTexture(GL_TEXTURE_2D, dirLightShadowMap);
+        // æ¸²æŸ“
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+        shader.use();
+        shader.setBool("dirLightShadowOn", true);
+        shader.setBool("pointLightShadowOn", true);
+        // ç»˜åˆ¶ç®±å­
+        // ä½¿ç”¨ç®±å­çº¹ç†
+        for (int i = 0; i < texCount; i++)
+        {
+            glActiveTexture(GL_TEXTURE0 + i);
+            glBindTexture(GL_TEXTURE_2D, texIDs[i]);
+        }
+        glBindVertexArray(VAO);
+        shader.setBool("instancingDraw", true);
+        glDrawArraysInstanced(GL_TRIANGLES, 0, 36, boxAmount);
+        shader.setBool("instancingDraw", false);
+        // ç»˜åˆ¶äºº
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, -1.0f));
+        model = glm::rotate(model, glm::radians(180.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(0.4f));
+        shader.setMat4("model", model);
+        normalMat = glm::transpose(glm::inverse(model));
+        shader.setMat4("normalMat", normalMat);
+        shader.setBool("Reflection", true);
+        shader.setBool("normalMapOn", true);
+        man.Draw(shader);
+        shader.setBool("Reflection", false);
+        shader.setBool("normalMapOn", false);
+        model = glm::mat4(1.0f);
+        // ç»˜åˆ¶ç›è’‚å°”è¾¾
+        glDisable(GL_CULL_FACE);
+        model = glm::translate(model, glm::vec3(0.0f, 0.0f, 1.0f));
+        model = glm::scale(model, glm::vec3(0.025f));
+        shader.setMat4("model", model);
+        normalMat = glm::transpose(glm::inverse(model));
+        shader.setMat4("normalMat", normalMat);
+        shader.setBool("specularOn", false);
+        matilda.Draw(shader);
+        shader.setBool("specularOn", true);
+        model = glm::mat4(1.0f);
+        glEnable(GL_CULL_FACE);
+        // ç»˜åˆ¶ç¯å…‰
+        glBindVertexArray(lightVAO);
+        lightShader.use();
+        for (unsigned int i = 0; i < 4; i++)
+        {
+            glm::mat4 lightModel;
+            lightModel = glm::translate(lightModel, pointLightPositions[i]);
+            lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+            lightShader.setMat4("model", lightModel);
+            lightShader.setVec3("lightColor", pointLightColors[i]);
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+        shader.use();
+        // ç»˜åˆ¶åœ°æ¿
+        model = glm::translate(model, glm::vec3(0.0f, -0.02f, 0.0f));
+        model = glm::scale(model, glm::vec3(8.0f));
+        shader.setMat4("model", model);
+        normalMat = glm::transpose(glm::inverse(model));
+        shader.setBool("normalMapOn", true);
+        shader.setBool("displacementMapOn", true);
+        shader.setBool("discardEdgeOn", false);
+        shader.setFloat("height_scale", height_scale);
+        plane.Draw(shader);
+        shader.setBool("discardEdgeOn", true);
+        shader.setBool("displacementMapOn", false);
+        shader.setBool("normalMapOn", false);
+        model = glm::mat4(1.0f);
+        */
+
+
+
+        /*
+        // å°†å¤šé‡é‡‡æ ·å¸§ç¼“å†²çš„ç»˜åˆ¶ç»“æœè¿˜åŸåˆ°åæœŸå¤„ç†ç¼“å†²é‡Œ
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, multisampFrameBuffer);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, postprocessFrameBuffer);
+        glReadBuffer(GL_COLOR_ATTACHMENT0);
+        glDrawBuffer(GL_COLOR_ATTACHMENT0);
+        glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glReadBuffer(GL_COLOR_ATTACHMENT1);
+        glDrawBuffer(GL_COLOR_ATTACHMENT1);
+        glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        // ä½¿ç”¨ä¹’ä¹“ç¼“å†²å¯¹é«˜äº®å›¾åƒåšé«˜æ–¯æ¨¡ç³Šå¤„ç†
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        bool horizontal = true, first_blur = true;
+        int blur_time = 10;
+        gaussianBlur.use();
+        for (unsigned int i = 0; i < blur_time; i++)
+        {
+            glBindFramebuffer(GL_FRAMEBUFFER, pingpongFBO[horizontal]);
+            gaussianBlur.setBool("horizontal", horizontal);
+            glActiveTexture(GL_TEXTURE0);
+            // ç¬¬ä¸€æ¬¡ä½¿ç”¨ç”Ÿæˆçš„é«˜äº®å›¾
+            glBindTexture(GL_TEXTURE_2D, first_blur ? screenTextures[1] : pingpongBuffer[!horizontal]);
+            // å¼€å§‹å¤„ç†
+            glBindVertexArray(screenVAO);
+            glDrawArrays(GL_TRIANGLES, 0, 6);
+            glBindVertexArray(0);
+            horizontal = !horizontal;
+            if (first_blur)
+                first_blur = false;
+        }
+        */
+        /*
+        // å…‰ç…§å¤„ç†é˜¶æ®µ
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        glBindFramebuffer(GL_FRAMEBUFFER, lightingFBO);
+        glClearColor(0.3f, 0.3f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+        lightingShader.use();
+        lightingShader.setBool("ssaoOn", ssaoOn);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, gBufferTextures[gPosition]);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_2D, gBufferTextures[gNormal]);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, gBufferTextures[gAlbedoSpec]);
+        glActiveTexture(GL_TEXTURE3);
+        glBindTexture(GL_TEXTURE_2D, ssaoBlurColorBuffer);
+        glBindVertexArray(screenVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+        */
+        // æ­£å‘æ¸²æŸ“éƒ¨åˆ†
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        glBindFramebuffer(GL_FRAMEBUFFER, forwardFBO);
+
+        glEnable(GL_DEPTH_TEST);
+        glClearColor(0.0f, 0.0f, 0.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+
+        // å¸§ç¼“å†²ä¹‹é—´çš„æ•°æ®ä¼ é€
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        /*
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, lightingFBO);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, forwardFBO);
+        glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_COLOR_BUFFER_BIT, GL_NEAREST);
+
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, gBuffer);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, forwardFBO);
+        glBlitFramebuffer(0, 0, SCR_WIDTH, SCR_HEIGHT, 0, 0, SCR_WIDTH, SCR_HEIGHT, GL_DEPTH_BUFFER_BIT, GL_NEAREST);
+        */
+
+        /*
+        lightCubeShader.use();
+        glBindVertexArray(cubeVAO);
+        for (unsigned int i = 0; i < lightPositions.size(); i++)
+        {
+            glm::mat4 lightModel;
+            lightModel = glm::translate(lightModel, lightPositions[i]);
+            lightModel = glm::scale(lightModel, glm::vec3(0.2f));
+            lightCubeShader.setMat4("model", lightModel);
+            lightCubeShader.setVec3("lightColor", glm::vec3(1.0f, 1.0f, 1.0f));
+            glDrawArrays(GL_TRIANGLES, 0, 36);
+        }
+        */
+
+
+        // ä½¿ç”¨PBRæ¸²æŸ“å™¨æ¸²æŸ“
+        pbrShader.use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, irradianceMap);
+        glActiveTexture(GL_TEXTURE1);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, prefilterMap);
+        glActiveTexture(GL_TEXTURE2);
+        glBindTexture(GL_TEXTURE_2D, brdfLUTTexture);
+        pbrShader.setVec3("viewPos", camera.Position);
+
+        model = glm::translate(model, glm::vec3(0.0f));
+        model = glm::rotate(model, glm::radians(0.0f), glm::vec3(0.0f, 1.0f, 0.0f));
+        model = glm::scale(model, glm::vec3(4.0f));
+        normalMat = glm::transpose(glm::inverse(model));
+        pbrShader.setMat4("model", model);
+        pbrShader.setMat4("normalMat", normalMat);
+        mModel.Draw(pbrShader);
+        model = glm::mat4(1.0f);
+
+        glDepthFunc(GL_LEQUAL);
+        skyboxShader.use();
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_CUBE_MAP, envCubeMap);
+        glBindVertexArray(cubeVAO);
+        glDrawArrays(GL_TRIANGLES, 0, 36);
+        glDepthFunc(GL_LESS);
+
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+
+        // åæœŸå¤„ç†é˜¶æ®µ
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        glDisable(GL_DEPTH_TEST);
+        glClearColor(1.0f, 1.0f, 1.0f, 1.0f);
+        glClear(GL_COLOR_BUFFER_BIT);
+
+        // å°†å¤šç¼“å†²çš„ç»˜åˆ¶ç»“æœå‘ˆç°å‡ºæ¥
+        screenShader.use();
+        screenShader.setFloat("exposure", exposure);		// æ›´æ–°æ›å…‰å€¼
+        screenShader.setFloat("gamma", gamma);				// æ›´æ–°GAMMAå€¼
+        glBindVertexArray(screenVAO);
+        glActiveTexture(GL_TEXTURE0);
+        glBindTexture(GL_TEXTURE_2D, forwardFboColor);
+        glDrawArrays(GL_TRIANGLES, 0, 6);
+
+        glBindTexture(GL_TEXTURE_2D, 0);
+        glBindFramebuffer(GL_FRAMEBUFFER, 0);
+
+        // GLFWï¼šæ£€æµ‹IOäº‹ä»¶ (é”®ç›˜çš„æŒ‰ä¸‹ä¸é‡Šæ”¾ã€é¼ æ ‡ç§»åŠ¨ç­‰ç­‰)
+        glfwPollEvents();
+
+        // å¼€å§‹ç»˜åˆ¶ImGuiå†…å®¹
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        // ----------------------------------------------------------------------------------------------------------------------------------
+        ImGui_ImplOpenGL3_NewFrame();
+        ImGui_ImplGlfw_NewFrame();
+        ImGui::NewFrame();
+
+        // æ˜¾ç¤ºDEMOçª—å£
+        if (show_demo_window)
+            ImGui::ShowDemoWindow(&show_demo_window);
+
+        {
+            static float f = 0.0f;
+            static int imgui_counter = 0;
+
+            ImGui::Begin("Hello World!");
+
+            ImGui::Text("This is some useful text.");
+            ImGui::Checkbox("Demo Window", &show_demo_window);
+            ImGui::Checkbox("Another Window", &show_another_window);
+
+            ImGui::SliderFloat("float", &f, 0.0f, 1.0f);
+            ImGui::ColorEdit3("clear color", (float*)&clear_color);
+
+            if (ImGui::Button("Button"))
+                imgui_counter++;
+            ImGui::SameLine();
+            ImGui::Text("counter = %d", imgui_counter);
+
+            ImGui::Text("Aplication average %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+            ImGui::End();
+        }
+
+        // æ˜¾ç¤ºå¦ä¸€ä¸ªçª—å£
+        if (show_another_window)
+        {
+            ImGui::Begin("Another Window", &show_another_window);
+            ImGui::Text("Hello from another window!");
+            if (ImGui::Button("Close Me"))
+                show_another_window = false;
+            ImGui::End();
+        }
+
+        // æ¸²æŸ“ImGui
+        ImGui::Render();
+        ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
+
+        // GLFW: äº¤æ¢å‰å¸§ç¼“å†²ä¸åå¸§ç¼“å†²ã€
+        glfwSwapBuffers(window);
+    }
+
+    // å¯é€‰: é‡Šæ”¾æ‰ä¸å†éœ€è¦çš„OpenGLå¯¹è±¡
+    //glDeleteVertexArrays(1, &VAO);
+    //glDeleteBuffers(1, &VBO);
+    //glDeleteBuffers(1, &EBO);
+
+    // GLFW: é‡Šæ”¾æ‰æ‰€æœ‰ä¹‹å‰GLFWåˆ†é…çš„èµ„æº
+    glfwTerminate();
+
+    return 0;
 }
 
-// º¯Êı¶¨Òå
+// å‡½æ•°å®šä¹‰
 // ------------------------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------------------------
 // ------------------------------------------------------------------------------------------------------------------------------------------
 
-// Êó±êÒÆ¶¯»Øµ÷º¯Êı
-void mouse_move_callback(GLFWwindow *window, double xpos, double ypos)
+// é¼ æ ‡ç§»åŠ¨å›è°ƒå‡½æ•°
+void mouse_move_callback(GLFWwindow* window, double xpos, double ypos)
 {
-	if (firstMouse)
-	{
-		lastX = xpos;
-		lastY = ypos;
-		firstMouse = false;
-	}
+    if (firstMouse)
+    {
+        lastX = xpos;
+        lastY = ypos;
+        firstMouse = false;
+    }
 
-	float xoffset = xpos - lastX;
-	float yoffset = lastY - ypos;
-	lastX = xpos;
-	lastY = ypos;
+    float xoffset = xpos - lastX;
+    float yoffset = lastY - ypos;
+    lastX = xpos;
+    lastY = ypos;
 
-	if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT))
-	{
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
-		camera.ProcessMouseMovement(xoffset, yoffset, true);
-	}
-	else
-	{
-		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
-	}
-	
+    if (glfwGetMouseButton(window, GLFW_MOUSE_BUTTON_RIGHT))
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+        camera.ProcessMouseMovement(xoffset, yoffset, true);
+    }
+    else
+    {
+        glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+    }
+
 }
 
-// Êó±ê¹öÂÖ»Øµ÷º¯Êı
-void mouse_scroll_callback(GLFWwindow *window, double xoffset, double yoffset)
+// é¼ æ ‡æ»šè½®å›è°ƒå‡½æ•°
+void mouse_scroll_callback(GLFWwindow* window, double xoffset, double yoffset)
 {
-	camera.ProcessMouseScroll(yoffset, deltaTime);
+    camera.ProcessMouseScroll(yoffset, deltaTime);
 }
 
-// ´¦ÀíËùÓĞµÄÊäÈë: ¼ì²âÊÇ·ñÓĞ¶ÔÓ¦µÄ¼üÎ»°´ÏÂ²¢Ö´ĞĞÏà¹Ø´¦Àí
+// å¤„ç†æ‰€æœ‰çš„è¾“å…¥: æ£€æµ‹æ˜¯å¦æœ‰å¯¹åº”çš„é”®ä½æŒ‰ä¸‹å¹¶æ‰§è¡Œç›¸å…³å¤„ç†
 void processInput(GLFWwindow* window)
 {
-	if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, true);
+    if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
+        glfwSetWindowShouldClose(window, true);
 
-	bool pressLeftShift = false;
-	if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT))
-		pressLeftShift = true;
+    bool pressLeftShift = false;
+    if (glfwGetKey(window, GLFW_KEY_LEFT_SHIFT))
+        pressLeftShift = true;
 
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera.ProcessKeyboard(FORWARD, pressLeftShift? 2 * deltaTime: deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
+        camera.ProcessKeyboard(FORWARD, pressLeftShift ? 2 * deltaTime : deltaTime);
 
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera.ProcessKeyboard(BACKWARD, pressLeftShift ? 2 * deltaTime : deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
+        camera.ProcessKeyboard(BACKWARD, pressLeftShift ? 2 * deltaTime : deltaTime);
 
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera.ProcessKeyboard(LEFT, pressLeftShift ? 2 * deltaTime : deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
+        camera.ProcessKeyboard(LEFT, pressLeftShift ? 2 * deltaTime : deltaTime);
 
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera.ProcessKeyboard(RIGHT, pressLeftShift ? 2 * deltaTime : deltaTime);
+    if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
+        camera.ProcessKeyboard(RIGHT, pressLeftShift ? 2 * deltaTime : deltaTime);
 
-	if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS) 
-	{
-		exposure -= 0.01f;
-		if (exposure <= 0.0f)
-			exposure = 0.0f;
-		std::cout << "exposure: " << exposure << std::endl;
-	}
+    if (glfwGetKey(window, GLFW_KEY_J) == GLFW_PRESS)
+    {
+        exposure -= 0.01f;
+        if (exposure <= 0.0f)
+            exposure = 0.0f;
+        std::cout << "exposure: " << exposure << std::endl;
+    }
 
-	if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
-	{
-		exposure += 0.01f;
-		std::cout << "exposure: " << exposure << std::endl;
-	}
+    if (glfwGetKey(window, GLFW_KEY_L) == GLFW_PRESS)
+    {
+        exposure += 0.01f;
+        std::cout << "exposure: " << exposure << std::endl;
+    }
 }
 
-// GLFW: ´°¿Ú´óĞ¡¸Ä±äºóÖ´ĞĞµÄ»Øµ÷º¯Êı
-void framebuffer_size_callback(GLFWwindow * window, int width, int height)
+// GLFW: çª—å£å¤§å°æ”¹å˜åæ‰§è¡Œçš„å›è°ƒå‡½æ•°
+void framebuffer_size_callback(GLFWwindow* window, int width, int height)
 {
-	glViewport(0, 0, width, height);
+    glViewport(0, 0, width, height);
 }
 
-// ³õÊ¼»¯¶¥µãÊı×é¶ÔÏó(Ê¹ÓÃË÷Òı»º³å¶ÔÏó£¬Ê¹ÓÃÎÆÀí×ø±ê)
-void initVAOWithTexCoods(unsigned int *VAO, unsigned *VBO, unsigned *EBO, float *vtx, int v_s, unsigned int *indx, int i_s)
+// åˆå§‹åŒ–é¡¶ç‚¹æ•°ç»„å¯¹è±¡(ä½¿ç”¨ç´¢å¼•ç¼“å†²å¯¹è±¡ï¼Œä½¿ç”¨çº¹ç†åæ ‡)
+void initVAOWithTexCoods(unsigned int* VAO, unsigned* VBO, unsigned* EBO, float* vtx, int v_s, unsigned int* indx, int i_s)
 {
-	glBindVertexArray(*VAO);
-	glBindBuffer(GL_ARRAY_BUFFER, *VBO);
-	glBufferData(GL_ARRAY_BUFFER, v_s, vtx, GL_STATIC_DRAW);
+    glBindVertexArray(*VAO);
+    glBindBuffer(GL_ARRAY_BUFFER, *VBO);
+    glBufferData(GL_ARRAY_BUFFER, v_s, vtx, GL_STATIC_DRAW);
 
-	glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *EBO);
-	glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_s, indx, GL_STATIC_DRAW);
+    glBindBuffer(GL_ELEMENT_ARRAY_BUFFER, *EBO);
+    glBufferData(GL_ELEMENT_ARRAY_BUFFER, i_s, indx, GL_STATIC_DRAW);
 
-	// Î»ÖÃÊôĞÔ
-	glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
-	glEnableVertexAttribArray(0);
+    // ä½ç½®å±æ€§
+    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)0);
+    glEnableVertexAttribArray(0);
 
-	// ÎÆÀí×ø±ê
-	glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
-	glEnableVertexAttribArray(1);
+    // çº¹ç†åæ ‡
+    glVertexAttribPointer(1, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(3 * sizeof(float)));
+    glEnableVertexAttribArray(1);
 
-	// ·¨ÏòÁ¿
-	glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
-	glEnableVertexAttribArray(2);
+    // æ³•å‘é‡
+    glVertexAttribPointer(2, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (void*)(5 * sizeof(float)));
+    glEnableVertexAttribArray(2);
 
-	glBindVertexArray(0);
-	glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
 }
 
-// ¼òµ¥³õÊ¼»¯Ò»¸öÎÆÀí¶ÔÏó
-Texture initTexture2D(const char *filePath, const char *type, bool gamma)
+// ç®€å•åˆå§‹åŒ–ä¸€ä¸ªçº¹ç†å¯¹è±¡
+Texture initTexture2D(const char* filePath, const char* type, bool gamma)
 {
-	Texture texture;
+    Texture texture;
 
-	unsigned int tex;
-	glGenTextures(1, &tex);
-	glBindTexture(GL_TEXTURE_2D, tex);
-	
-	// ¼ÓÔØÎÆÀí
-	//stbi_set_flip_vertically_on_load(true);
-	int width, height, numChannels;
-	unsigned char *data = stbi_load(filePath, &width, &height, &numChannels, 0);
-	if (data)
-	{
-		GLenum internalFormat;
-		GLenum dataFormat;
-		if (numChannels == 1)
-			internalFormat = dataFormat = GL_RED;
-		else if (numChannels == 3) 
-		{
-			internalFormat = gamma ? GL_SRGB : GL_RGB;
-			dataFormat = GL_RGB;
-		}
-		else if (numChannels == 4)
-		{
-			internalFormat = gamma ? GL_SRGB_ALPHA : GL_RGBA;
-			dataFormat = GL_RGBA;
-		}
-			
-		glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
-		glGenerateMipmap(GL_TEXTURE_2D);
+    unsigned int tex;
+    glGenTextures(1, &tex);
+    glBindTexture(GL_TEXTURE_2D, tex);
 
-		// Îªµ±Ç°°ó¶¨µÄÎÆÀí¶ÔÏóÉèÖÃ»·ÈÆ¡¢¹ıÂË·½Ê½
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    // åŠ è½½çº¹ç†
+    //stbi_set_flip_vertically_on_load(true);
+    int width, height, numChannels;
+    unsigned char* data = stbi_load(filePath, &width, &height, &numChannels, 0);
+    if (data)
+    {
+        GLenum internalFormat;
+        GLenum dataFormat;
+        if (numChannels == 1)
+            internalFormat = dataFormat = GL_RED;
+        else if (numChannels == 3)
+        {
+            internalFormat = gamma ? GL_SRGB : GL_RGB;
+            dataFormat = GL_RGB;
+        }
+        else if (numChannels == 4)
+        {
+            internalFormat = gamma ? GL_SRGB_ALPHA : GL_RGBA;
+            dataFormat = GL_RGBA;
+        }
 
-		texture.id = tex;
-		texture.path = filePath;
-		texture.type = type;
-	}
-	else
-	{
-		std::cout << "Failed to load texture" << std::endl;
-		std::cout << filePath << std::endl;
-	}
+        glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+        glGenerateMipmap(GL_TEXTURE_2D);
 
-	stbi_image_free(data);
+        // ä¸ºå½“å‰ç»‘å®šçš„çº¹ç†å¯¹è±¡è®¾ç½®ç¯ç»•ã€è¿‡æ»¤æ–¹å¼
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-	return texture;
+        texture.id = tex;
+        texture.path = filePath;
+        texture.type = type;
+    }
+    else
+    {
+        std::cout << "Failed to load texture" << std::endl;
+        std::cout << filePath << std::endl;
+    }
+
+    stbi_image_free(data);
+
+    return texture;
 }
 
-// ³õÊ¼»¯Á¢·½ÌåÎÆÀíÌùÍ¼¶ÔÏó
-void initCubemap(unsigned int &cubemap, vector<std::string> faces)
+// åˆå§‹åŒ–ç«‹æ–¹ä½“çº¹ç†è´´å›¾å¯¹è±¡
+void initCubemap(unsigned int& cubemap, vector<std::string> faces)
 {
-	glGenTextures(1, &cubemap);
-	glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
+    glGenTextures(1, &cubemap);
+    glBindTexture(GL_TEXTURE_CUBE_MAP, cubemap);
 
-	//stbi_set_flip_vertically_on_load(true);
-	int width, height, numChannels;
-	for (unsigned int i = 0; i < faces.size(); i++)
-	{
-		unsigned char *data = stbi_load(faces[i].c_str(), &width, &height, &numChannels, 0);
-		if (data)
-		{
-			glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
-		}
-		else
-		{
-			std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
-			
-		}
-		stbi_image_free(data);
-	}
+    //stbi_set_flip_vertically_on_load(true);
+    int width, height, numChannels;
+    for (unsigned int i = 0; i < faces.size(); i++)
+    {
+        unsigned char* data = stbi_load(faces[i].c_str(), &width, &height, &numChannels, 0);
+        if (data)
+        {
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, width, height, 0, GL_RGB, GL_UNSIGNED_BYTE, data);
+        }
+        else
+        {
+            std::cout << "Cubemap texture failed to load at path: " << faces[i] << std::endl;
 
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-	glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
+        }
+        stbi_image_free(data);
+    }
+
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+    glTexParameteri(GL_TEXTURE_CUBE_MAP, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
 }
 
-//  ¼ÓÔØÒ»ÕÅHDR¸ñÊ½Í¼Æ¬
-unsigned int loadHDRtexture(const char *filePath)
+//  åŠ è½½ä¸€å¼ HDRæ ¼å¼å›¾ç‰‡
+unsigned int loadHDRtexture(const char* filePath)
 {
-	stbi_set_flip_vertically_on_load(true);
-	int width, height, numComponent;
-	float *data = stbi_loadf(filePath, &width, &height, &numComponent, 0);
-	unsigned int hdrTexture;
-	if (data)
-	{
-		glGenTextures(1, &hdrTexture);
-		glBindTexture(GL_TEXTURE_2D, hdrTexture);
-		glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
+    stbi_set_flip_vertically_on_load(true);
+    int width, height, numComponent;
+    float* data = stbi_loadf(filePath, &width, &height, &numComponent, 0);
+    unsigned int hdrTexture;
+    if (data)
+    {
+        glGenTextures(1, &hdrTexture);
+        glBindTexture(GL_TEXTURE_2D, hdrTexture);
+        glTexImage2D(GL_TEXTURE_2D, 0, GL_RGB16F, width, height, 0, GL_RGB, GL_FLOAT, data);
 
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
-		std::cout << "Loading " << filePath << " success." << std::endl;
-	}
-	else
-	{
-		std::cout << "Failed to load HDR image." << std::endl;
-		std::cout << filePath << std::endl;
-	}
+        std::cout << "Loading " << filePath << " success." << std::endl;
+    }
+    else
+    {
+        std::cout << "Failed to load HDR image." << std::endl;
+        std::cout << filePath << std::endl;
+    }
 
-	stbi_image_free(data);
+    stbi_image_free(data);
 
-	return hdrTexture;
+    return hdrTexture;
 }
 
-// ³õÊ¼»¯²¢¶à¸öÎÆÀí¶ÔÏó²¢·µ»ØÆäÒıÓÃ
-unsigned int *initMultiTexture2D(const char *pathArray[], int count, bool gammas[])
+// åˆå§‹åŒ–å¹¶å¤šä¸ªçº¹ç†å¯¹è±¡å¹¶è¿”å›å…¶å¼•ç”¨
+unsigned int* initMultiTexture2D(const char* pathArray[], int count, bool gammas[])
 {
-	unsigned int *texIDs = new unsigned int[count];
-	glGenTextures(count, texIDs);
-	for (int i = 0; i < count; i++)
-	{
-		glBindTexture(GL_TEXTURE_2D, texIDs[i]);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
-		glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
+    unsigned int* texIDs = new unsigned int[count];
+    glGenTextures(count, texIDs);
+    for (int i = 0; i < count; i++)
+    {
+        glBindTexture(GL_TEXTURE_2D, texIDs[i]);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_REPEAT);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR_MIPMAP_LINEAR);
+        glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
 
 
-		int width, height, numChannels;
-		std::string filePath = ProjectDirectory.c_str();
-		filePath.append(pathArray[i]);
+        int width, height, numChannels;
+        std::string filePath = ProjectDirectory.c_str();
+        filePath.append(pathArray[i]);
 
-		//stbi_set_flip_vertically_on_load(true);
-		unsigned char *data = stbi_load(filePath.c_str(), &width, &height, &numChannels, 0);
-		if (data)
-		{
-			GLenum internalFormat;
-			GLenum dataFormat;
-			if (numChannels == 1)
-				internalFormat = dataFormat = GL_RED;
-			else if (numChannels == 3)
-			{
-				internalFormat = gammas[i] ? GL_SRGB : GL_RGB;
-				dataFormat = GL_RGB;
-			}
-			else if (numChannels == 4)
-			{
-				internalFormat = gammas[i] ? GL_SRGB_ALPHA : GL_RGBA;
-				dataFormat = GL_RGBA;
-			}
+        //stbi_set_flip_vertically_on_load(true);
+        unsigned char* data = stbi_load(filePath.c_str(), &width, &height, &numChannels, 0);
+        if (data)
+        {
+            GLenum internalFormat;
+            GLenum dataFormat;
+            if (numChannels == 1)
+                internalFormat = dataFormat = GL_RED;
+            else if (numChannels == 3)
+            {
+                internalFormat = gammas[i] ? GL_SRGB : GL_RGB;
+                dataFormat = GL_RGB;
+            }
+            else if (numChannels == 4)
+            {
+                internalFormat = gammas[i] ? GL_SRGB_ALPHA : GL_RGBA;
+                dataFormat = GL_RGBA;
+            }
 
-			std::string suffix = filePath.substr(filePath.find_last_of(".") + 1);	// ÇóÍ¼Æ¬ºó×º
-			std::cout << "Loading " + suffix + "..." << std::endl;
+            std::string suffix = filePath.substr(filePath.find_last_of(".") + 1);	// æ±‚å›¾ç‰‡åç¼€
+            std::cout << "Loading " + suffix + "..." << std::endl;
 
-			glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
-			glGenerateMipmap(GL_TEXTURE_2D);
-		}
-		else
-		{
-			std::cout << "Failed to load texture " << i << std::endl;
-		}
-		stbi_image_free(data);
-	}
-	return texIDs;
+            glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, dataFormat, GL_UNSIGNED_BYTE, data);
+            glGenerateMipmap(GL_TEXTURE_2D);
+        }
+        else
+        {
+            std::cout << "Failed to load texture " << i << std::endl;
+        }
+        stbi_image_free(data);
+    }
+    return texIDs;
 }
 
-// ³õÊ¼»¯×ÅÉ«Æ÷2DÎÆÀí²ÉÑùÆ÷µÄÎ»ÖÃÖµ
-void initSampler2DLoaction(Shader_Old shader, const char *textureNames[], int texCount)
+// åˆå§‹åŒ–ç€è‰²å™¨2Dçº¹ç†é‡‡æ ·å™¨çš„ä½ç½®å€¼
+void initSampler2DLoaction(Shader_Old shader, const char* textureNames[], int texCount)
 {
-	shader.use();
-	for (int i = 0; i < texCount; i++)
-	{
-		shader.setInt(textureNames[i], i);
-	}
+    shader.use();
+    for (int i = 0; i < texCount; i++)
+    {
+        shader.setInt(textureNames[i], i);
+    }
 }
 
-// Õı³£»æÖÆ³¡¾°
+// æ­£å¸¸ç»˜åˆ¶åœºæ™¯
 void drawSceneNormal()
 {
-	
+
 }
 
-// »ñÈ¡ÎÄ¼şÂ·¾¶
+// è·å–æ–‡ä»¶è·¯å¾„
 std::string getFilePath(std::string directory, std::string filename)
 {
-	return (directory + filename);
+    return (directory + filename);
 }
 
 float ssaoScaleLerp(float a, float b, float f)
 {
-	return a + f * (b - a);
+    return a + f * (b - a);
 }
 
-//´´½¨²¢·µ»ØÒ»¸öÇòÌåµÄ¶¥µãÊı¾İ£¬°üÀ¨Î»ÖÃ¡¢UV¡¢·¨ÏßÒÔ¼°¶¥µãË÷Òı
-//²ÎÊı£º
-//	X_SGEMENT£ºÇòÌåÔÚ X ·½ÏòÉÏµÄ·Ö¶Î
-//	Y_SGEMENT£ºÇòÌåÔÚ Y ·½ÏòÉÏµÄ·Ö¶Î
-//	data     £º·µ»ØÇòÌåµÄ¶¥µãÊı¾İ£¬°üÀ¨Î»ÖÃ¡¢uv¡¢·¨Ïß
-//	indices  £º·µ»Ø¶¥µãË÷Òı
-void CreateSphere(unsigned int X_SEGMENT, unsigned int Y_SEGMENT, std::vector<float> &data, std::vector<unsigned int> &indices)
+//åˆ›å»ºå¹¶è¿”å›ä¸€ä¸ªçƒä½“çš„é¡¶ç‚¹æ•°æ®ï¼ŒåŒ…æ‹¬ä½ç½®ã€UVã€æ³•çº¿ä»¥åŠé¡¶ç‚¹ç´¢å¼•
+//å‚æ•°ï¼š
+//	X_SGEMENTï¼šçƒä½“åœ¨ X æ–¹å‘ä¸Šçš„åˆ†æ®µ
+//	Y_SGEMENTï¼šçƒä½“åœ¨ Y æ–¹å‘ä¸Šçš„åˆ†æ®µ
+//	data     ï¼šè¿”å›çƒä½“çš„é¡¶ç‚¹æ•°æ®ï¼ŒåŒ…æ‹¬ä½ç½®ã€uvã€æ³•çº¿
+//	indices  ï¼šè¿”å›é¡¶ç‚¹ç´¢å¼•
+void CreateSphere(unsigned int X_SEGMENT, unsigned int Y_SEGMENT, std::vector<float>& data, std::vector<unsigned int>& indices)
 {
-	const float PI = 3.14159265359;
-	std::vector<glm::vec3> positions;
-	std::vector<glm::vec2> uv;
-	std::vector<glm::vec3> normals;
+    const float PI = 3.14159265359;
+    std::vector<glm::vec3> positions;
+    std::vector<glm::vec2> uv;
+    std::vector<glm::vec3> normals;
 
-	for (unsigned int y = 0; y <= Y_SEGMENT; ++y)
-	{
-		for (unsigned int x = 0; x <= X_SEGMENT; ++x)
-		{
-			float xSegment = (float)x / (float)X_SEGMENT;
-			float ySegment = (float)y / (float)Y_SEGMENT;
-			float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
-			float yPos = std::cos(ySegment * PI);
-			float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+    for (unsigned int y = 0; y <= Y_SEGMENT; ++y)
+    {
+        for (unsigned int x = 0; x <= X_SEGMENT; ++x)
+        {
+            float xSegment = (float)x / (float)X_SEGMENT;
+            float ySegment = (float)y / (float)Y_SEGMENT;
+            float xPos = std::cos(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
+            float yPos = std::cos(ySegment * PI);
+            float zPos = std::sin(xSegment * 2.0f * PI) * std::sin(ySegment * PI);
 
-			positions.push_back(glm::vec3(xPos, yPos, zPos));
-			uv.push_back(glm::vec2(xSegment, ySegment));
-			normals.push_back(glm::vec3(xPos, yPos, zPos));
-		}
-	}
+            positions.push_back(glm::vec3(xPos, yPos, zPos));
+            uv.push_back(glm::vec2(xSegment, ySegment));
+            normals.push_back(glm::vec3(xPos, yPos, zPos));
+        }
+    }
 
-	bool oddRow = false;
-	for (int y = 0; y < Y_SEGMENT; ++y)
-	{
-		if (!oddRow) // even rows: y == 0, y == 2; and so on
-		{
-			for (int x = 0; x <= X_SEGMENT; ++x)
-			{
-				indices.push_back(y       * (X_SEGMENT + 1) + x);
-				indices.push_back((y + 1) * (X_SEGMENT + 1) + x);
-			}
-		}
-		else
-		{
-			for (int x = X_SEGMENT; x >= 0; --x)
-			{
-				indices.push_back((y + 1) * (X_SEGMENT + 1) + x);
-				indices.push_back(y       * (X_SEGMENT + 1) + x);
-			}
-		}
-		oddRow = !oddRow;
-	}
+    bool oddRow = false;
+    for (int y = 0; y < Y_SEGMENT; ++y)
+    {
+        if (!oddRow) // even rows: y == 0, y == 2; and so on
+        {
+            for (int x = 0; x <= X_SEGMENT; ++x)
+            {
+                indices.push_back(y * (X_SEGMENT + 1) + x);
+                indices.push_back((y + 1) * (X_SEGMENT + 1) + x);
+            }
+        }
+        else
+        {
+            for (int x = X_SEGMENT; x >= 0; --x)
+            {
+                indices.push_back((y + 1) * (X_SEGMENT + 1) + x);
+                indices.push_back(y * (X_SEGMENT + 1) + x);
+            }
+        }
+        oddRow = !oddRow;
+    }
 
-	for (int i = 0; i < positions.size(); ++i)
-	{
-		data.push_back(positions[i].x);
-		data.push_back(positions[i].y);
-		data.push_back(positions[i].z);
-		if (uv.size() > 0)
-		{
-			data.push_back(uv[i].x);
-			data.push_back(uv[i].y);
-		}
-		if (normals.size() > 0)
-		{
-			data.push_back(normals[i].x);
-			data.push_back(normals[i].y);
-			data.push_back(normals[i].z);
-		}
-	}
+    for (int i = 0; i < positions.size(); ++i)
+    {
+        data.push_back(positions[i].x);
+        data.push_back(positions[i].y);
+        data.push_back(positions[i].z);
+        if (uv.size() > 0)
+        {
+            data.push_back(uv[i].x);
+            data.push_back(uv[i].y);
+        }
+        if (normals.size() > 0)
+        {
+            data.push_back(normals[i].x);
+            data.push_back(normals[i].y);
+            data.push_back(normals[i].z);
+        }
+    }
 }
 
 #endif

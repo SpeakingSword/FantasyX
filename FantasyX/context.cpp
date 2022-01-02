@@ -10,7 +10,7 @@ namespace fx {
         std::cout << "ENGIN CORE::A window was closed ... " << std::endl;
     }
 
-    fxWindow::fxWindow(GLuint width, GLuint height, const GLchar *title)
+    fxWindow::fxWindow(GLuint width, GLuint height, const GLchar* title)
     {
         window = nullptr;
         this->width = width;
@@ -23,7 +23,7 @@ namespace fx {
     {
         if (window == nullptr)
         {
-            // Ö»ÐèÒª³õÊ¼»¯Ò»´Î
+            // åªéœ€è¦åˆå§‹åŒ–ä¸€æ¬¡
             if (!glfwInitiated)
             {
                 glfwInit();
@@ -41,7 +41,7 @@ namespace fx {
 
             GLfloat offsetX = (1920 - width) / 2;
             GLfloat offsetY = (1080 - height) / 2;
-            // 30px ÊÇ±êÌâÀ¸µÄ¸ß¶È
+            // 30px æ˜¯æ ‡é¢˜æ çš„é«˜åº¦
             if (!fullScreen)
                 offsetY += 30;
 
@@ -57,7 +57,7 @@ namespace fx {
 
             glfwMakeContextCurrent(window);
 
-            // Ö»ÐèÒª³õÊ¼»¯Ò»´Î
+            // åªéœ€è¦åˆå§‹åŒ–ä¸€æ¬¡
             if (!gladLoaded)
             {
                 if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
@@ -129,12 +129,12 @@ namespace fx {
         glfwTerminate();
     }
 
-    GLFWwindow *fxWindow::GetGLFWwindow()
+    GLFWwindow* fxWindow::GetGLFWwindow()
     {
         return window;
     }
 
-    void fxWindow::MouseMove(GLdouble xpos, GLdouble ypos, Camera *camera)
+    void fxWindow::MouseMove(GLdouble xpos, GLdouble ypos, Camera* camera)
     {
         if (firstMove)
         {
@@ -159,7 +159,7 @@ namespace fx {
         }
     }
 
-    void fxWindow::ProcessInput(GameObject *sceneRoot, GameObject *camera)
+    void fxWindow::ProcessInput(GameObject* sceneRoot, GameObject* camera)
     {
         if (glfwGetKey(window, GLFW_KEY_ESCAPE) == GLFW_PRESS)
         {
@@ -169,7 +169,7 @@ namespace fx {
 
         GLdouble xpos, ypos;
         glfwGetCursorPos(window, &xpos, &ypos);
-        Camera *mCamera = (Camera *)camera->GetComponent("Camera");
+        Camera* mCamera = (Camera*)camera->GetComponent("Camera");
         MouseMove(xpos, ypos, mCamera);
 
         if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)

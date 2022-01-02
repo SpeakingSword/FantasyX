@@ -17,8 +17,8 @@ using namespace fx;
 
 int main()
 {
-#pragma region 必须的初始化部分
-    // GLFW: 初始化与配置
+#pragma region 蹇呴』鐨勫垵濮嬪寲閮ㄥ垎
+    // GLFW: 鍒濆鍖栦笌閰嶇疆
     // ------------------------------------------
     glfwInit();
     glfwWindowHint(GLFW_CONTEXT_VERSION_MAJOR, 3);
@@ -30,7 +30,7 @@ int main()
     glfwWindowHint(GLFW_OPENGL_FORWARD_COMPAT, GL_TRUE);
 #endif // __APPLE__
 
-    // GLFW: 创建窗口
+    // GLFW: 鍒涘缓绐楀彛
     // -------------------------------------------------------------------------------------
     GLFWwindow* window = glfwCreateWindow(800, 600, "FantasyX", NULL, NULL);
     if (window == NULL)
@@ -42,7 +42,7 @@ int main()
 
     glfwMakeContextCurrent(window);
 
-    // GLAD: 加载所有的OpenGL函数
+    // GLAD: 鍔犺浇鎵�鏈夌殑OpenGL鍑芥暟
     // -----------------------------------------------------
     if (!gladLoadGLLoader((GLADloadproc)glfwGetProcAddress))
     {
@@ -51,25 +51,25 @@ int main()
     }
 #pragma endregion
 
-    Scene *scene = new Scene();
-    ResourceManager *res = ResourceManager::GetInstance();
+    Scene* scene = new Scene();
+    ResourceManager* res = ResourceManager::GetInstance();
 
-    GameObject *cube_1 = GameObject::Cube();
+    GameObject* cube_1 = GameObject::Cube();
     cube_1->name = "Cube1";
-    GameObject *cube_2 = GameObject::Cube();
+    GameObject* cube_2 = GameObject::Cube();
     cube_2->name = "Cube2";
-    GameObject *cube_3 = GameObject::Cube();
+    GameObject* cube_3 = GameObject::Cube();
     cube_3->name = "Cube3";
-    GameObject *cube_4 = GameObject::Cube();
+    GameObject* cube_4 = GameObject::Cube();
     cube_4->name = "Cube4";
 
-    GameObject *dirLight = GameObject::DirLight();
+    GameObject* dirLight = GameObject::DirLight();
     dirLight->name = "DirLight";
 
-    GameObject *pointLight_1 = GameObject::PointLight();
+    GameObject* pointLight_1 = GameObject::PointLight();
     pointLight_1->name = "PointLight1";
     pointLight_1->transform->position = Vector3(4.0f, 0.0f, 0.0f);
-    GameObject *pointLight_2 = GameObject::PointLight();
+    GameObject* pointLight_2 = GameObject::PointLight();
     pointLight_2->name = "PointLight2";
     pointLight_2->transform->position = Vector3(-4.0f, 0.0f, 0.0f);
 
@@ -104,10 +104,10 @@ int main()
         }
         else
             timer += Time::deltaTime;
-        
+
         dirLight->transform->rotation.y += 20 * Time::deltaTime;
 
-        // 渲染循环 ... 
+        // 娓叉煋寰幆 ... 
         scene->Update();
         scene->Render();
     }

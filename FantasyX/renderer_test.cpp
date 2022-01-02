@@ -27,9 +27,9 @@ const GLuint CANVA_HEIGHT = 768;
 
 const GLuint HIERARCHY_WIDTH = 200;
 
-GameObject *CLICKED_OBJ = nullptr;
+GameObject* CLICKED_OBJ = nullptr;
 
-const GLchar *OBJ_TAG_STRING[GT_TAG_NUM]
+const GLchar* OBJ_TAG_STRING[GT_TAG_NUM]
 {
     "None",
     "Opaque",
@@ -39,29 +39,29 @@ const GLchar *OBJ_TAG_STRING[GT_TAG_NUM]
 };
 
 void SetGuiStyle();
-void DrawObjectTree(GameObject *obj);
-void ShowRendererSetting(Renderer *renderer);
+void DrawObjectTree(GameObject* obj);
+void ShowRendererSetting(Renderer* renderer);
 
 int main()
 {
     // window
-    fxWindow *window = new fxWindow();
+    fxWindow* window = new fxWindow();
     window->width = WINDOW_WIDTH;
     window->height = WINDOW_HEIGHT;
     window->Init(true, 3, 3);
 
-#pragma region ³õÊ¼»¯imgui
+#pragma region åˆå§‹åŒ–imgui
     IMGUI_CHECKVERSION();
     ImGui::CreateContext();
-    ImGuiIO &io = ImGui::GetIO();
+    ImGuiIO& io = ImGui::GetIO();
     (void)io;
 
-    // ÉèÖÃImGui·ç¸ñ
+    // è®¾ç½®ImGuié£Žæ ¼
     ImGui::StyleColorsDark();
     SetGuiStyle();
 
-    // ÎªImGui°ó¶¨äÖÈ¾Æ½Ì¨
-    const char *glsl_version = "#version 330 core";
+    // ä¸ºImGuiç»‘å®šæ¸²æŸ“å¹³å°
+    const char* glsl_version = "#version 330 core";
     ImGui_ImplGlfw_InitForOpenGL(window->GetGLFWwindow(), true);
     ImGui_ImplOpenGL3_Init(glsl_version);
 
@@ -78,9 +78,9 @@ int main()
         "D:\\OpenGLAssets\\Images\\Skybox\\mountain_and_lake\\back.jpg"
     };
 
-    Scene *scene = new Scene();
-    ResourceManager *res = ResourceManager::GetInstance();
-    Renderer *renderer = new Renderer();
+    Scene* scene = new Scene();
+    ResourceManager* res = ResourceManager::GetInstance();
+    Renderer* renderer = new Renderer();
     renderer->canvaWidth = CANVA_WIDTH;
     renderer->canvaHeight = CANVA_HEIGHT;
     renderer->drawMode = DRAW_WITH_FACES;
@@ -97,7 +97,7 @@ int main()
     scene->renderer = renderer;
 
     // zero object
-    GameObject *zero = new GameObject();
+    GameObject* zero = new GameObject();
     zero->name = "ZeroObject";
     zero->transform->position = Vector3(0.0f, 0.0f, 0.0f);
 
@@ -113,67 +113,67 @@ int main()
     */
 
     // hawk
-    GameObject *hawk = res->LoadModel("D:\\OpenGLAssets\\Models\\hawk\\EagleStaff.fbx");
+    GameObject* hawk = res->LoadModel("D:\\OpenGLAssets\\Models\\hawk\\EagleStaff.fbx");
     hawk->name = "hawk";
     hawk->transform->position = Vector3(0.0f, -0.4f, 0.3f);
     hawk->transform->scale = Vector3(0.2f);
     hawk->transform->rotation.y = -200.0f;
-    PBRStandardMaterial *hawk_mat = new PBRStandardMaterial();
+    PBRStandardMaterial* hawk_mat = new PBRStandardMaterial();
     hawk_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\hawk\\textures\\BaseColor.jpg", "_AlbedoMap", true));
     hawk_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\hawk\\textures\\Metallic.jpg", "_MetallicMap"));
     hawk_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\hawk\\textures\\NormalMap.jpg", "_NormalMap"));
     hawk_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\hawk\\textures\\Roughness.jpg", "_RoughnessMap"));
     hawk_mat->textures2D.push_back(res->LoadTexture2D("D:\\OpenGLAssets\\Models\\hawk\\textures\\AO.jpg", "_AoMap"));
     hawk->SetMaterial(hawk_mat);
-    
+
     // tiger
-    GameObject *tiger = res->LoadModel("D:\\OpenGLAssets\\Models\\tiger-white\\Tiger_.fbx");
+    GameObject* tiger = res->LoadModel("D:\\OpenGLAssets\\Models\\tiger-white\\Tiger_.fbx");
     tiger->name = "tiger";
     tiger->transform->position = Vector3(0.0f, -1.089f, 0.3f);
     tiger->transform->scale = Vector3(0.005f);
     tiger->transform->rotation.y = 90.0f;
-    PBRSimpleMaterial *tiger_mat = new PBRSimpleMaterial();
+    PBRSimpleMaterial* tiger_mat = new PBRSimpleMaterial();
     tiger_mat->metallic = 0.012f;
     tiger_mat->roughness = 0.512f;
     tiger_mat->baseColor = Vector3(1.0f);
     tiger->SetMaterial(tiger_mat);
-    
+
     // base
-    GameObject *base = GameObject::Cube();
+    GameObject* base = GameObject::Cube();
     base->name = "base";
     base->transform->position = Vector3(0.0f, -1.0f, 0.0f);
     base->transform->scale = Vector3(5.0f, 0.05f, 5.0f);
-    PBRSimpleMaterial *base_simple_mat = new PBRSimpleMaterial();
+    PBRSimpleMaterial* base_simple_mat = new PBRSimpleMaterial();
     base_simple_mat->metallic = 0.01f;
     base_simple_mat->roughness = 0.95f;
     base->SetMaterial(base_simple_mat);
 
     // dirlight
-    GameObject *dirLight = GameObject::DirLight();
+    GameObject* dirLight = GameObject::DirLight();
     dirLight->transform->position = Vector3(2.5f);
     dirLight->transform->rotation.x = -40.0f;
     dirLight->transform->rotation.y = 230.0f;
-    ((DirLight *)dirLight->GetComponent("Light"))->strength = 5.0f;
+    ((DirLight*)dirLight->GetComponent("Light"))->strength = 5.0f;
 
     // pointlights
-    GameObject *pointLightZero = new GameObject();
+    GameObject* pointLightZero = new GameObject();
     pointLightZero->name = "PointLightZero";
     pointLightZero->transform->position = Vector3(0.0f, 2.6f, 0.0f);
     bool p_light_rotate = false;
     GLfloat rotateSpeed = 1.0f;
     GLfloat p_light_radius = 3.0f;
-    GameObject *pointLight1 = GameObject::PointLight();
-    GameObject *pointLight2 = GameObject::PointLight();
-    GameObject *pointLight3 = GameObject::PointLight();
+    GameObject* pointLight1 = GameObject::PointLight();
+    GameObject* pointLight2 = GameObject::PointLight();
+    GameObject* pointLight3 = GameObject::PointLight();
 
     // camera
-    GameObject *camera_obj = GameObject::Camera();
+    GameObject* camera_obj = GameObject::Camera();
     camera_obj->name = "Camera";
     camera_obj->transform->position = Vector3(2.5f, 0.0f, 0.0f);
     camera_obj->transform->rotation.y = -180.0f;
-    Camera *camera = (Camera *)camera_obj->GetComponent("Camera");
+    Camera* camera = (Camera*)camera_obj->GetComponent("Camera");
     camera->near = 0.0001f;
-    
+
     // build scene
     zero->Add(hawk);
     zero->Add(tiger);
@@ -198,11 +198,11 @@ int main()
 
         window->Clear(Vector3(0.2f));
 
-        // ¸üÐÂ³¡¾° ... 
+        // æ›´æ–°åœºæ™¯ ... 
         scene->Update();
         scene->Render();
 
-#pragma region »æÖÆGUI
+#pragma region ç»˜åˆ¶GUI
 
         ImGui_ImplOpenGL3_NewFrame();
         ImGui_ImplGlfw_NewFrame();
@@ -214,96 +214,96 @@ int main()
         ImGui::SetNextWindowSize(ImVec2(window->width, window->height));
         ImGui::SetNextWindowPos(ImVec2(0, 0));
 
-        // Ö÷´°¿Ú
+        // ä¸»çª—å£
         ImGuiStyle& gui_style = ImGui::GetStyle();
-        ImGui::Begin("Main", (bool *)1, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
+        ImGui::Begin("Main", (bool*)1, ImGuiWindowFlags_MenuBar | ImGuiWindowFlags_NoTitleBar | ImGuiWindowFlags_NoResize);
 
-            // ²Ëµ¥À¸
-            GLfloat MenuBarHeightWidthSpacing;
-            ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 4));
-            if (ImGui::BeginMenuBar())
+        // èœå•æ 
+        GLfloat MenuBarHeightWidthSpacing;
+        ImGui::PushStyleVar(ImGuiStyleVar_ItemSpacing, ImVec2(8, 4));
+        if (ImGui::BeginMenuBar())
+        {
+            MenuBarHeightWidthSpacing = ImGui::GetFrameHeightWithSpacing();
+            if (ImGui::BeginMenu("File"))
             {
-                MenuBarHeightWidthSpacing = ImGui::GetFrameHeightWithSpacing();
-                if (ImGui::BeginMenu("File"))
+                if (ImGui::MenuItem("Close"))
                 {
-                    if (ImGui::MenuItem("Close"))
-                    {
-                        window->Close();
-                    }
-                    ImGui::EndMenu();
+                    window->Close();
                 }
-
-                if (ImGui::BeginMenu("Edit"))
-                {
-                    if (ImGui::MenuItem("Add a cube"))
-                    {
-                        GameObject *cube = GameObject::Cube();
-                        scene->Add(cube);
-                    }
-                    ImGui::EndMenu();
-                }
-
-                ImGui::EndMenuBar();
-            }
-            ImGui::PopStyleVar();
-
-            // ²¼¾Ö×ó±ß
-            GameObject *clicked = nullptr;
-            ImGui::BeginChild("Left", ImVec2(HIERARCHY_WIDTH, window->height - MenuBarHeightWidthSpacing), true);
-            DrawObjectTree(scene->Start());
-            ImGui::EndChild();
-            ImGui::SameLine();
-
-            // ²¼¾ÖÖÐ¼ä
-            ImGui::BeginChild("Middle", ImVec2(renderer->canvaWidth, window->height - MenuBarHeightWidthSpacing), true);
-                
-                // ³¡¾°ÊÓÍ¼
-                ImGui::BeginChild("MiddleUp", ImVec2(renderer->canvaWidth, renderer->canvaHeight), true);
-                if (ImGui::IsWindowFocused())
-                {
-                    window->ProcessInput(zero, camera_obj);
-                }
-                    
-                ImVec2 scene_window_pos = ImGui::GetWindowPos();
-                ImGui::GetWindowDrawList()->AddImage((void *)renderer->buffer[DISPLAY_BUFFER]->colorAttachments.front()->id, scene_window_pos,
-                    ImVec2(scene_window_pos.x + renderer->canvaWidth, scene_window_pos.y + renderer->canvaHeight), ImVec2(0, 1), ImVec2(1, 0));
-
-                    ImGui::BeginChild("Overlay", ImVec2(300, 100), false);
-                    ImGui::Text("Framerate %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
-                    ImGui::Text("Vertices %d", Renderer::vertices);
-                    ImGui::Text("Faces %d", Renderer::faces);
-                    ImGui::EndChild();
-
-
-                ImGui::EndChild();
-
-                // ¿ØÖÆÌ¨ÊÓÍ¼
-                ImGui::BeginChild("MiddleDown", ImVec2(renderer->canvaWidth,
-                    window->height - MenuBarHeightWidthSpacing - renderer->canvaHeight - gui_style.ItemSpacing.y * 2), true);
-                ShowRendererSetting(renderer);
-                ImGui::EndChild();
-
-            ImGui::EndChild();
-
-            // ÊôÐÔÊÓ²ìÆ÷ÊÓÍ¼
-            ImGui::SameLine();
-            ImGui::BeginChild("Right", ImVec2(window->width - renderer->canvaWidth - HIERARCHY_WIDTH, 0), true, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
-            if (CLICKED_OBJ != nullptr)
-            {
-                ImGui::Text("Name: %s", CLICKED_OBJ->name.c_str());
-                ImGui::Text("Tag: %s", OBJ_TAG_STRING[CLICKED_OBJ->tag]);
-                ImGui::Checkbox("Visible", &CLICKED_OBJ->visible);
-                CLICKED_OBJ->transform->DrawUIElements();
-                CLICKED_OBJ->componentSystem->DrawUIElements();
+                ImGui::EndMenu();
             }
 
-            // ÊôÐÔÊÓ²ìÆ÷ÊÓÍ¼½áÊø
-            ImGui::EndChild();
+            if (ImGui::BeginMenu("Edit"))
+            {
+                if (ImGui::MenuItem("Add a cube"))
+                {
+                    GameObject* cube = GameObject::Cube();
+                    scene->Add(cube);
+                }
+                ImGui::EndMenu();
+            }
 
-        // Ö÷´°¿Ú½áÊø
+            ImGui::EndMenuBar();
+        }
+        ImGui::PopStyleVar();
+
+        // å¸ƒå±€å·¦è¾¹
+        GameObject* clicked = nullptr;
+        ImGui::BeginChild("Left", ImVec2(HIERARCHY_WIDTH, window->height - MenuBarHeightWidthSpacing), true);
+        DrawObjectTree(scene->Start());
+        ImGui::EndChild();
+        ImGui::SameLine();
+
+        // å¸ƒå±€ä¸­é—´
+        ImGui::BeginChild("Middle", ImVec2(renderer->canvaWidth, window->height - MenuBarHeightWidthSpacing), true);
+
+        // åœºæ™¯è§†å›¾
+        ImGui::BeginChild("MiddleUp", ImVec2(renderer->canvaWidth, renderer->canvaHeight), true);
+        if (ImGui::IsWindowFocused())
+        {
+            window->ProcessInput(zero, camera_obj);
+        }
+
+        ImVec2 scene_window_pos = ImGui::GetWindowPos();
+        ImGui::GetWindowDrawList()->AddImage((void*)renderer->buffer[DISPLAY_BUFFER]->colorAttachments.front()->id, scene_window_pos,
+            ImVec2(scene_window_pos.x + renderer->canvaWidth, scene_window_pos.y + renderer->canvaHeight), ImVec2(0, 1), ImVec2(1, 0));
+
+        ImGui::BeginChild("Overlay", ImVec2(300, 100), false);
+        ImGui::Text("Framerate %.3f ms/frame (%.1f FPS)", 1000.0f / ImGui::GetIO().Framerate, ImGui::GetIO().Framerate);
+        ImGui::Text("Vertices %d", Renderer::vertices);
+        ImGui::Text("Faces %d", Renderer::faces);
+        ImGui::EndChild();
+
+
+        ImGui::EndChild();
+
+        // æŽ§åˆ¶å°è§†å›¾
+        ImGui::BeginChild("MiddleDown", ImVec2(renderer->canvaWidth,
+            window->height - MenuBarHeightWidthSpacing - renderer->canvaHeight - gui_style.ItemSpacing.y * 2), true);
+        ShowRendererSetting(renderer);
+        ImGui::EndChild();
+
+        ImGui::EndChild();
+
+        // å±žæ€§è§†å¯Ÿå™¨è§†å›¾
+        ImGui::SameLine();
+        ImGui::BeginChild("Right", ImVec2(window->width - renderer->canvaWidth - HIERARCHY_WIDTH, 0), true, ImGuiWindowFlags_AlwaysHorizontalScrollbar);
+        if (CLICKED_OBJ != nullptr)
+        {
+            ImGui::Text("Name: %s", CLICKED_OBJ->name.c_str());
+            ImGui::Text("Tag: %s", OBJ_TAG_STRING[CLICKED_OBJ->tag]);
+            ImGui::Checkbox("Visible", &CLICKED_OBJ->visible);
+            CLICKED_OBJ->transform->DrawUIElements();
+            CLICKED_OBJ->componentSystem->DrawUIElements();
+        }
+
+        // å±žæ€§è§†å¯Ÿå™¨è§†å›¾ç»“æŸ
+        ImGui::EndChild();
+
+        // ä¸»çª—å£ç»“æŸ
         ImGui::End();
 
-        // äÖÈ¾ImGui
+        // æ¸²æŸ“ImGui
         ImGui::Render();
         ImGui_ImplOpenGL3_RenderDrawData(ImGui::GetDrawData());
 #pragma endregion
@@ -328,11 +328,11 @@ void SetGuiStyle()
 
     gui_style.ItemSpacing = ImVec2(1, 4);
     gui_style.ItemInnerSpacing = ImVec2(4, 4);
-    
+
     gui_style.GrabRounding = 6;
 }
 
-void DrawObjectTree(GameObject *obj)
+void DrawObjectTree(GameObject* obj)
 {
     ImGui::PushID(obj);
     ImGui::AlignTextToFramePadding();
@@ -370,7 +370,7 @@ void DrawObjectTree(GameObject *obj)
     ImGui::PopID();
 }
 
-void ShowRendererSetting(Renderer *renderer)
+void ShowRendererSetting(Renderer* renderer)
 {
     ImGui::SliderFloat("Gamma", &renderer->gamma, 0.0f, 2.2f);
     ImGui::SliderFloat("Exposure", &renderer->exposure, 0.0f, 1.0f);

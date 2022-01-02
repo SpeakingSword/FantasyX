@@ -13,7 +13,6 @@ void main()
     vec3 color = texture(lightMap, fs_in.texCoord).rgb;
     float grey = dot(color, vec3(0.2126, 0.7152, 0.0722));
 
-    // É«µ÷Ó³Éä
     float brightness = 1.0f - exp(-grey * exposure);
 
     if (brightness >= 0.95f)

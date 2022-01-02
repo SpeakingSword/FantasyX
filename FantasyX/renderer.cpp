@@ -126,7 +126,7 @@ namespace fx {
         AfterRender();
     }
 
-    void Renderer::InorderTraverse(BiTreeNode<GameObject *> *node, Shader *shader = nullptr)
+    void Renderer::InorderTraverse(BiTreeNode<GameObject*>* node, Shader* shader = nullptr)
     {
         if (node == nullptr)
             return;
@@ -150,7 +150,7 @@ namespace fx {
 
     }
 
-    void Renderer::ReverseInorderTraverse(BiTreeNode<GameObject *> *node, Shader *shader = nullptr)
+    void Renderer::ReverseInorderTraverse(BiTreeNode<GameObject*>* node, Shader* shader = nullptr)
     {
         if (node == nullptr)
             return;
@@ -176,14 +176,14 @@ namespace fx {
     void Renderer::BeforeRender()
     {
 
-#pragma region ³õÊ¼»¯¹ý¶É»º³å
+#pragma region åˆå§‹åŒ–è¿‡æ¸¡ç¼“å†²
 
         if (buffer[TRANSMITION_BUFFER] == nullptr)
         {
             buffer[TRANSMITION_BUFFER] = new FrameBuffer();
             buffer[TRANSMITION_BUFFER]->CreateBuffer();
 
-            Texture2D *colorTex = new Texture2D();
+            Texture2D* colorTex = new Texture2D();
             colorTex->width = canvaWidth;
             colorTex->height = canvaHeight;
             //colorTex->minFilter = GL_NEAREST;
@@ -197,7 +197,7 @@ namespace fx {
 
 #pragma endregion
 
-#pragma region ¸üÐÂ×ÅÉ«Æ÷¹²Ïí±äÁ¿
+#pragma region æ›´æ–°ç€è‰²å™¨å…±äº«å˜é‡
 
         if (shaderBuffer[SHARED_MATRICES] == nullptr)
         {
@@ -217,7 +217,7 @@ namespace fx {
             shaderBuffer[SHARED_CAMERA_VALUES]->BindBase();
         }
 
-        Camera *camera = (Camera *)sceneData.cameras->front()->GetComponent("Camera");
+        Camera* camera = (Camera*)sceneData.cameras->front()->GetComponent("Camera");
         Matrix4x4 view, projection;
         switch (camera->operationMode)
         {
@@ -257,9 +257,9 @@ namespace fx {
 
 #pragma endregion
 
-#pragma region ÉèÖÃOpenGLµÄ×´Ì¬
+#pragma region è®¾ç½®OpenGLçš„çŠ¶æ€
 
-        // ×´Ì¬¿ª¹Ø
+        // çŠ¶æ€å¼€å…³
         glEnable(GL_CULL_FACE);
         glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 
@@ -269,14 +269,14 @@ namespace fx {
 
     void Renderer::GeomatryMapping()
     {
-        // ³õÊ¼»¯G»º³å
+        // åˆå§‹åŒ–Gç¼“å†²
 #pragma region Gbuffer Initiate
         if (buffer[G_BUFFER] == nullptr)
         {
             buffer[G_BUFFER] = new FrameBuffer();
             buffer[G_BUFFER]->CreateBuffer();
 
-            Texture2D *pos = new Texture2D();
+            Texture2D* pos = new Texture2D();
             pos->internalFormat = GL_RGB16F;
             pos->width = canvaWidth;
             pos->height = canvaHeight;
@@ -286,7 +286,7 @@ namespace fx {
             pos->CreateBuffer();
             buffer[G_BUFFER]->AddTexture2D(pos, COLOR_ATTACHMENT);
 
-            Texture2D *depth = new Texture2D();
+            Texture2D* depth = new Texture2D();
             depth->internalFormat = GL_R16F;
             depth->width = canvaWidth;
             depth->height = canvaHeight;
@@ -296,7 +296,7 @@ namespace fx {
             depth->CreateBuffer();
             buffer[G_BUFFER]->AddTexture2D(depth, COLOR_ATTACHMENT);
 
-            Texture2D *albedo = new Texture2D();
+            Texture2D* albedo = new Texture2D();
             albedo->internalFormat = GL_RGB16F;
             albedo->width = canvaWidth;
             albedo->height = canvaHeight;
@@ -306,7 +306,7 @@ namespace fx {
             albedo->CreateBuffer();
             buffer[G_BUFFER]->AddTexture2D(albedo, COLOR_ATTACHMENT);
 
-            Texture2D *metallic = new Texture2D();
+            Texture2D* metallic = new Texture2D();
             metallic->internalFormat = GL_RED;
             metallic->width = canvaWidth;
             metallic->height = canvaHeight;
@@ -316,9 +316,9 @@ namespace fx {
             metallic->CreateBuffer();
             buffer[G_BUFFER]->AddTexture2D(metallic, COLOR_ATTACHMENT);
 
-            Texture2D *normal = new Texture2D();
+            Texture2D* normal = new Texture2D();
 
-            // £¡£¡£¡×¢Òâ·¨ÏßÌùÍ¼»º³å±ØÐëÎª¸ß¶¯Ì¬·¶Î§£¬²»È»¸ºÖµ»á±»½Ø¶ÏÎª0
+            // ï¼ï¼ï¼æ³¨æ„æ³•çº¿è´´å›¾ç¼“å†²å¿…é¡»ä¸ºé«˜åŠ¨æ€èŒƒå›´ï¼Œä¸ç„¶è´Ÿå€¼ä¼šè¢«æˆªæ–­ä¸º0
             normal->internalFormat = GL_RGB16F;
             normal->width = canvaWidth;
             normal->height = canvaHeight;
@@ -328,7 +328,7 @@ namespace fx {
             normal->CreateBuffer();
             buffer[G_BUFFER]->AddTexture2D(normal, COLOR_ATTACHMENT);
 
-            Texture2D *roughness = new Texture2D();
+            Texture2D* roughness = new Texture2D();
             roughness->internalFormat = GL_RED;
             roughness->width = canvaWidth;
             roughness->height = canvaHeight;
@@ -338,7 +338,7 @@ namespace fx {
             roughness->CreateBuffer();
             buffer[G_BUFFER]->AddTexture2D(roughness, COLOR_ATTACHMENT);
 
-            Texture2D *ao = new Texture2D();
+            Texture2D* ao = new Texture2D();
             ao->internalFormat = GL_RED;
             ao->width = canvaWidth;
             ao->height = canvaHeight;
@@ -348,7 +348,7 @@ namespace fx {
             ao->CreateBuffer();
             buffer[G_BUFFER]->AddTexture2D(ao, COLOR_ATTACHMENT);
 
-            RenderBuffer *rbo = new RenderBuffer();
+            RenderBuffer* rbo = new RenderBuffer();
             rbo->width = canvaWidth;
             rbo->height = canvaHeight;
             rbo->CreateBuffer();
@@ -374,17 +374,17 @@ namespace fx {
             break;
         }
 
-        // Ê¹ÓÃG»º³å
+        // ä½¿ç”¨Gç¼“å†²
         buffer[G_BUFFER]->Bind();
         glViewport(0, 0, canvaWidth, canvaHeight);
         glEnable(GL_DEPTH_TEST);
         glClearColor(backGroundColor.x, backGroundColor.y, backGroundColor.z, 1.0f);
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
-        GameObject *camera = sceneData.cameras->front();
+        GameObject* camera = sceneData.cameras->front();
         GLfloat r = glm::dot(camera->transform->front, WORLD_FRONT);
 
-        // Èç¹ûÉãÏñ»úÓëÕýzÖáÍ¬Ïò£¬Ôò·´ÖÐÐò±éÀú,·ñÔò·´Ïò£¬ÖÐÐò±éÀú
+        // å¦‚æžœæ‘„åƒæœºä¸Žæ­£zè½´åŒå‘ï¼Œåˆ™åä¸­åºéåŽ†,å¦åˆ™åå‘ï¼Œä¸­åºéåŽ†
         if (r > 0)
         {
             ReverseInorderTraverse(sceneData.opaqueTree->root);
@@ -400,14 +400,14 @@ namespace fx {
 
     void Renderer::ShadowMapCalculate()
     {
-#pragma region ³õÊ¼»¯ÒõÓ°ÌùÍ¼»æÖÆ»º³å
+#pragma region åˆå§‹åŒ–é˜´å½±è´´å›¾ç»˜åˆ¶ç¼“å†²
 
         if (buffer[SHADOWMAP_CALCULATE_BUFFER] == nullptr)
         {
             buffer[SHADOWMAP_CALCULATE_BUFFER] = new FrameBuffer();
             buffer[SHADOWMAP_CALCULATE_BUFFER]->CreateBuffer();
 
-            Texture2D *shadowMap = new Texture2D();
+            Texture2D* shadowMap = new Texture2D();
             shadowMap->internalFormat = GL_DEPTH_COMPONENT24;
             shadowMap->width = dirLightShadowMapWidth;
             shadowMap->height = dirLightShadowMapWidth;
@@ -425,29 +425,29 @@ namespace fx {
 
 #pragma endregion
 
-        // Èç¹ûÂú×ãÌõ¼þ²Å»æÖÆ
+        // å¦‚æžœæ»¡è¶³æ¡ä»¶æ‰ç»˜åˆ¶
         if (sceneData.dirLights->size() > 0 && shadowOn)
         {
-            // Ê¹ÓÃÒõÓ°ÌùÍ¼»æÖÆ»º³å
+            // ä½¿ç”¨é˜´å½±è´´å›¾ç»˜åˆ¶ç¼“å†²
             buffer[SHADOWMAP_CALCULATE_BUFFER]->Bind();
             glViewport(0, 0, dirLightShadowMapWidth, dirLightShadowMapWidth);
             glEnable(GL_DEPTH_TEST);
             glClear(GL_DEPTH_BUFFER_BIT);
 
 
-            // ¼ÆËã¶¨Ïò¹âÔ´Î»ÖÃµÄ±ä»»¾ØÕó
+            // è®¡ç®—å®šå‘å…‰æºä½ç½®çš„å˜æ¢çŸ©é˜µ
             GLfloat near = 0.1f, far = 10.0f;
             Matrix4x4 dirLightProjection = glm::ortho(-5.0f, 5.0f, -5.0f, 5.0f, near, far);
             Matrix4x4 dirLightView = glm::lookAt(sceneData.dirLights->front()->transform->worldPos, Vector3(0.0f), WORLD_UP);
             Matrix4x4 dirLightSpaceMatrix = dirLightProjection * dirLightView;
 
-            DirLightShadowShader *shader = DirLightShadowShader::GetInstance();
+            DirLightShadowShader* shader = DirLightShadowShader::GetInstance();
             shader->Bind();
             shader->SetMat4("lightSpaceMatrix", dirLightSpaceMatrix);
             shader->SetFloat("NEAR", near);
             shader->SetFloat("FAR", far);
 
-            // È·¶¨±éÀúË³Ðò
+            // ç¡®å®šéåŽ†é¡ºåº
             GLfloat r = glm::dot(sceneData.dirLights->front()->transform->front, WORLD_FRONT);
             if (r > 0)
             {
@@ -461,8 +461,8 @@ namespace fx {
             shader->Unbind();
             buffer[SHADOWMAP_CALCULATE_BUFFER]->Unbind();
 
-            // Ë³±ãÉèÖÃ¶¨Ïò¹âµÄ¿Õ¼äÍ¶Ó°¾ØÕó
-            PBRLightingShader *lighting_shader = PBRLightingShader::GetInstance();
+            // é¡ºä¾¿è®¾ç½®å®šå‘å…‰çš„ç©ºé—´æŠ•å½±çŸ©é˜µ
+            PBRLightingShader* lighting_shader = PBRLightingShader::GetInstance();
             lighting_shader->Bind();
             lighting_shader->SetMat4("dirLightSpaceMatrix", dirLightSpaceMatrix);
             lighting_shader->Unbind();
@@ -471,14 +471,14 @@ namespace fx {
 
     void Renderer::Lighting()
     {
-#pragma region ³õÊ¼»¯¹âÕÕ´¦ÀíÖ¡»º³å
+#pragma region åˆå§‹åŒ–å…‰ç…§å¤„ç†å¸§ç¼“å†²
 
         if (buffer[LIGHTING_BUFFER] == nullptr)
         {
             buffer[LIGHTING_BUFFER] = new FrameBuffer();
             buffer[LIGHTING_BUFFER]->CreateBuffer();
 
-            Texture2D *lighting = new Texture2D();
+            Texture2D* lighting = new Texture2D();
             lighting->internalFormat = GL_RGB16F;
             lighting->width = canvaWidth;
             lighting->height = canvaHeight;
@@ -497,7 +497,7 @@ namespace fx {
             buffer[IBL_BUFFER] = new FrameBuffer();
             buffer[IBL_BUFFER]->CreateBuffer();
 
-            RenderBuffer *rbo = new RenderBuffer();
+            RenderBuffer* rbo = new RenderBuffer();
             rbo->width = canvaWidth;
             rbo->height = canvaHeight;
             rbo->internalFormat = GL_DEPTH_COMPONENT24;
@@ -508,25 +508,25 @@ namespace fx {
 
 #pragma endregion
 
-        HdrIBLTextures *currentHdrIBLTextures = nullptr;
-        // Èç¹û¹¦ÄÜ¿ªÆô¶øÇÒµ±Ç°ÏÔÊ¾µÄÎÆÀí²»Îª¿Õ£¬ÔòÊÔÍ¼ÕÒµ½¶ÔÓ¦±£´æµÄIBLÌùÍ¼£¬Ã»ÕÒµ½Ôò»æÖÆ
+        HdrIBLTextures* currentHdrIBLTextures = nullptr;
+        // å¦‚æžœåŠŸèƒ½å¼€å¯è€Œä¸”å½“å‰æ˜¾ç¤ºçš„çº¹ç†ä¸ä¸ºç©ºï¼Œåˆ™è¯•å›¾æ‰¾åˆ°å¯¹åº”ä¿å­˜çš„IBLè´´å›¾ï¼Œæ²¡æ‰¾åˆ°åˆ™ç»˜åˆ¶
         if (IBL && hdrTexture.id != 0)
         {
             auto got = hdrIBLTextureStorage.find(hdrTexture.path.c_str());
 
-            // Ã»ÕÒµ½¾Í»æÖÆ
+            // æ²¡æ‰¾åˆ°å°±ç»˜åˆ¶
             if (got == hdrIBLTextureStorage.end())
             {
-                HdrIBLTextures *newHdrIBLTextures = new HdrIBLTextures();
+                HdrIBLTextures* newHdrIBLTextures = new HdrIBLTextures();
                 newHdrIBLTextures->hdrTexture = this->hdrTexture;
                 newHdrIBLTextures->CreateTextures();
-                newHdrIBLTextures->DrawTextures(buffer[IBL_BUFFER], (RenderBuffer *)buffer[IBL_BUFFER]->depthAttachment);
+                newHdrIBLTextures->DrawTextures(buffer[IBL_BUFFER], (RenderBuffer*)buffer[IBL_BUFFER]->depthAttachment);
                 currentHdrIBLTextures = newHdrIBLTextures;
 
-                std::pair<string, HdrIBLTextures *> p(hdrTexture.path.c_str(), newHdrIBLTextures);
+                std::pair<string, HdrIBLTextures*> p(hdrTexture.path.c_str(), newHdrIBLTextures);
                 hdrIBLTextureStorage.insert(p);
             }
-            else  // ÕÒµ½ÔòÖ±½ÓÊ¹ÓÃ
+            else  // æ‰¾åˆ°åˆ™ç›´æŽ¥ä½¿ç”¨
             {
                 currentHdrIBLTextures = got._Ptr->_Myval.second;
             }
@@ -550,7 +550,7 @@ namespace fx {
             glBindTexture(GL_TEXTURE_2D, buffer[G_BUFFER]->colorAttachments.at(i)->id);
         }
 
-        PBRLightingShader *shader = PBRLightingShader::GetInstance();
+        PBRLightingShader* shader = PBRLightingShader::GetInstance();
         shader->Bind();
         shader->SetVec3("viewPos", sceneData.cameras->front()->transform->worldPos);
 
@@ -564,15 +564,15 @@ namespace fx {
 
         if (sceneData.dirLights->size() > 0 && sceneData.dirLights->front()->visible)
         {
-            // ÉèÖÃ¶¨Ïò¹â
-            shader->SetVec3("dirLight.color", ((DirLight *)(sceneData.dirLights->front()->GetComponent("Light")))->color);
-            shader->SetVec3("dirLight.direction", ((DirLight *)(sceneData.dirLights->front()->GetComponent("Light")))->direction);
-            shader->SetFloat("dirLight.strength", ((DirLight *)(sceneData.dirLights->front()->GetComponent("Light")))->strength);
+            // è®¾ç½®å®šå‘å…‰
+            shader->SetVec3("dirLight.color", ((DirLight*)(sceneData.dirLights->front()->GetComponent("Light")))->color);
+            shader->SetVec3("dirLight.direction", ((DirLight*)(sceneData.dirLights->front()->GetComponent("Light")))->direction);
+            shader->SetFloat("dirLight.strength", ((DirLight*)(sceneData.dirLights->front()->GetComponent("Light")))->strength);
             shader->SetBool("dirLightOn", true);
 
             if (shadowOn)
             {
-                // ÉèÖÃÐèÒª»æÖÆÒõÓ°µÄ±äÁ¿
+                // è®¾ç½®éœ€è¦ç»˜åˆ¶é˜´å½±çš„å˜é‡
                 glActiveTexture(GL_TEXTURE0 + 12);
                 glBindTexture(GL_TEXTURE_2D, buffer[SHADOWMAP_CALCULATE_BUFFER]->depthAttachment->id);
                 shader->SetBool("dirLightShadowOn", true);
@@ -596,9 +596,9 @@ namespace fx {
             {
                 if ((*iter)->visible)
                 {
-                    shader->SetVec3(("pointLights[" + std::to_string(pointLightNum) + "].color").c_str(), ((PointLight *)((*iter)->GetComponent("Light")))->color);
-                    shader->SetVec3(("pointLights[" + std::to_string(pointLightNum) + "].position").c_str(), ((PointLight *)((*iter)->GetComponent("Light")))->position);
-                    shader->SetFloat(("pointLights[" + std::to_string(pointLightNum) + "].strength").c_str(), ((PointLight *)((*iter)->GetComponent("Light")))->strength);
+                    shader->SetVec3(("pointLights[" + std::to_string(pointLightNum) + "].color").c_str(), ((PointLight*)((*iter)->GetComponent("Light")))->color);
+                    shader->SetVec3(("pointLights[" + std::to_string(pointLightNum) + "].position").c_str(), ((PointLight*)((*iter)->GetComponent("Light")))->position);
+                    shader->SetFloat(("pointLights[" + std::to_string(pointLightNum) + "].strength").c_str(), ((PointLight*)((*iter)->GetComponent("Light")))->strength);
                     pointLightNum++;
                     if (pointLightNum >= 8)
                         break;
@@ -612,7 +612,7 @@ namespace fx {
         }
 
 
-        RectangleMesh *mesh = RectangleMesh::GetInstance();
+        RectangleMesh* mesh = RectangleMesh::GetInstance();
         glBindVertexArray(mesh->VAO);
 
         if (mesh->indices.size() > 0)
@@ -634,7 +634,7 @@ namespace fx {
             buffer[FORWARDRENDER_BUFFER] = new FrameBuffer();
             buffer[FORWARDRENDER_BUFFER]->CreateBuffer();
 
-            Texture2D *color = new Texture2D();
+            Texture2D* color = new Texture2D();
             color->width = canvaWidth;
             color->height = canvaHeight;
             color->minFilter = GL_NEAREST;
@@ -642,7 +642,7 @@ namespace fx {
             color->CreateBuffer();
             buffer[FORWARDRENDER_BUFFER]->AddTexture2D(color, COLOR_ATTACHMENT);
 
-            RenderBuffer *rbo = new RenderBuffer();
+            RenderBuffer* rbo = new RenderBuffer();
             rbo->width = canvaWidth;
             rbo->height = canvaHeight;
             rbo->CreateBuffer();
@@ -659,19 +659,19 @@ namespace fx {
         glViewport(0, 0, canvaWidth, canvaHeight);
         glEnable(GL_DEPTH_TEST);
 
-        // ÊÇ·ñ»æÖÆÌì¿ÕºÐ×Ó
-        if (((Camera *)sceneData.cameras->front()->GetComponent("Camera"))->projection == CAM_PERSPECTIVE)
+        // æ˜¯å¦ç»˜åˆ¶å¤©ç©ºç›’å­
+        if (((Camera*)sceneData.cameras->front()->GetComponent("Camera"))->projection == CAM_PERSPECTIVE)
         {
             glDisable(GL_CULL_FACE);
             glDepthFunc(GL_LEQUAL);
-            // °ó¶¨ÐèÒªÏÔÊ¾µÄÌì¿ÕºÐ×Ó
+            // ç»‘å®šéœ€è¦æ˜¾ç¤ºçš„å¤©ç©ºç›’å­
             glActiveTexture(GL_TEXTURE0);
             glBindTexture(GL_TEXTURE_CUBE_MAP, publicHdrIBLTextures != nullptr ? publicHdrIBLTextures->IBLTextures[IBL_IRRADIANCE_MAP]->id : skyboxTexture.id);
 
-            SkyBoxShader *skyboxShader = SkyBoxShader::GetInstance();
+            SkyBoxShader* skyboxShader = SkyBoxShader::GetInstance();
             skyboxShader->Bind();
 
-            CubeMesh *mesh = CubeMesh::GetInstance();
+            CubeMesh* mesh = CubeMesh::GetInstance();
             glBindVertexArray(mesh->VAO);
 
             if (mesh->indices.size() > 0)
@@ -699,7 +699,7 @@ namespace fx {
             buffer[BRIGHT_BUFFER] = new FrameBuffer();
             buffer[BRIGHT_BUFFER]->CreateBuffer();
 
-            Texture2D *bright = new Texture2D();
+            Texture2D* bright = new Texture2D();
             bright->internalFormat = GL_RGB16F;
             bright->width = canvaWidth / bloomWidth;
             bright->height = canvaHeight / bloomWidth;
@@ -720,11 +720,11 @@ namespace fx {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, buffer[TRANSMITION_BUFFER]->colorAttachments.front()->id);
 
-        BrightCatchShader *shader = BrightCatchShader::GetInstance();
+        BrightCatchShader* shader = BrightCatchShader::GetInstance();
         shader->Bind();
         shader->SetFloat("exposure", this->exposure);
 
-        RectangleMesh *mesh = RectangleMesh::GetInstance();
+        RectangleMesh* mesh = RectangleMesh::GetInstance();
         glBindVertexArray(mesh->VAO);
 
         if (mesh->indices.size() > 0)
@@ -745,7 +745,7 @@ namespace fx {
             buffer[PING_BUFFER] = new FrameBuffer();
             buffer[PING_BUFFER]->CreateBuffer();
 
-            Texture2D *ping = new Texture2D();
+            Texture2D* ping = new Texture2D();
             ping->internalFormat = GL_RGB16F;
             ping->width = canvaWidth / bloomWidth;
             ping->height = canvaHeight / bloomWidth;
@@ -758,7 +758,7 @@ namespace fx {
             buffer[PONG_BUFFER] = new FrameBuffer();
             buffer[PONG_BUFFER]->CreateBuffer();
 
-            Texture2D *pong = new Texture2D();
+            Texture2D* pong = new Texture2D();
             pong->internalFormat = GL_RGB16F;
             pong->width = canvaWidth / bloomWidth;
             pong->height = canvaHeight / bloomWidth;
@@ -769,8 +769,8 @@ namespace fx {
             buffer[PONG_BUFFER]->CheckCompleteness();
         }
 
-        GaussianBlurShader *shader = GaussianBlurShader::GetInstance();
-        RectangleMesh *mesh = RectangleMesh::GetInstance();
+        GaussianBlurShader* shader = GaussianBlurShader::GetInstance();
+        RectangleMesh* mesh = RectangleMesh::GetInstance();
         bool horizontal = true, first_blur = true;
         shader->Bind();
         for (GLuint i = 0; i < bloomLevel; i++)
@@ -802,7 +802,7 @@ namespace fx {
             buffer[BLOOM_BUFFER] = new FrameBuffer();
             buffer[BLOOM_BUFFER]->CreateBuffer();
 
-            Texture2D *bloomLevel = new Texture2D();
+            Texture2D* bloomLevel = new Texture2D();
             bloomLevel->internalFormat = GL_RGB16F;
             bloomLevel->width = canvaWidth;
             bloomLevel->height = canvaHeight;
@@ -834,11 +834,11 @@ namespace fx {
         }
         glBindTexture(GL_TEXTURE_2D, blurTexture);
 
-        BloomShader *shader = BloomShader::GetInstance();
+        BloomShader* shader = BloomShader::GetInstance();
         shader->Bind();
         shader->SetFloat("bloomStrength", bloomStrength);
 
-        RectangleMesh *mesh = RectangleMesh::GetInstance();
+        RectangleMesh* mesh = RectangleMesh::GetInstance();
         glBindVertexArray(mesh->VAO);
 
         if (mesh->indices.size() > 0)
@@ -850,7 +850,7 @@ namespace fx {
         glBindVertexArray(0);
         buffer[BLOOM_BUFFER]->Unbind();
         glDisable(GL_BLEND);
-        
+
         FrameBuffer::BlitColorBuffer(buffer[BLOOM_BUFFER]->id, 0, buffer[TRANSMITION_BUFFER]->id, 0, canvaWidth, canvaHeight, canvaWidth, canvaHeight);
     }
 
@@ -866,7 +866,7 @@ namespace fx {
             buffer[DISPLAY_BUFFER] = new FrameBuffer();
             buffer[DISPLAY_BUFFER]->CreateBuffer();
 
-            Texture2D *color = new Texture2D();
+            Texture2D* color = new Texture2D();
             color->internalFormat = GL_RGB;
             color->width = canvaWidth;
             color->height = canvaHeight;
@@ -884,7 +884,7 @@ namespace fx {
         glActiveTexture(GL_TEXTURE0);
         glBindTexture(GL_TEXTURE_2D, buffer[TRANSMITION_BUFFER]->colorAttachments.front()->id);
 
-        DisplayShader *shader = DisplayShader::GetInstance();
+        DisplayShader* shader = DisplayShader::GetInstance();
         shader->Bind();
         shader->SetFloat("gamma", gamma);
         shader->SetFloat("exposure", exposure);
@@ -892,7 +892,7 @@ namespace fx {
         shader->SetInt("postType", postProcessing);
         shader->SetFloat("postStrength", postStrength);
 
-        RectangleMesh *mesh = RectangleMesh::GetInstance();
+        RectangleMesh* mesh = RectangleMesh::GetInstance();
         glBindVertexArray(mesh->VAO);
 
         if (mesh->indices.size() > 0)

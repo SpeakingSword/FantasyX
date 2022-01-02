@@ -8,7 +8,7 @@
 
 using namespace std;
 
-/*¶ş²æÊ÷½áµã*/
+/*äºŒå‰æ ‘ç»“ç‚¹*/
 template <typename T>
 class BiTreeNode {
 public:
@@ -25,35 +25,35 @@ public:
 template <typename T>
 class BiTree {
 private:
-    int size;/*Ê÷ÖĞ½áµãµÄ¸öÊı*/
+    int size;/*æ ‘ä¸­ç»“ç‚¹çš„ä¸ªæ•°*/
 public:
-    BiTreeNode<T> *root;/*¸ù½áµãµÄÖ¸Õë*/
+    BiTreeNode<T>* root;/*æ ¹ç»“ç‚¹çš„æŒ‡é’ˆ*/
 
     BiTree() { size = 0; root = nullptr; };
     ~BiTree() { remove(root); };
 
-    bool insert_left(BiTreeNode<T>* node, T data);/*½«data²åÈëµ½nodeµÄ×óº¢×Ó*/
-    bool insert_right(BiTreeNode<T>* node, T data);/*½«data²åÈëµ½nodeµÄÓÒº¢×Ó*/
-    bool remove(BiTreeNode<T>* &node);/*É¾³ıÒÔnodeÎª¸ùµÄ×ÓÊ÷*/
-    bool preorderR(BiTreeNode<T>* node, list<T>* l);/*µİ¹éÊµÏÖ£ºÏÈĞò±éÀúÒÔnodeÎª¸ùµÄÊ÷£¬²¢½«±éÀú½á¹û±£´æµ½lÖĞ*/
-    bool preorderI(BiTreeNode<T>* node, list<T>* l);/*µü´úÊµÏÖ£ºÏÈĞò±éÀúÒÔnodeÎª¸ùµÄÊ÷£¬²¢½«±éÀú½á¹û±£´æµ½lÖĞ*/
-    bool inorderR(BiTreeNode<T>* node, list<T>* l);/*µİ¹éÊµÏÖ£ºÖĞĞò±éÀúÒÔnodeÎª¸ùµÄÊ÷£¬²¢½«±éÀú½á¹û±£´æµ½lÖĞ*/
-    bool inorderI(BiTreeNode<T>* node, list<T>* l);/*µü´úÊµÏÖ£ºÖĞĞò±éÀúÒÔnodeÎª¸ùµÄÊ÷£¬²¢½«±éÀú½á¹û±£´æµ½lÖĞ*/
-    bool postorderR(BiTreeNode<T>* node, list<T>* l);/*µİ¹éÊµÏÖ£ººóĞò±éÀúÒÔnodeÎª¸ùµÄÊ÷£¬²¢½«±éÀú½á¹û±£´æµ½lÖĞ*/
-    bool postorderI(BiTreeNode<T>* node, list<T>* l);/*µü´úÊµÏÖ£ººóĞò±éÀúÒÔnodeÎª¸ùµÄÊ÷£¬²¢½«±éÀú½á¹û±£´æµ½lÖĞ*/
-    bool level(BiTreeNode<T>* node, list<T>* l);/*²ã´Î±éÀúÒÔnodeÎª¸ùµÄÊ÷£¬²¢½«±äÁ¿½á¹û±£´æµ½lÖĞ*/
-    int height(BiTreeNode<T>* node);/*ÒÔnodeÎª¸ùµÄÊ÷µÄ¸ß¶È*/
+    bool insert_left(BiTreeNode<T>* node, T data);/*å°†dataæ’å…¥åˆ°nodeçš„å·¦å­©å­*/
+    bool insert_right(BiTreeNode<T>* node, T data);/*å°†dataæ’å…¥åˆ°nodeçš„å³å­©å­*/
+    bool remove(BiTreeNode<T>*& node);/*åˆ é™¤ä»¥nodeä¸ºæ ¹çš„å­æ ‘*/
+    bool preorderR(BiTreeNode<T>* node, list<T>* l);/*é€’å½’å®ç°ï¼šå…ˆåºéå†ä»¥nodeä¸ºæ ¹çš„æ ‘ï¼Œå¹¶å°†éå†ç»“æœä¿å­˜åˆ°lä¸­*/
+    bool preorderI(BiTreeNode<T>* node, list<T>* l);/*è¿­ä»£å®ç°ï¼šå…ˆåºéå†ä»¥nodeä¸ºæ ¹çš„æ ‘ï¼Œå¹¶å°†éå†ç»“æœä¿å­˜åˆ°lä¸­*/
+    bool inorderR(BiTreeNode<T>* node, list<T>* l);/*é€’å½’å®ç°ï¼šä¸­åºéå†ä»¥nodeä¸ºæ ¹çš„æ ‘ï¼Œå¹¶å°†éå†ç»“æœä¿å­˜åˆ°lä¸­*/
+    bool inorderI(BiTreeNode<T>* node, list<T>* l);/*è¿­ä»£å®ç°ï¼šä¸­åºéå†ä»¥nodeä¸ºæ ¹çš„æ ‘ï¼Œå¹¶å°†éå†ç»“æœä¿å­˜åˆ°lä¸­*/
+    bool postorderR(BiTreeNode<T>* node, list<T>* l);/*é€’å½’å®ç°ï¼šååºéå†ä»¥nodeä¸ºæ ¹çš„æ ‘ï¼Œå¹¶å°†éå†ç»“æœä¿å­˜åˆ°lä¸­*/
+    bool postorderI(BiTreeNode<T>* node, list<T>* l);/*è¿­ä»£å®ç°ï¼šååºéå†ä»¥nodeä¸ºæ ¹çš„æ ‘ï¼Œå¹¶å°†éå†ç»“æœä¿å­˜åˆ°lä¸­*/
+    bool level(BiTreeNode<T>* node, list<T>* l);/*å±‚æ¬¡éå†ä»¥nodeä¸ºæ ¹çš„æ ‘ï¼Œå¹¶å°†å˜é‡ç»“æœä¿å­˜åˆ°lä¸­*/
+    int height(BiTreeNode<T>* node);/*ä»¥nodeä¸ºæ ¹çš„æ ‘çš„é«˜åº¦*/
 };
 
 /**************************************************************************
 Function:insert_left
-Description:½«data²åÈëµ½nodeµÄ×óº¢×Ó
-Input:¶ş²æÊ÷½áµãnode,Êı¾İdata
-Output:²åÈëÊÇ·ñ³É¹¦
+Description:å°†dataæ’å…¥åˆ°nodeçš„å·¦å­©å­
+Input:äºŒå‰æ ‘ç»“ç‚¹node,æ•°æ®data
+Output:æ’å…¥æ˜¯å¦æˆåŠŸ
 ***************************************************************************/
 template <typename T>
 bool BiTree<T>::insert_left(BiTreeNode<T>* node, T data) {
-    if (node == nullptr) {//ÔÊĞí¿ÕÊ÷²åÈë½áµã
+    if (node == nullptr) {//å…è®¸ç©ºæ ‘æ’å…¥ç»“ç‚¹
         if (size > 0)
             return false;
         else
@@ -70,9 +70,9 @@ bool BiTree<T>::insert_left(BiTreeNode<T>* node, T data) {
 }
 /**************************************************************************
 Function:insert_right
-Description:½«data²åÈëµ½nodeµÄÓÒº¢×Ó
-Input:¶ş²æÊ÷½áµãnode,Êı¾İdata
-Output:²åÈëÊÇ·ñ³É¹¦
+Description:å°†dataæ’å…¥åˆ°nodeçš„å³å­©å­
+Input:äºŒå‰æ ‘ç»“ç‚¹node,æ•°æ®data
+Output:æ’å…¥æ˜¯å¦æˆåŠŸ
 ***************************************************************************/
 template <typename T>
 bool BiTree<T>::insert_right(BiTreeNode<T>* node, T data) {
@@ -94,20 +94,20 @@ bool BiTree<T>::insert_right(BiTreeNode<T>* node, T data) {
 
 /**************************************************************************
 Function:remove
-Description:É¾³ıÒÔnodeÎª¸ùµÄ×ÓÊ÷
-Input:¶ş²æÊ÷½áµãnodeµÄÒıÓÃ
-Output:É¾³ıÊÇ·ñ³É¹¦
+Description:åˆ é™¤ä»¥nodeä¸ºæ ¹çš„å­æ ‘
+Input:äºŒå‰æ ‘ç»“ç‚¹nodeçš„å¼•ç”¨
+Output:åˆ é™¤æ˜¯å¦æˆåŠŸ
 ***************************************************************************/
 template <typename T>
-bool BiTree<T>::remove(BiTreeNode<T>* &node) {
-    /*Ö®ËùÒÔÒª´«ÈëÖ¸ÕëµÄÒıÓÃ£¬ÊÇÒòÎª²»µ«ÒªÊÍ·ÅnodeÖ¸ÏòµÄ¿Õ¼ä£¬
-    Í¬ÑùÒ²ĞèÒª½«nodeÄÚ±£´æµÄµØÖ·¸ü¸ÄÎªnullptr*/
+bool BiTree<T>::remove(BiTreeNode<T>*& node) {
+    /*ä¹‹æ‰€ä»¥è¦ä¼ å…¥æŒ‡é’ˆçš„å¼•ç”¨ï¼Œæ˜¯å› ä¸ºä¸ä½†è¦é‡Šæ”¾nodeæŒ‡å‘çš„ç©ºé—´ï¼Œ
+    åŒæ ·ä¹Ÿéœ€è¦å°†nodeå†…ä¿å­˜çš„åœ°å€æ›´æ”¹ä¸ºnullptr*/
     if (node == nullptr)
         return true;
 
     if (remove(node->left) && remove(node->right)) {
-        delete node;//ÊÍ·ÅpÖ¸ÏòµÄ¿Õ¼ä
-        node = nullptr;//Çå¿ÕpÄÚµÄµØÖ·
+        delete node;//é‡Šæ”¾pæŒ‡å‘çš„ç©ºé—´
+        node = nullptr;//æ¸…ç©ºpå†…çš„åœ°å€
         size--;
         return true;
     }
@@ -116,10 +116,10 @@ bool BiTree<T>::remove(BiTreeNode<T>* &node) {
 }
 
 /**************************************************************************
-Function:preorderR¡¢preorderI
-Description:ÏÈĞò±éÀúÒÔnodeÎª¸ùµÄÊı£¬²¢½«±éÀú½á¹û±£´æµ½lÖĞ
-Input:¶ş²æÊ÷½áµãnode£¬ÁĞ±íl
-Output:±éÀúÊÇ·ñ³É¹¦
+Function:preorderRã€preorderI
+Description:å…ˆåºéå†ä»¥nodeä¸ºæ ¹çš„æ•°ï¼Œå¹¶å°†éå†ç»“æœä¿å­˜åˆ°lä¸­
+Input:äºŒå‰æ ‘ç»“ç‚¹nodeï¼Œåˆ—è¡¨l
+Output:éå†æ˜¯å¦æˆåŠŸ
 ***************************************************************************/
 template <typename T>
 bool BiTree<T>::preorderR(BiTreeNode<T>* node, list<T>* l) {
@@ -138,7 +138,7 @@ bool BiTree<T>::preorderI(BiTreeNode<T>* node, list<T>* l) {
     BiTreeNode<T>* p = node;
     while (p != nullptr || !s.empty()) {
         if (p != nullptr) {
-            //Ñ¹ÈëÕ»Ê±Êä³ö
+            //å‹å…¥æ ˆæ—¶è¾“å‡º
             l->push_back(p->data);
             s.push(p);
             p = p->left;
@@ -152,10 +152,10 @@ bool BiTree<T>::preorderI(BiTreeNode<T>* node, list<T>* l) {
     return true;
 }
 /**************************************************************************
-Function:inorderR¡¢inorderI
-Description:ÖĞĞò±éÀúÒÔnodeÎª¸ùµÄÊı£¬²¢½«±éÀú½á¹û±£´æµ½lÖĞ
-Input:¶ş²æÊ÷½áµãnode£¬ÁĞ±íl
-Output:±éÀúÊÇ·ñ³É¹¦
+Function:inorderRã€inorderI
+Description:ä¸­åºéå†ä»¥nodeä¸ºæ ¹çš„æ•°ï¼Œå¹¶å°†éå†ç»“æœä¿å­˜åˆ°lä¸­
+Input:äºŒå‰æ ‘ç»“ç‚¹nodeï¼Œåˆ—è¡¨l
+Output:éå†æ˜¯å¦æˆåŠŸ
 ***************************************************************************/
 template <typename T>
 bool BiTree<T>::inorderR(BiTreeNode<T>* node, list<T>* l) {
@@ -175,22 +175,22 @@ bool BiTree<T>::inorderI(BiTreeNode<T>* node, list<T>* l) {
     while (!s.empty() || p != nullptr) {
         if (p != nullptr) {
             s.push(p);
-            p = p->left;//ÏÂÒ»¸ö¸Ã·ÃÎÊµÄ½áµã
+            p = p->left;//ä¸‹ä¸€ä¸ªè¯¥è®¿é—®çš„ç»“ç‚¹
         }
         else {
             p = s.top();
-            s.pop();//Òª·ÃÎÊ¾Íµ¯³ö
-            l->push_back(p->data);//µ¯³öÕ»Ê±Êä³ö
-            p = p->right;//ÏÂÒ»¸ö¸Ã·ÃÎÊµÄ½áµã
+            s.pop();//è¦è®¿é—®å°±å¼¹å‡º
+            l->push_back(p->data);//å¼¹å‡ºæ ˆæ—¶è¾“å‡º
+            p = p->right;//ä¸‹ä¸€ä¸ªè¯¥è®¿é—®çš„ç»“ç‚¹
         }
     }
     return true;
 }
 /**************************************************************************
-Function:postorderR¡¢postorderI
-Description:ºóĞò±éÀúÒÔnodeÎª¸ùµÄÊı£¬²¢½«±éÀú½á¹û±£´æµ½lÖĞ
-Input:¶ş²æÊ÷½áµãnode£¬ÁĞ±íl
-Output:±éÀúÊÇ·ñ³É¹¦
+Function:postorderRã€postorderI
+Description:ååºéå†ä»¥nodeä¸ºæ ¹çš„æ•°ï¼Œå¹¶å°†éå†ç»“æœä¿å­˜åˆ°lä¸­
+Input:äºŒå‰æ ‘ç»“ç‚¹nodeï¼Œåˆ—è¡¨l
+Output:éå†æ˜¯å¦æˆåŠŸ
 ***************************************************************************/
 template <typename T>
 bool BiTree<T>::postorderR(BiTreeNode<T>* node, list<T>* l) {
@@ -207,7 +207,7 @@ bool BiTree<T>::postorderI(BiTreeNode<T>* node, list<T>* l) {
         return false;
     stack<BiTreeNode<T>*> s;
     BiTreeNode<T>* p = node;
-    BiTreeNode<T>* pre = nullptr;//ÓÃÓÚ±ê¼ÇÏÈÇ°·ÃÎÊ¹ıµÄ½áµã
+    BiTreeNode<T>* pre = nullptr;//ç”¨äºæ ‡è®°å…ˆå‰è®¿é—®è¿‡çš„ç»“ç‚¹
     while (!s.empty() || p != nullptr) {
         if (p != nullptr) {
             s.push(p);
@@ -219,8 +219,8 @@ bool BiTree<T>::postorderI(BiTreeNode<T>* node, list<T>* l) {
                 p = right;
             }
             else {
-                //ÔÚp==nullptrÇÒright!=nullptr&&right!=preÊ±£¬
-                //ËµÃ÷Òª·ÃÎÊÕ»¶¥½áµãÁË
+                //åœ¨p==nullpträ¸”right!=nullptr&&right!=preæ—¶ï¼Œ
+                //è¯´æ˜è¦è®¿é—®æ ˆé¡¶ç»“ç‚¹äº†
                 pre = s.top();
                 l->push_back(pre->data);
                 s.pop();
@@ -231,9 +231,9 @@ bool BiTree<T>::postorderI(BiTreeNode<T>* node, list<T>* l) {
 }
 /**************************************************************************
 Function:level
-Description:²ã´Î±éÀúÒÔnodeÎª¸ùµÄÊ÷£¬²¢½«±äÁ¿½á¹û±£´æµ½lÖĞ
-Input:¶ş²æÊ÷½áµãnode£¬ÁĞ±íl
-Output:±éÀúÊÇ·ñ³É¹¦
+Description:å±‚æ¬¡éå†ä»¥nodeä¸ºæ ¹çš„æ ‘ï¼Œå¹¶å°†å˜é‡ç»“æœä¿å­˜åˆ°lä¸­
+Input:äºŒå‰æ ‘ç»“ç‚¹nodeï¼Œåˆ—è¡¨l
+Output:éå†æ˜¯å¦æˆåŠŸ
 ***************************************************************************/
 template <typename T>
 bool BiTree<T>::level(BiTreeNode<T>* node, list<T>* l) {
@@ -254,9 +254,9 @@ bool BiTree<T>::level(BiTreeNode<T>* node, list<T>* l) {
 
 /**************************************************************************
 Function:height
-Description:ÒÔnodeÎª¸ùµÄÊ÷µÄ¸ß¶È
-Input:¶ş²æÊ÷½áµãnode
-Output:Ê÷µÄ¸ß¶È
+Description:ä»¥nodeä¸ºæ ¹çš„æ ‘çš„é«˜åº¦
+Input:äºŒå‰æ ‘ç»“ç‚¹node
+Output:æ ‘çš„é«˜åº¦
 ***************************************************************************/
 template <typename T>
 int BiTree<T>::height(BiTreeNode<T>* node) {
@@ -268,4 +268,3 @@ int BiTree<T>::height(BiTreeNode<T>* node) {
 }
 
 #endif // !BITREE_H
-

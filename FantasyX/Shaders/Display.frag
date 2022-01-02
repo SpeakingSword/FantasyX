@@ -22,21 +22,21 @@ uniform bool displaySingleColor;
 uniform float gamma;
 uniform float postStrength;
 
-// Èñ»¯ºË
+// é”åŒ–
 float sharpen_kernel[9] = {
     -1, -1, -1,
     -1,  9, -1,
     -1, -1, -1
 };
 
-// Ä£ºıºË
+// æ¨¡ç³Š
 float blur_kernel[9] = {
     1.0 / 16, 2.0 / 16, 1.0 / 16,
     2.0 / 16, 4.0 / 16, 2.0 / 16,
     1.0 / 16, 2.0 / 16, 1.0 / 16  
 };
 
-// ±ßÔµ¼ì²âºË
+// è¾¹ç¼˜æ£€æµ‹
 float edge_detection_kernel[9] = {
     1,  1, 1,
     1, -8, 1,
@@ -79,8 +79,8 @@ void main()
             break;
     }
 
-	// GammaĞ£Õı
-	FragColor = vec4(pow(color, vec3(1.0f / gamma)), 1.0f);
+    // Gammaæ ¡å‡†
+    FragColor = vec4(pow(color, vec3(1.0f / gamma)), 1.0f);
 }
 
 vec3 none()

@@ -2,7 +2,7 @@
 out vec4 FragColor;
 
 in VS_OUT {
-	vec2 texCoord;
+    vec2 texCoord;
 } fs_in;
 
 uniform sampler2D brightMap;

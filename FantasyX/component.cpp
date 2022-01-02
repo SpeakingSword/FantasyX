@@ -44,7 +44,7 @@ namespace fx {
         }
     }
 
-    bool ComponentSystem::Contain(const GLchar *name) const
+    bool ComponentSystem::Contain(const GLchar* name) const
     {
         auto iter = componentMap.cbegin();
         for (; iter != componentMap.cend(); iter++)
@@ -64,7 +64,7 @@ namespace fx {
         }
     }
 
-    Component *ComponentSystem::GetComponent(const GLchar *name) const
+    Component* ComponentSystem::GetComponent(const GLchar* name) const
     {
         auto iter = componentMap.cbegin();
         for (; iter != componentMap.cend(); iter++)
@@ -77,7 +77,7 @@ namespace fx {
         return nullptr;
     }
 
-    void ComponentSystem::AddComponent(Component *com)
+    void ComponentSystem::AddComponent(Component* com)
     {
         if (Contain(com->name.c_str()))
         {
@@ -85,12 +85,12 @@ namespace fx {
         }
         else
         {
-            componentMap.insert(pair<string, Component *>(com->name, com));
+            componentMap.insert(pair<string, Component*>(com->name, com));
             com->gameObject = this->host;
         }
     }
 
-    void ComponentSystem::RemoveComponent(const GLchar *name)
+    void ComponentSystem::RemoveComponent(const GLchar* name)
     {
         auto n = componentMap.erase(name);
         if (n == 0)
@@ -122,7 +122,7 @@ namespace fx {
         std::cout << "ENGIN CORE::Transform created .. " << std::endl;
     }
 
-    Transform::Transform(GameObject *host)
+    Transform::Transform(GameObject* host)
     {
         name = "Transform";
         gameObject = host;
@@ -178,9 +178,9 @@ namespace fx {
     {
         ImGui::Separator();
         ImGui::Text("Transform");
-        ImGui::DragFloat3("position", (GLfloat *)&this->position, 0.1f);
-        ImGui::DragFloat3("rotation", (GLfloat *)&this->rotation, 0.1f);
-        ImGui::DragFloat3("scale", (GLfloat *)&this->scale, 0.1f);
+        ImGui::DragFloat3("position", (GLfloat*)&this->position, 0.1f);
+        ImGui::DragFloat3("rotation", (GLfloat*)&this->rotation, 0.1f);
+        ImGui::DragFloat3("scale", (GLfloat*)&this->scale, 0.1f);
     }
 
     void Transform::Translate(Vector3 dir, GLfloat far, Space mode)
@@ -212,7 +212,7 @@ namespace fx {
     void Transform::Print()
     {
         std::cout << "Component Name: " << this->name.c_str() << std::endl;
-        const GLchar *host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
+        const GLchar* host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
         std::cout << "Host Name: " << host_name << std::endl;
         std::cout << "Position: " << position.x << " " << position.y << " " << position.z << std::endl;
         std::cout << "Rotation: " << rotation.x << " " << rotation.y << " " << rotation.z << std::endl;
@@ -222,7 +222,7 @@ namespace fx {
         std::cout << "Up: " << up.x << " " << up.y << " " << up.z << std::endl;
         std::cout << "Right: " << right.x << " " << right.y << " " << right.z << std::endl;
         std::cout << "Front: " << front.x << " " << front.y << " " << front.z << std::endl;
-        // ¶ÔÓÚÄ£ÐÍ±ä»»¾ØÕóÔÝÊ±²»ÐèÒªÊä³ö ...
+        // å¯¹äºŽæ¨¡åž‹å˜æ¢çŸ©é˜µæš‚æ—¶ä¸éœ€è¦è¾“å‡º ...
     }
 #pragma endregion
 
@@ -287,7 +287,7 @@ namespace fx {
     void Render::Print()
     {
         std::cout << "Component Name: " << this->name.c_str() << std::endl;
-        const GLchar *host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
+        const GLchar* host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
         std::cout << "Host Name: " << host_name << std::endl;
         if (this->mesh != nullptr)
         {
@@ -357,11 +357,11 @@ namespace fx {
         ImGui::Separator();
         ImGui::Text("Lighting");
         ImGui::Text("LightType: %s", name.c_str());
-        ImGui::ColorEdit3("LightColor", (GLfloat *)&color);
+        ImGui::ColorEdit3("LightColor", (GLfloat*)&color);
         ImGui::SliderFloat("LightStrength", &strength, 0.0f, 5.0f);
     }
 
-    const GLchar *DirLight::GetType()
+    const GLchar* DirLight::GetType()
     {
         return this->type.c_str();
     }
@@ -369,7 +369,7 @@ namespace fx {
     void DirLight::Print()
     {
         std::cout << "Component Name: " << this->name.c_str() << std::endl;
-        const GLchar *host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
+        const GLchar* host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
         std::cout << "Host Name: " << host_name << std::endl;
         std::cout << "Light Type: " << this->type.c_str() << std::endl;
         std::cout << "Light Color: " << color.x << " " << color.y << " " << color.z << std::endl;
@@ -436,11 +436,11 @@ namespace fx {
         ImGui::Separator();
         ImGui::Text("Lighting");
         ImGui::Text("LightType: %s", name.c_str());
-        ImGui::ColorEdit3("LightColor", (GLfloat *)&color);
+        ImGui::ColorEdit3("LightColor", (GLfloat*)&color);
         ImGui::SliderFloat("LightStrength", &strength, 0.0f, 5.0f);
     }
 
-    const GLchar *PointLight::GetType()
+    const GLchar* PointLight::GetType()
     {
         return this->type.c_str();
     }
@@ -448,7 +448,7 @@ namespace fx {
     void PointLight::Print()
     {
         std::cout << "Component Name: " << this->name.c_str() << std::endl;
-        const GLchar *host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
+        const GLchar* host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
         std::cout << "Host Name: " << host_name << std::endl;
         std::cout << "Light Type: " << this->type.c_str() << std::endl;
         std::cout << "Light Color: " << color.x << " " << color.y << " " << color.z << std::endl;
@@ -522,11 +522,11 @@ namespace fx {
         ImGui::Separator();
         ImGui::Text("Lighting");
         ImGui::Text("LightType: %s", name.c_str());
-        ImGui::ColorEdit3("LightColor", (GLfloat *)&color);
+        ImGui::ColorEdit3("LightColor", (GLfloat*)&color);
         ImGui::SliderFloat("LightStrength", &strength, 0.0f, 5.0f);
     }
 
-    const GLchar *SpotLight::GetType()
+    const GLchar* SpotLight::GetType()
     {
         return this->type.c_str();
     }
@@ -534,7 +534,7 @@ namespace fx {
     void SpotLight::Print()
     {
         std::cout << "Component Name: " << this->name.c_str() << std::endl;
-        const GLchar *host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
+        const GLchar* host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
         std::cout << "Host Name: " << host_name << std::endl;
         std::cout << "Light Type: " << this->type.c_str() << std::endl;
         std::cout << "Light Color: " << color.x << " " << color.y << " " << color.z << std::endl;
@@ -718,7 +718,7 @@ namespace fx {
     void Camera::Print()
     {
         std::cout << "Component Name: " << this->name.c_str() << std::endl;
-        const GLchar *host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
+        const GLchar* host_name = (this->gameObject != nullptr) ? this->gameObject->name.c_str() : "NULL";
         std::cout << "Host Name: " << host_name << std::endl;
         std::cout << "Position: " << this->position.x << " " << this->position.y << " " << this->position.z << std::endl;
         std::cout << "Front: " << this->front.x << " " << this->front.y << " " << this->front.z << std::endl;
