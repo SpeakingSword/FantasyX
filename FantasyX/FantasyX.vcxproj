@@ -90,6 +90,7 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\GitHubProject\FantasyX\FantasyX\Include;D:\GitHubProject\FantasyX\FantasyX\Include\glm;D:\GitHubProject\FantasyX\FantasyX\Include\KHR;D:\GitHubProject\FantasyX\FantasyX\Include\imgui;D:\GitHubProject\FantasyX\FantasyX\Include\GLFW;D:\GitHubProject\FantasyX\FantasyX\Include\glad;D:\GitHubProject\FantasyX\FantasyX\Include\fx;D:\GitHubProject\FantasyX\FantasyX\Include\assimp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
