@@ -70,8 +70,12 @@
   </ImportGroup>
   <PropertyGroup Label="UserMacros" />
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
-    <IncludePath>D:\VS2017Dependencies\includes;$(IncludePath)</IncludePath>
-    <LibraryPath>D:\VS2017Dependencies\libs;$(LibraryPath)</LibraryPath>
+    <IncludePath>D:\GitHubProject\FantasyX\FantasyX\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\GitHubProject\FantasyX\FantasyX\Bin;$(LibraryPath)</LibraryPath>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <IncludePath>D:\GitHubProject\FantasyX\FantasyX\Include;$(IncludePath)</IncludePath>
+    <LibraryPath>D:\GitHubProject\FantasyX\FantasyX\Bin;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -79,9 +83,11 @@
       <Optimization>Disabled</Optimization>
       <SDLCheck>true</SDLCheck>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>D:\GitHubProject\FantasyX\FantasyX\Include\KHR;D:\GitHubProject\FantasyX\FantasyX\Include\imgui;D:\GitHubProject\FantasyX\FantasyX\Include\glm;D:\GitHubProject\FantasyX\FantasyX\Include\GLFW;D:\GitHubProject\FantasyX\FantasyX\Include\glad;D:\GitHubProject\FantasyX\FantasyX\Include\fx;D:\GitHubProject\FantasyX\FantasyX\Include\assimp;D:\GitHubProject\FantasyX\FantasyX\Include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>glfw3.lib;opengl32.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>opengl32.lib;glfw3.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>D:\GitHubProject\FantasyX\FantasyX\Bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
@@ -92,6 +98,10 @@
       <ConformanceMode>true</ConformanceMode>
       <AdditionalIncludeDirectories>D:\GitHubProject\FantasyX\FantasyX\Include;D:\GitHubProject\FantasyX\FantasyX\Include\glm;D:\GitHubProject\FantasyX\FantasyX\Include\KHR;D:\GitHubProject\FantasyX\FantasyX\Include\imgui;D:\GitHubProject\FantasyX\FantasyX\Include\GLFW;D:\GitHubProject\FantasyX\FantasyX\Include\glad;D:\GitHubProject\FantasyX\FantasyX\Include\fx;D:\GitHubProject\FantasyX\FantasyX\Include\assimp;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
+    <Link>
+      <AdditionalLibraryDirectories>D:\GitHubProject\FantasyX\FantasyX\Bin;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>glfw3.lib;assimp.lib;%(AdditionalDependencies)</AdditionalDependencies>
+    </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>

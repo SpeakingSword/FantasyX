@@ -22,26 +22,23 @@ uniform bool displaySingleColor;
 uniform float gamma;
 uniform float postStrength;
 
-// 锐化
-float sharpen_kernel[9] = {
+float sharpen_kernel[9] = float[](
     -1, -1, -1,
     -1,  9, -1,
     -1, -1, -1
-};
+);
 
-// 模糊
-float blur_kernel[9] = {
+float blur_kernel[9] = float[](
     1.0 / 16, 2.0 / 16, 1.0 / 16,
     2.0 / 16, 4.0 / 16, 2.0 / 16,
     1.0 / 16, 2.0 / 16, 1.0 / 16  
-};
+);
 
-// 边缘检测
-float edge_detection_kernel[9] = {
+float edge_detection_kernel[9] = float[](
     1,  1, 1,
     1, -8, 1,
     1,  1, 1
-};
+);
 
 vec3 none();
 vec3 reversal();
@@ -79,7 +76,6 @@ void main()
             break;
     }
 
-    // Gamma校准
     FragColor = vec4(pow(color, vec3(1.0f / gamma)), 1.0f);
 }
 
@@ -107,7 +103,7 @@ vec3 grey()
 vec3 sharpen(float strength)
 {
     float offset = POST_MIN_OFFSET + (POST_MAX_OFFSET - POST_MIN_OFFSET) * (strength / 100);
-    vec2 offsets[9] = {
+    vec2 offsets[9] = vec2[](
         vec2(-offset,  offset),
         vec2( 0.0f,    offset),
         vec2( offset,  offset),
@@ -117,7 +113,7 @@ vec3 sharpen(float strength)
         vec2(-offset, -offset),
         vec2( 0.0f,   -offset),
         vec2( offset, -offset)
-    };
+    );
     
     vec3 sampleTex[9];
     for(int i = 0; i < 9; i++)
@@ -136,7 +132,7 @@ vec3 sharpen(float strength)
 vec3 blur(float strength)
 {
     float offset = POST_MIN_OFFSET + (POST_MAX_OFFSET - POST_MIN_OFFSET) * (strength / 100);
-    vec2 offsets[9] = {
+    vec2 offsets[9] = vec2[](
         vec2(-offset,  offset),
         vec2( 0.0f,    offset),
         vec2( offset,  offset),
@@ -146,7 +142,7 @@ vec3 blur(float strength)
         vec2(-offset, -offset),
         vec2( 0.0f,   -offset),
         vec2( offset, -offset)
-    };
+    );
     
     vec3 sampleTex[9];
     for(int i = 0; i < 9; i++)
@@ -165,7 +161,7 @@ vec3 blur(float strength)
 vec3 edge_detection(float strength)
 {
     float offset = POST_MIN_OFFSET + (POST_MAX_OFFSET - POST_MIN_OFFSET) * (strength / 100);
-    vec2 offsets[9] = {
+    vec2 offsets[9] = vec2[](
         vec2(-offset,  offset),
         vec2( 0.0f,    offset),
         vec2( offset,  offset),
@@ -175,7 +171,7 @@ vec3 edge_detection(float strength)
         vec2(-offset, -offset),
         vec2( 0.0f,   -offset),
         vec2( offset, -offset)
-    };
+    );
     
     vec3 sampleTex[9];
     for(int i = 0; i < 9; i++)

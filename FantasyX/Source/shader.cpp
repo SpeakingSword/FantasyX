@@ -65,7 +65,7 @@ namespace fx {
         if (!success)
         {
             glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-            std::cout << "ENGIN CORE::ERROR::SHADER: vertex shader compilation failed !\n" << infoLog << std::endl;
+            std::cout << "ENGIN CORE::ERROR::SHADER: vertex shader compilation failed ! path:" << this->name << "\n" << infoLog << std::endl;
             system("pause");
         }
 
@@ -78,7 +78,7 @@ namespace fx {
         if (!success)
         {
             glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-            std::cout << "ENGIN CORE::ERROR::SHADER: fragment shader compilation failed !\n" << infoLog << std::endl;
+            std::cout << "ENGIN CORE::ERROR::SHADER: fragment shader compilation failed ! path:" << this->name << "\n" << infoLog << std::endl;
             system("pause");
         }
 
@@ -92,7 +92,7 @@ namespace fx {
         if (!success)
         {
             glGetProgramInfoLog(shaderProgramID, 512, NULL, infoLog);
-            std::cout << "ENGIN CORE::ERROR::SHADER: shader program linking failed !\n" << infoLog << std::endl;
+            std::cout << "ENGIN CORE::ERROR::SHADER: shader program linking failed ! path:" << this->name << "\n" << infoLog << std::endl;
             system("pause");
         }
 
@@ -119,7 +119,7 @@ namespace fx {
         if (!success)
         {
             glGetShaderInfoLog(vertex, 512, NULL, infoLog);
-            std::cout << "ENGIN CORE::ERROR::SHADER: vertex shader compilation failed !\n" << infoLog << std::endl;
+            std::cout << "ENGIN CORE::ERROR::SHADER: vertex shader compilation failed ! path:" << this->name << "\n" << infoLog << std::endl;
             system("pause");
         }
 
@@ -132,7 +132,7 @@ namespace fx {
         if (!success)
         {
             glGetShaderInfoLog(geomatry, 512, NULL, infoLog);
-            std::cout << "ENGIN CORE::ERROR::SHADER: geomatry shader compilation failed !\n" << infoLog << std::endl;
+            std::cout << "ENGIN CORE::ERROR::SHADER: geomatry shader compilation failed ! path:" << this->name << "\n" << infoLog << std::endl;
             system("pause");
         }
 
@@ -145,7 +145,7 @@ namespace fx {
         if (!success)
         {
             glGetShaderInfoLog(fragment, 512, NULL, infoLog);
-            std::cout << "ENGIN CORE::ERROR::SHADER: fragment shader compilation failed !\n" << infoLog << std::endl;
+            std::cout << "ENGIN CORE::ERROR::SHADER: fragment shader compilation failed ! path:" << this->name << "\n" << infoLog << std::endl;
             system("pause");
         }
 
@@ -160,7 +160,7 @@ namespace fx {
         if (!success)
         {
             glGetProgramInfoLog(shaderProgramID, 512, NULL, infoLog);
-            std::cout << "ENGIN CORE::ERROR::SHADER: shader program linking failed !\n" << infoLog << std::endl;
+            std::cout << "ENGIN CORE::ERROR::SHADER: shader program linking failed ! path:" << this->name << "\n" << infoLog << std::endl;
             system("pause");
         }
 

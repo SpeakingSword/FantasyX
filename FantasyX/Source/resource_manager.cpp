@@ -283,17 +283,17 @@ namespace fx {
         //}
 
         //return appDir.c_str();
-        return "D:\\Visual Studio 2017 Projects\\FantasyX\\FantasyX";
+        return "D:\\GitHubProject\\FantasyX\\FantasyX";
     }
 
     const GLchar* ResourceManager::GetShaderDir()
     {
-        return "\\Shaders\\";
+        return "\\Resource\\Shader\\";
     }
 
     const GLchar* ResourceManager::GetImageDir()
     {
-        return "\\Images\\";
+        return "\\Resource\\Img\\";
     }
 
     GLchar* ResourceManager::GetFileString(const GLchar* path)
