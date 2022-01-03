@@ -37,6 +37,9 @@
     <Filter Include="sources\test">
       <UniqueIdentifier>{f7a9e5ee-2fad-4521-9234-1cc19b4c46f4}</UniqueIdentifier>
     </Filter>
+    <Filter Include="headers\glad">
+      <UniqueIdentifier>{03c29cc9-903d-4c74-be90-547994f60e0f}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="Shaders\PBRStandard.frag">
@@ -126,148 +129,148 @@
     <None Include="FantasyX.licenseheader" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="scene.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="types.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="component.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui.h">
-      <Filter>headers\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_glfw.h">
-      <Filter>headers\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_impl_opengl3.h">
-      <Filter>headers\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imgui_internal.h">
-      <Filter>headers\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_rectpack.h">
-      <Filter>headers\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_textedit.h">
-      <Filter>headers\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imstb_truetype.h">
-      <Filter>headers\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="imconfig.h">
-      <Filter>headers\imgui</Filter>
-    </ClInclude>
-    <ClInclude Include="renderer.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="gameobject.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="mesh.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="texture.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="material.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="shader.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="bitree.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="resource_manager.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="clocker.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="buffer.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
-    <ClInclude Include="context.h">
-      <Filter>headers\core</Filter>
-    </ClInclude>
+    <ClCompile Include="Source\buffer.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\clocker.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\component.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\componentsystem_test.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\context.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\demo.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\gameobject.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\gameobject_test.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\glad.c">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\imgui.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\imgui_demo.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\imgui_draw.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\imgui_impl_glfw.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\imgui_impl_opengl3.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\imgui_widgets.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\loadcheck_test.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\loadmodel_test.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\material.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\mesh.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\renderer.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\renderer_test.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\resource_manager.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\scene.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\scene_test.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
+    <ClCompile Include="Source\shader.cpp">
+      <Filter>sources</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="imgui.cpp">
-      <Filter>sources\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_demo.cpp">
-      <Filter>sources\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_draw.cpp">
-      <Filter>sources\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_impl_glfw.cpp">
-      <Filter>sources\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_impl_opengl3.cpp">
-      <Filter>sources\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="imgui_widgets.cpp">
-      <Filter>sources\imgui</Filter>
-    </ClCompile>
-    <ClCompile Include="scene.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="glad.c">
-      <Filter>sources\glad</Filter>
-    </ClCompile>
-    <ClCompile Include="mesh.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="material.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="shader.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="component.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="gameobject.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="gameobject_test.cpp">
-      <Filter>sources\test</Filter>
-    </ClCompile>
-    <ClCompile Include="componentsystem_test.cpp">
-      <Filter>sources\test</Filter>
-    </ClCompile>
-    <ClCompile Include="resource_manager.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="loadmodel_test.cpp">
-      <Filter>sources\test</Filter>
-    </ClCompile>
-    <ClCompile Include="scene_test.cpp">
-      <Filter>sources\test</Filter>
-    </ClCompile>
-    <ClCompile Include="clocker.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="buffer.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="demo.cpp">
-      <Filter>sources\test</Filter>
-    </ClCompile>
-    <ClCompile Include="context.cpp">
-      <Filter>sources\core</Filter>
-    </ClCompile>
-    <ClCompile Include="renderer_test.cpp">
-      <Filter>sources\test</Filter>
-    </ClCompile>
-    <ClCompile Include="loadcheck_test.cpp">
-      <Filter>sources\test</Filter>
-    </ClCompile>
+    <ClInclude Include="Include\bitree.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\buffer.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\clocker.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\component.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\context.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\gameobject.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\imconfig.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\imgui.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\imgui_impl_glfw.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\imgui_impl_opengl3.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\imgui_internal.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\imstb_rectpack.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\imstb_textedit.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\imstb_truetype.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\material.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\mesh.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\renderer.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\resource_manager.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\scene.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\shader.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\texture.h">
+      <Filter>headers</Filter>
+    </ClInclude>
+    <ClInclude Include="Include\types.h">
+      <Filter>headers</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>
